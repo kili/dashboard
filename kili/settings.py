@@ -10,8 +10,13 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+from openstack_dashboard import exceptions
+import openstack_dashboard.enabled
+import openstack_dashboard.local.enabled
+from openstack_dashboard.utils import settings
 from kombu import Exchange, Queue
 
 DATABASES = { 
@@ -32,12 +37,71 @@ DATABASES = {
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '_8!hwo0@xfkkz15e%+nh4f0v7ra7)jucipgt9)o(3s16v=^tk%'
 
-from openstack_dashboard.settings import *
+HORIZON_CONFIG = {
+    'dashboards': ('project', 'admin', 'settings', 'router',),
+    'default_dashboard': 'project',
+    'user_home': 'openstack_dashboard.views.get_user_home',
+    'ajax_queue_limit': 10,
+    'auto_fade_alerts': {
+        'delay': 3000,
+        'fade_duration': 1500,
+        'types': ['alert-success', 'alert-info']
+    },
+    'help_url': "http://docs.openstack.org",
+    'exceptions': {'recoverable': exceptions.RECOVERABLE,
+                   'not_found': exceptions.NOT_FOUND,
+                   'unauthorized': exceptions.UNAUTHORIZED},
+}
+
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+BIN_DIR = os.path.abspath(os.path.join(ROOT_PATH, '..', 'bin'))
+
+if ROOT_PATH not in sys.path:
+    sys.path.append(ROOT_PATH)
+
+DEBUG = False
+TEMPLATE_DEBUG = DEBUG
+
+SITE_BRANDING = 'OpenStack Dashboard'
+
+LOGIN_URL = '/auth/login/'
+LOGOUT_URL = '/auth/logout/'
+# LOGIN_REDIRECT_URL can be used as an alternative for
+# HORIZON_CONFIG.user_home, if user_home is not set.
+# Do not set it to '/home/', as this will cause circular redirect loop
+LOGIN_REDIRECT_URL = '/'
+
+MEDIA_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'media'))
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.abspath(os.path.join(ROOT_PATH, '..', 'static'))
+STATIC_URL = '/static/'
+
+COMPRESS_OFFLINE_CONTEXT = {
+    'STATIC_URL': STATIC_URL,
+    'HORIZON_CONFIG': HORIZON_CONFIG
+}
+
+STATICFILES_FINDERS = (
+    'compressor.finders.CompressorFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
+COMPRESS_PRECOMPILERS = (
+    ('text/less', ('lesscpy {infile}')),
+)
+
+COMPRESS_CSS_FILTERS = (
+    'compressor.filters.css_default.CssAbsoluteFilter',
+)
+
+COMPRESS_ENABLED = True
+COMPRESS_OUTPUT_DIR = 'dashboard'
+COMPRESS_CSS_HASHING_METHOD = 'hash'
+COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [ 'localhost', ]
 
@@ -62,6 +126,54 @@ INSTALLED_APPS = (
     'async',
 )
 
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend',)
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_COOKIE_HTTPONLY = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_SECURE = False
+SESSION_TIMEOUT = 1800
+
+# when doing upgrades, it may be wise to stick to PickleSerializer
+# TODO(mrunge): remove after Icehouse
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+LANGUAGES = (
+    ('en', 'English'),
+    ('en-au', 'Australian English'),
+    ('en-gb', 'British English'),
+    ('es', 'Spanish'),
+    ('fr', 'French'),
+    ('ja', 'Japanese'),
+    ('ko', 'Korean (Korea)'),
+    ('nl', 'Dutch (Netherlands)'),
+    ('pl', 'Polish'),
+    ('pt-br', 'Portuguese (Brazil)'),
+    ('zh-cn', 'Simplified Chinese'),
+)
+LANGUAGE_CODE = 'en'
+LANGUAGE_COOKIE_NAME = 'horizon_language'
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+
+OPENSTACK_KEYSTONE_DEFAULT_ROLE = '_member_'
+
+DEFAULT_EXCEPTION_REPORTER_FILTER = 'horizon.exceptions.HorizonReporterFilter'
+
+POLICY_FILES_PATH = os.path.join(ROOT_PATH, "conf")
+# Map of local copy of service policy files
+POLICY_FILES = {
+    'identity': 'keystone_policy.json',
+    'compute': 'nova_policy.json',
+    'volume': 'cinder_policy.json',
+    'image': 'glance_policy.json',
+    'orchestration': 'heat_policy.json',
+}
+LOCAL_PATH = None
+
 MIDDLEWARE_CLASSES = ( 
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
@@ -72,6 +184,27 @@ MIDDLEWARE_CLASSES = (
         'django.middleware.doc.XViewMiddleware',
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.request',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.contrib.messages.context_processors.messages',
+    'horizon.context_processors.horizon',
+    'openstack_dashboard.context_processors.openstack',
+)
+
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    'horizon.loaders.TemplateLoader'
+)
+
+TEMPLATE_DIRS = (
+    os.path.join(ROOT_PATH, 'templates'),
 )
 
 ROOT_URLCONF = 'kili.urls'
@@ -90,7 +223,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
