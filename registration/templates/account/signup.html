@@ -1,0 +1,34 @@
+{% extends "account/base.html" %}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Registration" %} - {% endblock %}
+{% block extra_head %}{% include "_stylesheets.html" %}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row large-rounded">
+        <div id="" class="login ">
+        <div class="modal-header" align="center">
+            <h3>{% trans "Sign Up" %}</h3>
+            <p>{% blocktrans %}Already have an account? Then please {% endblocktrans %}<a href="{{ login_url }}">Sign In!</a></p>
+        </div>
+        <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+          {% csrf_token %}
+            <div class="modal-body clearfix">
+            {% block modal-body %}
+                <fieldset>
+                  <style>.errorlist{color:red}</style>
+                  {{ form.as_p }}
+                  {% if redirect_field_value %}
+                  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                  {% endif %}
+                </fieldset>
+            {% endblock %}
+            </div>
+            <div class="modal-footer" ><button type="submit" class="btn btn-primary pull-right">{% trans "Sign Up" %} &raquo;</button></div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

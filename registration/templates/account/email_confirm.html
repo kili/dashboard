@@ -1,0 +1,30 @@
+{% extends "account/base.html" %}
+
+{% load url from future %}
+{% load i18n branding account  %}
+
+{% block head_title %}{% trans "Confirm E-mail Address" %}{% endblock %}
+{% block extra_head %}{% include "_stylesheets.html" %}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row large-rounded">
+        <div id="" class="modal login">
+        <div class="modal-header" align="center">
+            <h3>{% trans "Just one more step!" %}</h3>
+        </div>
+        <div class="modal-body clearfix">
+        {% if confirmation %}
+            {% user_display confirmation.email_address.user as user_display %}
+            <p>{% blocktrans with confirmation.email_address.email as email %}Click the button below in order to confirm your Kili account.{% endblocktrans %}</p>
+            <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+            {% csrf_token %}
+            </div>
+            <div class="modal-footer" ><button type="submit" class="btn btn-primary pull-right">{% trans 'Activate' %}</button></div>
+            </form>
+        {% else %}
+            {% url 'account_email' as email_url %}
+            <p>{% blocktrans %}This e-mail confirmation link expired or is invalid. Please <a href="{{ email_url}}">issue a new e-mail confirmation request</a>.{% endblocktrans %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

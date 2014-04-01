@@ -1,0 +1,10 @@
+{% load account %}{% autoescape off %}Hello,
+
+Thanks for requesting an account on Kili.  Click on this link {{ activate_url }} to confirm your email address.
+
+If you did not request this account, simply delete this message.
+
+Thanks,
+The Kili Team
+------------{% endautoescape %}
+

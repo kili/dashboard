@@ -1,0 +1,5 @@
+-e git+git@github.com:kili/horizon.git@master#egg=horizon
+-e git+git@github.com:replay/django-allauth.git#egg=django-allauth
+South
+celery
+MySQL-python
