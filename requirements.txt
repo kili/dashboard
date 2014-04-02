@@ -3,3 +3,4 @@ django-allauth
 South
 celery
 MySQL-python
+python-memcached
