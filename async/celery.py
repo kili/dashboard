@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from celery import Celery
-from openstack_dashboard import settings
+from django.conf import settings
 
 
 celery_app = Celery('async', include=['async.tasks'])
