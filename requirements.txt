@@ -1,5 +1,5 @@
 -e git+https://github.com/kili/horizon.git#egg=horizon==master
--e git+https://github.com/replay/django-allauth.git#egg=django-allauth==master
+django-allauth
 South
 celery
 MySQL-python
