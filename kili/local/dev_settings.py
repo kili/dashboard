@@ -31,5 +31,3 @@ ENV_NAME = "dev"
 OPENSTACK_SSL_NO_VERIFY = True
 
 OPENSTACK_SSL_CACERT = "/usr/local/share/ca-certificates/kili_staging_rootca.crt"
-
-CELERY_ALWAYS_EAGER = True
