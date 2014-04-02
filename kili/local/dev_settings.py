@@ -4,7 +4,7 @@ from kili.settings import *
 KEYSTONE_TOKEN = "3DD7j.2v-N8si0qiT_Uf" 
 KEYSTONE_URL = "http://10.186.43.2:35357/v2.0"
 
-BROKER_URL = 'amqp://horizon_dashboard:b:gfLeV5LpU6xljZwSl0@10.186.43.2//horizon_dashboard'
+BROKER_URL = 'amqp://horizon_dashboard:iamapassword@127.0.0.1//horizon_dashboard'
         
 DATABASES = { 
             'default': {
