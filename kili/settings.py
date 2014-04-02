@@ -124,6 +124,7 @@ INSTALLED_APPS = (
     'allauth.account',
     'south',
     'async',
+    'kili',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -227,7 +228,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
 
 DEFAULT_FROM_EMAIL = "Kili <admin@kili.io>"
 
@@ -292,3 +293,4 @@ settings.update_dashboards([
         openstack_dashboard.local.enabled,
 ], HORIZON_CONFIG, INSTALLED_APPS)
 
+OPENSTACK_SSL_CACERT="/home/james/Desktop/StageCerts/kili_staging_rootca.crt"
