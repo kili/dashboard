@@ -289,3 +289,5 @@ settings.update_dashboards([
         openstack_dashboard.local.enabled,
 ], HORIZON_CONFIG, INSTALLED_APPS)
 
+if DEBUG:
+    logging.basicConfig(level=logging.DEBUG)
