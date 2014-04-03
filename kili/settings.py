@@ -293,4 +293,3 @@ settings.update_dashboards([
         openstack_dashboard.local.enabled,
 ], HORIZON_CONFIG, INSTALLED_APPS)
 
-OPENSTACK_SSL_CACERT="/home/james/Desktop/StageCerts/kili_staging_rootca.crt"
