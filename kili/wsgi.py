@@ -8,7 +8,16 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 """
 
 import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kili.settings")
+import sys
+import django.core.handlers.wsgi
+from django.conf import settings
 
-from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+# Add this file path to sys.path in order to import settings
+sys.path.insert(0, os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), '..'))
+os.environ['DJANGO_SETTINGS_MODULE'] = 'kili.local.local_settings'
+sys.stdout = sys.stderr
+
+DEBUG = False
+
+application = django.core.handlers.wsgi.WSGIHandler()
