@@ -99,10 +99,6 @@ COMPRESS_OUTPUT_DIR = 'dashboard'
 COMPRESS_CSS_HASHING_METHOD = 'hash'
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-
 ALLOWED_HOSTS = [ 'localhost', ]
 
 # Application definition
