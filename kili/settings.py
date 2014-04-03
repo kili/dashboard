@@ -291,3 +291,109 @@ settings.update_dashboards([
 
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
+
+LOGGING = {
+    'version': 1,
+    # When set to True this will disable all logging except
+    # for loggers specified in this configuration dictionary. Note that
+    # if nothing is specified here and disable_existing_loggers is True,
+    # django.db.backends will still log unless it is disabled explicitly.
+    'disable_existing_loggers': False,
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
+        },
+        'console': {
+            # Set the level to "DEBUG" for verbose output logging.
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        # Logging from django.db.backends is VERY verbose, send to null
+        # by default.
+        'django.db.backends': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
+        'requests': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
+        'horizon': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'openstack_dashboard': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'novaclient': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'cinderclient': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'keystoneclient': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'glanceclient': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'neutronclient': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'heatclient': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'ceilometerclient': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'troveclient': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'swiftclient': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'openstack_auth': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'nose.plugins.manager': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'iso8601': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
+    }
+}
