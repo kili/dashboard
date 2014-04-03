@@ -227,7 +227,7 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
 
-DEFAULT_FROM_EMAIL = "Kili <admin@kili.io>"
+DEFAULT_FROM_EMAIL = "Kili <help@kili.io>"
 
 AUTH_USER_MODEL = 'registration.User'
 
