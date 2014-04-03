@@ -4,6 +4,8 @@ Thanks for requesting an account on Kili.  Click on this link {{ activate_url }}
 
 If you did not request this account, simply delete this message.
 
+If at any point in the future you need help, simply email us at help@kili.io
+
 Thanks,
 The Kili Team
 ------------{% endautoescape %}
