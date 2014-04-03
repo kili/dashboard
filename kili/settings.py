@@ -105,6 +105,7 @@ ALLOWED_HOSTS = [ '*', ]
 # Application definition
 
 INSTALLED_APPS = (
+    'kili',
     'openstack_dashboard',
     'django.contrib.contenttypes',
     'django.contrib.auth',
@@ -121,7 +122,6 @@ INSTALLED_APPS = (
     'allauth.account',
     'south',
     'async',
-    'kili',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
