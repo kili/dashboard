@@ -321,6 +321,7 @@ LOGGING = {
         'syslog': {
             'level': 'DEBUG',
             'class': 'logging.handlers.SysLogHandler',
+            'address': '/dev/log',
         },
     },
     'loggers': {
