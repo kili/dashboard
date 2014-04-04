@@ -318,6 +318,10 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
         },
+        'syslog': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.SysLogHandler',
+        },
     },
     'loggers': {
         # Logging from django.db.backends is VERY verbose, send to null
@@ -341,7 +345,7 @@ LOGGING = {
             'propagate': False,
         },
         'novaclient': {
-            'handlers': ['console'],
+            'handlers': ['console', 'syslog'],
             'level': 'DEBUG',
             'propagate': False,
         },
