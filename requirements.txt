@@ -84,3 +84,4 @@ South
 celery
 MySQL-python
 python-memcached
+newrelic
