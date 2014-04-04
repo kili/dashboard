@@ -7,16 +7,26 @@ KEYSTONE_URL = "http://10.186.43.2:35357/v2.0"
 BROKER_URL = 'amqp://horizon_dashboard:iamapassword@127.0.0.1//horizon_dashboard'
         
 DATABASES = { 
-            'default': {
-                                    'ENGINE': 'django.db.backends.mysql',
-                                    'NAME': 'horizon_dashboard',
-                                    'USER': 'horizon',
-                                    'PASSWORD': 'vSzjLZT3YmdzNL1k7OuJ',
-                                    'HOST': '10.186.43.2',
-                                    'PORT': '3306',
-                                },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'horizon_dashboard',
+        'USER': 'horizon',
+        'PASSWORD': 'vSzjLZT3YmdzNL1k7OuJ',
+        'HOST': '10.186.43.2',
+        'PORT': '3306',
+    },
 }   
-    
+
+INSTALLED_APPS += (
+    'debug_toolbar',
+)
+
+INTERNAL_IPS = ( '127.0.0.1', )
+
+MIDDLEWARE_CLASSES += (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+)
+
 OPENSTACK_HOST = "10.186.43.2"
 OPENSTACK_KEYSTONE_URL = "http://{}:5000/v2.0".format(OPENSTACK_HOST)
         
@@ -28,6 +38,4 @@ DEBUG = True
 
 ENV_NAME = "dev" 
 
-OPENSTACK_SSL_NO_VERIFY = True
-
-OPENSTACK_SSL_CACERT = "/usr/local/share/ca-certificates/kili_staging_rootca.crt"
+DEBUG_TOOLBAR_PATCH_SETTINGS = False

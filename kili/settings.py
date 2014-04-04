@@ -60,7 +60,7 @@ BIN_DIR = os.path.abspath(os.path.join(ROOT_PATH, '..', 'bin'))
 if ROOT_PATH not in sys.path:
     sys.path.append(ROOT_PATH)
 
-DEBUG = False
+DEBUG = False 
 TEMPLATE_DEBUG = DEBUG
 
 SITE_BRANDING = 'OpenStack Dashboard'
@@ -128,10 +128,8 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend',)
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 SESSION_COOKIE_HTTPONLY = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_SECURE = False
 SESSION_TIMEOUT = 1800
 
 # when doing upgrades, it may be wise to stick to PickleSerializer
@@ -173,6 +171,7 @@ POLICY_FILES = {
 LOCAL_PATH = None
 
 MIDDLEWARE_CLASSES = ( 
+        'django.middleware.cache.UpdateCacheMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
@@ -182,7 +181,15 @@ MIDDLEWARE_CLASSES = (
         'django.middleware.doc.XViewMiddleware',
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'django.middleware.cache.FetchFromCacheMiddleware',
 )
+
+CACHES = { 
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }   
+}
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.debug',
@@ -278,6 +285,7 @@ KEYSTONE_TOKEN = "JbztrK_H2,yO0jJ4.Vje"
 KEYSTONE_DEFAULT_GROUP = "admin"
 
 #OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = True
+
 
 OPENSTACK_API_VERSION = {
     'identity': 2.0,
