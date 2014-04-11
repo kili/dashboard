@@ -10,4 +10,15 @@
       <p id="page_description"><p><a href="http://status.kili.io">Check the Kili status overview</a></p>{% trans "You may have mistyped the address or the page may have moved." %}</p>
     </div>
   </div>
+    <script type="text/javascript" src="//statuspage-production.s3.amazonaws.com/se.js"></script>
+    <script type="text/javascript">
+        window.fetchStatusPage({
+            pageId: 'bfv5m73rm34g', // required
+            renderTo: '#my-render-elem', // optional, will render summary of status
+            successCallback: function(data) { // optional, for full control of data returned
+                // do something with the data here
+                console.log(data.status.description);
+            }
+        });
+    </script>
 {% endblock %}
