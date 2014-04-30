@@ -85,3 +85,4 @@ celery
 MySQL-python
 python-memcached
 newrelic
+django-debug-toolbar
