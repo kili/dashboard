@@ -21,7 +21,7 @@ sys.stdout = sys.stderr
 
 DEBUG = False
 
-newrelic.agent.initialize(settings.NEWRELIC_CONFIG_FILE)
+newrelic.agent.initialize(settings.NEWRELIC_CONFIG_FILE, settings.ENV_NAME)
 
 application = django.core.handlers.wsgi.WSGIHandler()
 application = newrelic.agent.wsgi_application()(application)
