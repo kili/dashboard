@@ -151,6 +151,8 @@ COMPRESS_OUTPUT_DIR = 'dashboard'
 COMPRESS_CSS_HASHING_METHOD = 'hash'
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
+KEYSTONE_DEFAULT_GROUP = "admin"
+
 ALLOWED_HOSTS = [ '*', ]
 
 INSTALLED_APPS = [
