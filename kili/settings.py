@@ -59,7 +59,7 @@ STATIC_URL = '/static/'
 
 ROOT_URLCONF = 'kili.urls'
 
-SECRET_KEY = '_8!hwo0@xfkkz15e%+nh4f0v7ra7)jucipgt9)o(3s16v=^tk%'
+SECRET_KEY = 'dummysecretkey'
 
 HORIZON_CONFIG = {
     'dashboards': ('project', 'admin', 'settings', 'router',),
