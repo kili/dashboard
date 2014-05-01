@@ -76,13 +76,13 @@ wsgiref==0.1.2
 
 # Kili requirements
 -e git+https://github.com/kili/horizon.git#egg=horizon==master
-django-allauth
-South
-celery
-MySQL-python
-python-memcached
-newrelic
-django-debug-toolbar
-amqp
-billiard
-kombu
+django-allauth==0.16.1
+South==0.8.4
+celery==3.1.11
+MySQL-python==1.2.5
+python-memcached==1.53
+newrelic==2.18.1.15
+django-debug-toolbar==1.2
+amqp==1.4.5
+billiard==3.3.0.17
+kombu==3.0.15
