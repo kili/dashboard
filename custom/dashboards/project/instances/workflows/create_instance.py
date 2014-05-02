@@ -1,3 +1,4 @@
+from horizon import forms
 from django.utils.translation import ugettext_lazy as _
 from openstack_dashboard.dashboards.project.instances.workflows.\
     create_instance import *
@@ -9,12 +10,6 @@ class CustomSetAccessControlsAction(SetAccessControlsAction):
                                        help_text=_("Which key pair to use for "
                                                    "authentication."),
                                        add_item_link=KEYPAIR_IMPORT_URL)
-
-    def __init__(self, request, *args, **kwargs):
-        super(CustomSetAccessControlsAction, self).__init__(request, *args, **kwargs)
-        if not api.nova.can_set_server_password():
-            del self.fields['admin_pass']
-            del self.fields['confirm_admin_pass']
 
 
 class CustomSetAccessControls(SetAccessControls):
