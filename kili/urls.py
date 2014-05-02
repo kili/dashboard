@@ -6,7 +6,6 @@ import openstack_dashboard
 urlpatterns = patterns('',
     url(r'^accounts/', include('allauth.urls')),
     url(r'', include('openstack_dashboard.urls')),
-    url(r'', 'login', name="account_login"),
 )
 
 if settings.DEBUG:
