@@ -75,6 +75,7 @@ HORIZON_CONFIG = {
     'exceptions': {'recoverable': exceptions.RECOVERABLE,
                    'not_found': exceptions.NOT_FOUND,
                    'unauthorized': exceptions.UNAUTHORIZED},
+    'customization_module': 'custom.overrides',
 }
 
 # Set to True to allow users to upload images to glance via Horizon server.
