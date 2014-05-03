@@ -15,6 +15,11 @@ class CustomSetAccessControlsAction(SetAccessControlsAction):
     def __init__(self, *args, **kwargs):
         super(CustomSetAccessControlsAction, self).__init__(*args, **kwargs)
 
+    class Meta:
+        name = _("Access & Security")
+        help_text = _("Control access to your instance via key pairs, "
+                      "security groups, and other mechanisms.")
+
 
 class CustomSetAccessControls(SetAccessControls):
     action_class = CustomSetAccessControlsAction
