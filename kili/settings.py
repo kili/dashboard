@@ -75,7 +75,7 @@ HORIZON_CONFIG = {
     'exceptions': {'recoverable': exceptions.RECOVERABLE,
                    'not_found': exceptions.NOT_FOUND,
                    'unauthorized': exceptions.UNAUTHORIZED},
-    'customization_module': 'custom.overrides',
+    'customization_module': 'customizations.loader',
 }
 
 # Set to True to allow users to upload images to glance via Horizon server.
@@ -516,3 +516,7 @@ FLAVOR_EXTRA_KEYS = {
         ('quota:outbound_average', _('Quota: Outbound average')),
     ]
 }
+
+CUSTOMIZATIONS = (
+    'customizations.launch_instance.LaunchInstanceViewCustomizer',
+)
