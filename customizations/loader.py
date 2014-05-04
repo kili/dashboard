@@ -4,19 +4,15 @@ import warnings
 
 
 class CustomizationLoader:
+    customization_classes = []
 
     def __init__(self):
         try:
-            self.customizations = getattr(settings, 'CUSTOMIZATIONS')
+            configured_customizations = getattr(settings, 'CUSTOMIZATIONS')
         except AttributeError:
             warnings.warn('CUSTOMIZATIONS is not configured in settings')
 
-    def load(self):
-        """
-        load all the configured customizations and call the execute()
-        method on them
-        """
-        for customization in self.customizations:
+        for customization in configured_customizations:
             bits = customization.split('.')
             if len(bits) == 1:
                 raise ValueError('Importing a local function as string is '
@@ -24,13 +20,19 @@ class CustomizationLoader:
             try:
                 mod = import_module('.'.join(bits[:-1]))
             except ImportError:
-                raise ImportError('The module %s could not be loaded' %
+                raise ImportError('The module %s could not be imported' %
                                   '.'.join(bits[:-1]))
             try:
-                obj = getattr(mod, bits[-1])
+                self.customization_classes.append(getattr(mod, bits[-1]))
             except AttributeError:
                 raise ValueError('The module %s has no class %s' %
                                  ('.'.join(bits[:-1]), bits[-1]))
+
+    def execute(self):
+        """
+        Call the execute method on all loaded customization objects
+        """
+        for obj in self.customization_classes:
             obj().execute()
 
-CustomizationLoader().load()
+CustomizationLoader().execute()
