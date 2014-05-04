@@ -2,7 +2,6 @@ from horizon import forms
 from django.utils.translation import ugettext_lazy as _
 from openstack_dashboard.dashboards.project.instances.workflows.\
     create_instance import *
-from horizon import workflows
 
 
 class CustomSetAccessControlsAction(SetAccessControlsAction):
@@ -15,7 +14,6 @@ class CustomSetAccessControlsAction(SetAccessControlsAction):
     def __init__(self, *args, **kwargs):
         super(CustomSetAccessControlsAction, self).__init__(*args, **kwargs)
 
-    # still haven't figured out howto extend this nested class from the orig
     class Meta:
         name = _("Access & Security")
         help_text = _("Control access to your instance via key pairs, "

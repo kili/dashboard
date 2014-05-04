@@ -13,10 +13,13 @@ class LaunchInstanceViewCustomizer:
         replace SetAccessControls with CustomSetAccessControls
         to make a keypair selection required
         """
-        LaunchInstanceView.workflow_class.default_steps = (
-            SelectProjectUser,
-            SetInstanceDetails,
-            CustomSetAccessControls,
-            SetNetwork,
-            PostCreationStep,
-            SetAdvanced)
+        LaunchInstanceView.workflow_class.default_steps = self.get_default_steps()
+
+    def get_default_steps(self):
+        return (SelectProjectUser,
+                SetInstanceDetails,
+                # customized access control tab
+                CustomSetAccessControls,
+                SetNetwork,
+                PostCreationStep,
+                SetAdvanced)
