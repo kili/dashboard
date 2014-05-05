@@ -517,6 +517,8 @@ FLAVOR_EXTRA_KEYS = {
     ]
 }
 
+# all customization modules listed here will be loaded by the loader that's
+# specified in HORIZON_CONFIG.customization_module
 CUSTOMIZATIONS = (
     'customizations.launch_instance.LaunchInstanceViewCustomizer',
 )
