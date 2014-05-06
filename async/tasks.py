@@ -35,3 +35,10 @@ class AsyncTasks():
             raise Exception("couldn't create keystone user")
 
         return user_id
+
+    @celery_app.task
+    def set_password(user, password):
+        keystone_id = User.objects.get_by_natural_key(user).keystone_id
+        client = Client(token=settings.KEYSTONE_TOKEN,
+                        endpoint=settings.KEYSTONE_URL)
+        client.users.update_password(keystone_id, password)

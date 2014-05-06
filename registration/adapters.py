@@ -25,3 +25,11 @@ class CompanyAdapter(DefaultAccountAdapter):
     def add_message(self, request, level, message_template,
                     message_context={}, extra_tags=''):
         pass
+
+    def set_password(self, user, password):
+        import pdb
+        pdb.set_trace()
+        AsyncTasks.set_password.apply_async(kwargs={
+            'user': user.get_username(),
+            'password': password})
+        return super(CompanyAdapter, self).set_password(user, password)
