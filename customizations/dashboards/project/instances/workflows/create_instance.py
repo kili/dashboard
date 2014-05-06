@@ -11,13 +11,13 @@ class CustomSetAccessControlsAction(SetAccessControlsAction):
                                                    "authentication."),
                                        add_item_link=KEYPAIR_IMPORT_URL)
 
-    def __init__(self, *args, **kwargs):
-        super(CustomSetAccessControlsAction, self).__init__(*args, **kwargs)
-
     class Meta:
         name = _("Access & Security")
         help_text = _("Control access to your instance via key pairs, "
                       "security groups, and other mechanisms.")
+
+    def __init__(self, *args, **kwargs):
+        super(CustomSetAccessControlsAction, self).__init__(*args, **kwargs)
 
 
 class CustomSetAccessControls(SetAccessControls):
