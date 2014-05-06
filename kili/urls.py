@@ -1,15 +1,14 @@
-from django.conf.urls import patterns, include, url
 from django.conf import settings
-import openstack_dashboard
+from django.conf import urls
 
 
-urlpatterns = patterns('',
-    url(r'^accounts/', include('allauth.urls')),
-    url(r'', include('openstack_dashboard.urls')),
+urlpatterns = urls.patterns('',
+    urls.url(r'^accounts/', urls.include('allauth.urls')),
+    urls.url(r'', urls.include('openstack_dashboard.urls')),
 )
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += patterns('',
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+    urlpatterns += urls.patterns('',
+        urls.url(r'^__debug__/', urls.include(debug_toolbar.urls)),
     )

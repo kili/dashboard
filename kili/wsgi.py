@@ -7,11 +7,11 @@ For more information on this file, see
 https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 """
 
+from django.conf import settings
+import django.core.handlers.wsgi
+import newrelic.agent
 import os
 import sys
-import django.core.handlers.wsgi
-from django.conf import settings
-import newrelic.agent
 
 # Add this file path to sys.path in order to import settings
 sys.path.insert(0, os.path.join(os.path.dirname(

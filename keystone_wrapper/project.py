@@ -1,7 +1,7 @@
-from keystoneclient.v3.projects import Project, ProjectManager
+from keystoneclient.v3 import projects
 
 
-class TransactionProjectCreator(Project):
+class TransactionProjectCreator(projects.Project):
 
     def __init__(self, **kwargs):
         self.client = kwargs['client']

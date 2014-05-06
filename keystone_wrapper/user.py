@@ -1,7 +1,7 @@
-from keystoneclient.v2_0.users import User
+from keystoneclient.v2_0 import users
 
 
-class TransactionUserCreator(User):
+class TransactionUserCreator(users.User):
 
     def __init__(self, **kwargs):
         self.client = kwargs['client']

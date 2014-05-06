@@ -1,10 +1,10 @@
 from __future__ import absolute_import
+from allauth.account import utils
+from async.celery import celery_app
 from django.conf import settings
-from keystoneclient.v2_0.client import Client
-from allauth.account.utils import user_field
 from keystone_wrapper.transactions import CreateUserTransaction
+from keystoneclient.v2_0 import client
 from registration.models import User
-from .celery import celery_app
 
 
 class AsyncTasks():
@@ -12,14 +12,14 @@ class AsyncTasks():
     @celery_app.task
     def email_confirmed(address):
         keystone_id = User.objects.get_by_natural_key(address).keystone_id
-        client = Client(token=settings.KEYSTONE_TOKEN,
-                        endpoint=settings.KEYSTONE_URL)
-        client.users.update(keystone_id, enabled=True)
+        keystone_client = client.Client(token=settings.KEYSTONE_TOKEN,
+                                        endpoint=settings.KEYSTONE_URL)
+        keystone_client.users.update(keystone_id, enabled=True)
 
     @celery_app.task
     def update_keystone_id(keystone_id, address):
         user = User.objects.get_by_natural_key(address)
-        user_field(user, 'keystone_id', keystone_id)
+        utils.user_field(user, 'keystone_id', keystone_id)
         user.save()
 
     @celery_app.task
@@ -39,6 +39,6 @@ class AsyncTasks():
     @celery_app.task
     def set_password(user, password):
         keystone_id = User.objects.get_by_natural_key(user).keystone_id
-        client = Client(token=settings.KEYSTONE_TOKEN,
-                        endpoint=settings.KEYSTONE_URL)
-        client.users.update_password(keystone_id, password)
+        keystone_client = client.Client(token=settings.KEYSTONE_TOKEN,
+                                        endpoint=settings.KEYSTONE_URL)
+        keystone_client.users.update_password(keystone_id, password)

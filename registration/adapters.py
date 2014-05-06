@@ -1,14 +1,14 @@
-from allauth.account.adapter import DefaultAccountAdapter
-from allauth.account.utils import user_field
+from allauth.account import adapter
+from allauth.account import utils
 from async.tasks import AsyncTasks
 
 
-class CompanyAdapter(DefaultAccountAdapter):
+class CompanyAdapter(adapter.DefaultAccountAdapter):
 
     def save_user(self, request, user, form, commit=True):
         data = form.cleaned_data
         company = data.get('company')
-        user_field(user, 'company', company)
+        utils.user_field(user, 'company', company)
         AsyncTasks.save_user.apply_async(kwargs={
             'company': data['company'],
             'user_name': data['email'],
@@ -27,8 +27,6 @@ class CompanyAdapter(DefaultAccountAdapter):
         pass
 
     def set_password(self, user, password):
-        import pdb
-        pdb.set_trace()
         AsyncTasks.set_password.apply_async(kwargs={
             'user': user.get_username(),
             'password': password})
