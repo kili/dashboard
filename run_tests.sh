@@ -144,7 +144,7 @@ function run_pylint {
 
 function run_pep8 {
   echo "Running flake8 ..."
-  EXCEPTIONS="./registration/migrations,./site-packages,./.venv,./src"
+  export EXCEPTIONS="./registration/migrations,./site-packages,./.venv,./src"
   set +o errexit
   ${command_wrapper} python -c "import hacking" 2>/dev/null
   no_hacking=$?
