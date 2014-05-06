@@ -1,0 +1,21 @@
+language: python
+python:
+  - "2.7"
+env:
+  before_install:
+    - sudo apt-get update -qq
+install:
+  - pip install --use-mirrors -r ./requirements.txt
+  - pip install --use-mirrors -r ./test-requirements.txt
+branches:
+  only:
+    - master
+script: ./run_tests.sh -N
+notifications:
+  email:
+    recipients:
+      - mauro@kili.io
+      - james@kili.io
+      - adam@kili.io
+    on_success: change
+    on_failure: change
