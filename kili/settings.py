@@ -24,12 +24,12 @@ import sys
 import warnings
 
 # Load the pluggable dashboard settings
+from django.utils.translation import ugettext_lazy as _
+import kombu
 import openstack_dashboard.enabled
+from openstack_dashboard import exceptions
 import openstack_dashboard.local.enabled
 from openstack_dashboard.utils import settings
-from django.utils.translation import ugettext_lazy as _
-from openstack_dashboard import exceptions
-from kombu import Exchange, Queue
 
 warnings.formatwarning = lambda message, category, *args, **kwargs: \
     '%s: %s' % (category.__name__, message)
@@ -154,7 +154,7 @@ COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 KEYSTONE_DEFAULT_GROUP = "admin"
 
-ALLOWED_HOSTS = [ '*', ]
+ALLOWED_HOSTS = ['*', ]
 
 INSTALLED_APPS = [
     'kili',
@@ -249,13 +249,15 @@ DEFAULT_FROM_EMAIL = "Kili <help@kili.io>"
 
 AUTH_USER_MODEL = 'registration.User'
 
-DEFAULT_ROLES = ["Member",]
+DEFAULT_ROLES = ["Member", ]
 
 SITE_ID = 1
 
 CELERY_DEFAULT_QUEUE = 'registration'
-CELERY_QUEUES = ( 
-        Queue('registration', Exchange('registration'), routing_key='registration'),
+CELERY_QUEUES = (
+    kombu.Queue('registration',
+                kombu.Exchange('registration'),
+                routing_key='registration'),
 )
 CELERY_RESULT_BACKEND = 'amqp'
 CELERY_RESULT_PERSISTENT = True
@@ -269,8 +271,8 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SIGNUP_PASSWORD_VERIFICATION = False
 ACCOUNT_SIGNUP_FORM_CLASS = "registration.forms.RegistrationForm"
 ACCOUNT_ADAPTER = "registration.adapters.CompanyAdapter"
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/" 
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/" 
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/"
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/"
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
 EMAIL_HOST = "127.0.0.1"
 EMAIL_PORT = 25

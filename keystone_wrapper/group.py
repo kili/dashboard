@@ -1,7 +1,7 @@
-from keystoneclient.v3.groups import Group, GroupManager
+from keystoneclient.v3 import groups
 
 
-class TransactionGroupCreator(Group):
+class TransactionGroupCreator(groups.Group):
 
     def __init__(self, **kwargs):
         self.client = kwargs['client']
@@ -16,4 +16,3 @@ class TransactionGroupCreator(Group):
     def __exit__(self, type, value, traceback):
         if value is not None:
             self.client.groups.delete(self.group.id)
-

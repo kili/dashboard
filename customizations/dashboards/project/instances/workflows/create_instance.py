@@ -1,10 +1,12 @@
-from horizon import forms
 from django.utils.translation import ugettext_lazy as _
-from openstack_dashboard.dashboards.project.instances.workflows.\
-    create_instance import *
+from horizon import forms
+from openstack_dashboard.dashboards.project.instances.workflows \
+    import create_instance
+
+KEYPAIR_IMPORT_URL = "horizon:project:access_and_security:keypairs:import"
 
 
-class CustomSetAccessControlsAction(SetAccessControlsAction):
+class CustomSetAccessControlsAction(create_instance.SetAccessControlsAction):
     keypair = forms.DynamicChoiceField(label=_("Key Pair"),
                                        required=True,
                                        help_text=_("Which key pair to use for "
@@ -20,7 +22,7 @@ class CustomSetAccessControlsAction(SetAccessControlsAction):
         super(CustomSetAccessControlsAction, self).__init__(*args, **kwargs)
 
 
-class CustomSetAccessControls(SetAccessControls):
+class CustomSetAccessControls(create_instance.SetAccessControls):
     action_class = CustomSetAccessControlsAction
 
     def __init__(self, *args, **kwargs):

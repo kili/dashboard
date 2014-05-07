@@ -1,7 +1,7 @@
-from keystoneclient.v3.domains import Domain
+from keystoneclient.v3 import domains
 
 
-class TransactionDomainCreator(Domain):
+class TransactionDomainCreator(domains.Domain):
 
     def __init__(self, **kwargs):
         self.client = kwargs['client']
@@ -15,4 +15,3 @@ class TransactionDomainCreator(Domain):
         if value is not None:
             self.client.domains.update(self.domain.id, enabled=False)
             self.client.domains.delete(self.domain.id)
-

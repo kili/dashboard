@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from .models import User
+from registration.models import User
 
 
 class RegistrationForm(forms.Form):

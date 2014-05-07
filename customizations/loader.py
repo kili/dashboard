@@ -1,5 +1,5 @@
-from django.utils.importlib import import_module
 from django.conf import settings
+from django.utils import importlib
 import warnings
 
 
@@ -18,7 +18,7 @@ class CustomizationLoader:
                 raise ValueError('Importing a local function as string is '
                                  'not supported')
             try:
-                mod = import_module('.'.join(bits[:-1]))
+                mod = importlib.import_module('.'.join(bits[:-1]))
             except ImportError:
                 raise ImportError('The module %s could not be imported' %
                                   '.'.join(bits[:-1]))
@@ -29,9 +29,7 @@ class CustomizationLoader:
                                  ('.'.join(bits[:-1]), bits[-1]))
 
     def execute(self):
-        """
-        Call the execute method on all loaded customization objects
-        """
+        """Call the execute method on all loaded customization objects."""
         for obj in self.customization_classes:
             obj().execute()
 

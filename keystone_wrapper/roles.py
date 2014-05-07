@@ -1,5 +1,3 @@
-from keystoneclient.v3.roles import RoleManager
-from keystoneclient.v3.client import Client
 from django.conf import settings
 
 

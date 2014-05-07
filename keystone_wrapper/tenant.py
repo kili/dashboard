@@ -1,7 +1,7 @@
-from keystoneclient.v2_0.tenants import Tenant, TenantManager
+from keystoneclient.v2_0 import tenants
 
 
-class TransactionTenantCreator(Tenant):
+class TransactionTenantCreator(tenants.Tenant):
 
     def __init__(self, **kwargs):
         self.client = kwargs['client']

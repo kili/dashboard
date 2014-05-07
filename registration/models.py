@@ -1,5 +1,6 @@
+from django.contrib.auth.models import AbstractBaseUser  # noqa
+from django.core import mail
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
 from registration.managers import UserManager
 
 
@@ -40,19 +41,13 @@ class User(AbstractBaseUser):
         return True
 
     def email_user(self, subject, message, from_email=None):
-        """
-        Sends an email to this User
-        """
-        send_mail(subject, message, from_email, [self.email])
+        """Sends an email to this User."""
+        mail.send_mail(subject, message, from_email, [self.email])
 
     def set_company(self, company):
-        """
-        Set company name
-        """
+        """Set company name."""
         self.company = company
 
     def get_company(self):
-        """
-        Return company name
-        """
+        """Return company name."""
         return self.company

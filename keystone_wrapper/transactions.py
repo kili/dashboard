@@ -1,23 +1,19 @@
 from django.conf import settings
-from keystoneclient.v2_0.client import Client
-from keystone_wrapper.domain import TransactionDomainCreator
-from keystone_wrapper.project import TransactionProjectCreator
-from keystone_wrapper.tenant import TransactionTenantCreator
-from keystone_wrapper.group import TransactionGroupCreator
-from keystone_wrapper.user import TransactionUserCreator
 from keystone_wrapper.roles import TransactionDefaultRoles
+from keystone_wrapper.tenant import TransactionTenantCreator
+from keystone_wrapper.user import TransactionUserCreator
+from keystoneclient.v2_0 import client
 
 
 class CreateUserTransaction():
 
     def __init__(self):
-        self.client = Client(
+        self.client = client.Client(
             token=settings.KEYSTONE_TOKEN,
             endpoint=settings.KEYSTONE_URL)
 
     def create_user(self, **kwargs):
         tenant_name = kwargs['tenant_name']
-        group_name = kwargs['group_name']
         user_name = kwargs['user_name']
         password = kwargs['password']
 
