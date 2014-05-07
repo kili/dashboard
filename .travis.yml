@@ -4,13 +4,11 @@ python:
 env:
   before_install:
     - sudo apt-get update -qq
-install:
-  - pip install --use-mirrors -r ./requirements.txt
-  - pip install --use-mirrors -r ./test-requirements.txt
+    - sudo apt-get upgrade -qq
 branches:
   only:
     - master
-script: ./run_tests.sh -N
+script: ./run_tests.sh -V
 notifications:
   email:
     recipients:

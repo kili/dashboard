@@ -153,6 +153,7 @@ function run_pep8 {
       echo "OpenStack hacking is not installed on your host. Its detection will be missed." >&2
       echo "Please install or use virtual env if you need OpenStack hacking detection." >&2
   fi
+  echo "DJANGO_SETTINGS_MODULE=openstack_dashboard.test.settings ${command_wrapper} flake8"
   DJANGO_SETTINGS_MODULE=openstack_dashboard.test.settings ${command_wrapper} flake8
 }
 
