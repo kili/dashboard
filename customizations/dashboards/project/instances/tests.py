@@ -104,7 +104,8 @@ class InstanceTests(test.TestCase):
         url = reverse('horizon:project:instances:launch')
         res = self.client.post(url, form_data)
 
-        for context in [l2_context for l1_context in res.context
+        for context in [l2_context
+                        for l1_context in res.context
                         for l2_context in l1_context
                         if 'form' in l2_context
                         and l2_context['form'].__class__
