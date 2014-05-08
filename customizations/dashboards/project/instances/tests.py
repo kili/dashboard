@@ -104,10 +104,10 @@ class InstanceTests(test.TestCase):
         url = reverse('horizon:project:instances:launch')
         res = self.client.post(url, form_data)
 
-        for request_context_index in range(0, len(res.context)):
-            for context in res.context[request_context_index]:
-                if ('form' in context
-                        and context['form'].__class__ ==
-                        customized_create_instance.
-                        CustomSetAccessControlsAction):
-                    self.assertEqual(context['form'].is_valid(), False)
+        for context in [l2_context for l1_context in res.context
+                        for l2_context in l1_context
+                        if 'form' in l2_context
+                        and l2_context['form'].__class__
+                        == customized_create_instance.
+                        CustomSetAccessControlsAction]:
+            self.assertEqual(context['form'].is_valid(), False)
