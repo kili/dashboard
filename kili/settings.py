@@ -157,6 +157,7 @@ KEYSTONE_DEFAULT_GROUP = "admin"
 ALLOWED_HOSTS = ['*', ]
 
 INSTALLED_APPS = [
+    'billing_app',
     'kili',
     'openstack_dashboard',
     'django.contrib.contenttypes',
@@ -525,3 +526,4 @@ FLAVOR_EXTRA_KEYS = {
 CUSTOMIZATIONS = (
     'customizations.launch_instance.LaunchInstanceViewCustomizer',
 )
+
