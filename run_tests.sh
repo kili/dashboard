@@ -153,7 +153,6 @@ function run_pep8 {
       echo "OpenStack hacking is not installed on your host. Its detection will be missed." >&2
       echo "Please install or use virtual env if you need OpenStack hacking detection." >&2
   fi
-  echo "DJANGO_SETTINGS_MODULE=openstack_dashboard.test.settings ${command_wrapper} flake8"
   DJANGO_SETTINGS_MODULE=openstack_dashboard.test.settings ${command_wrapper} flake8
 }
 
@@ -314,27 +313,15 @@ function run_tests_subset {
 }
 
 function run_tests_all {
-  echo "Running Horizon application tests"
-  export NOSE_XUNIT_FILE=horizon/nosetests.xml
+  echo "Running kili tests"
+  export NOSE_XUNIT_FILE=kili/nosetests.xml
   if [ "$NOSE_WITH_HTML_OUTPUT" = '1' ]; then
-    export NOSE_HTML_OUT_FILE='horizon_nose_results.html'
+    export NOSE_HTML_OUT_FILE='kili_nose_results.html'
   fi
-  if [ $with_coverage -eq 1 ]; then
-    ${command_wrapper} coverage erase
-    coverage_run="coverage run -p"
-  fi
-  ${command_wrapper} ${coverage_run} $root/manage.py test horizon --settings=horizon.test.settings $testopts
-  # get results of the Horizon tests
-  HORIZON_RESULT=$?
-
-  echo "Running openstack_dashboard tests"
-  export NOSE_XUNIT_FILE=openstack_dashboard/nosetests.xml
-  if [ "$NOSE_WITH_HTML_OUTPUT" = '1' ]; then
-    export NOSE_HTML_OUT_FILE='dashboard_nose_results.html'
-  fi
-  ${command_wrapper} ${coverage_run} $root/manage.py test openstack_dashboard --settings=openstack_dashboard.test.settings $testopts
-  # get results of the openstack_dashboard tests
-  DASHBOARD_RESULT=$?
+  ${command_wrapper} ${coverage_run} $root/manage.py test kili async customizations registration keystone_wrapper --settings=kili.test.settings $testopts
+  echo "${command_wrapper} ${coverage_run} $root/manage.py test kili async customizations registration keystone_wrapper --settings=kili.test.settings $testopts"
+  # get results of the kili tests
+  KILI_RESULT=$?
 
   if [ $with_coverage -eq 1 ]; then
     echo "Generating coverage reports"
@@ -351,7 +338,7 @@ function run_tests_all {
       PEP8_RESULT=$?
   fi
 
-  TEST_RESULT=$(($HORIZON_RESULT || $DASHBOARD_RESULT || $PEP8_RESULT))
+  TEST_RESULT=$(($KILI_RESULT || $PEP8_RESULT))
   if [ $TEST_RESULT -eq 0 ]; then
     echo "Tests completed successfully."
   else
