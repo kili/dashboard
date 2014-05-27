@@ -157,6 +157,7 @@ KEYSTONE_DEFAULT_GROUP = "admin"
 ALLOWED_HOSTS = ['*', ]
 
 INSTALLED_APPS = [
+    'accounting',
     'billing_app',
     'kili',
     'openstack_dashboard',
@@ -526,4 +527,11 @@ FLAVOR_EXTRA_KEYS = {
 CUSTOMIZATIONS = (
     'customizations.launch_instance.LaunchInstanceViewCustomizer',
 )
+
+ACCOUNTING_USD_BOOK = "user_accounts_usd"
+ACCOUNTING_ASSET_SOURCES = [
+    'STRIPE',
+    'KOPOKOPO',
+    'GIFTS',
+]
 

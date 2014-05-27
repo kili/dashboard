@@ -61,6 +61,7 @@ wsgiref==0.1.2
 
 # Kili requirements
 -e git+https://github.com/kili/horizon.git#egg=horizon==master
+-e git+https://github.com/kili/bookkeeper.git#egg=bookkeeper=master
 django-allauth==0.16.1
 South==0.8.4
 celery==3.1.11
