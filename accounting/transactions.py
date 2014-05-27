@@ -12,7 +12,8 @@ class TransactionManager():
             raise Exception(
                 "'{0}' is invalid asset source".format(asset_source))
         asset_source = self.account_manager.get_account(asset_source)
-        user_account = self.account_manager.get_account("USER_{0}".format(user))
+        user_account = \
+            self.account_manager.get_account("USER_{0}".format(user))
         asset_source.debit(
             amount,
             user_account,
