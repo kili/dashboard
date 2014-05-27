@@ -1,9 +1,17 @@
+import datetime
+
+from billing import CreditCard, get_gateway, get_integration
+from billing.gateway import CardNotSupported
+
 from horizon import views
+
+from .forms import CreditCardForm
+#from .urls import stripe_obj
+stripe_obj = get_integration("stripe_example")
 
 
 class IndexView(views.APIView):
-    # A very simple class-based view...
-    template_name = 'billing_app/history/index.html'
+    template_name = 'billing_app/payments/index.html'
 
     def get_data(self, request, context, *args, **kwargs):
         # Add data to the context here...

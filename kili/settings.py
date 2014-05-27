@@ -158,7 +158,6 @@ ALLOWED_HOSTS = ['*', ]
 
 INSTALLED_APPS = [
     'accounting',
-    'billing_app',
     'kili',
     'openstack_dashboard',
     'django.contrib.contenttypes',
@@ -168,6 +167,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.sites',
+
+    'billing',
+    'billing_app',
+    'stripe',
     'compressor',
     'horizon',
     'openstack_auth',
