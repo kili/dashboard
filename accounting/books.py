@@ -10,7 +10,7 @@ class BookManager():
         self.books = settings.ACCOUNTING_BOOKS,
 
     def get_book(self, currency='USD'):
-        if not self.books.has_key(currency):
+        if not currency in self.books:
             raise Exception(u"no book for currency '{0}'".format(currency))
         try:
             self.book = BookSet.objects.get(description=self.books[currency])
