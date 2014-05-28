@@ -19,10 +19,11 @@ CARD_TYPES = [
     ('maestro', 'Maestro'),
     # ('forbrugsforeningen', ''),
     # ('laser', 'Laser'),
-    ]
+]
 
 today = datetime.date.today()
-MONTH_CHOICES = [(m, datetime.date(today.year, m, 1).strftime('%b')) for m in range(1, 13)]
+MONTH_CHOICES = [(m, datetime.date(today.year, m, 1).strftime('%b'))
+                 for m in range(1, 13)]
 YEAR_CHOICES = [(y, y) for y in range(today.year, today.year + 21)]
 
 

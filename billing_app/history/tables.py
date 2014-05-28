@@ -1,5 +1,5 @@
-from horizon import tables
 from django.utils.translation import ugettext_lazy as _
+from horizon import tables
 
 
 class PaymentsHistoryTable(tables.DataTable):

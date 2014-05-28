@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from django.core import exceptions
 import re
 from swingtix.bookkeeper.models import Account
 from swingtix.bookkeeper.models import BookSet
@@ -11,11 +11,11 @@ class BookManager():
         self.books = settings.ACCOUNTING_BOOKS
 
     def get_book(self, currency='USD'):
-        if not currency in self.books:
+        if currency not in self.books:
             raise Exception(u"no book for currency '{0}'".format(currency))
         try:
             self.book = BookSet.objects.get(description=self.books[currency])
-        except ObjectDoesNotExist:
+        except exceptions.ObjectDoesNotExist:
             self.book = BookSet(description=self.books[currency])
             self.book.save()
         return self.book
@@ -50,6 +50,14 @@ class AccountManager():
             return False
         return True
 
+    def create_account(self, account_name):
+        account = Account(
+            bookset=BookManager().get_book(),
+            name=account_name,
+            positive_credit=self.is_credit_positive(account_name))
+        account.save()
+        return account
+
     def is_asset_source(self, account):
         if account in settings.ACCOUNTING_ASSET_SOURCES:
             return True
@@ -62,13 +70,8 @@ class AccountManager():
         book = BookManager().get_book()
         try:
             return book.get_account(account_name)
-        except ObjectDoesNotExist:
-            account = Account(
-                bookset=book,
-                name=account_name,
-                positive_credit=self.is_credit_positive(account_name))
-            account.save()
-            return account
+        except exceptions.ObjectDoesNotExist:
+            return self.create_account(account_name)
 
     def get_user_account(self, user):
         return self.get_account(self.format_user_account(user))

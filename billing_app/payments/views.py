@@ -1,13 +1,9 @@
-import datetime
-
-from billing import CreditCard, get_gateway, get_integration
-from billing.gateway import CardNotSupported
+from billing import get_integration
 from horizon import views
-from django.views import generic
-from .forms import CreditCardForm
 
 
 stripe_obj = get_integration("stripe")
+
 
 class IndexView(views.APIView):
     template_name = 'billing_app/payments/index.html'
@@ -20,4 +16,3 @@ class IndexView(views.APIView):
                      "status": status}
         context.update(stripe_vars)
         return context
-

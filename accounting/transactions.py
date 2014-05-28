@@ -1,5 +1,4 @@
 from accounting import managers
-from django.conf import settings
 
 
 class UserTransactions():
@@ -39,9 +38,8 @@ class TransactionHistory():
 
     def get_account_transaction_history(
             self, account, paginate=False, coords=None):
-        """
-        If paginate is true, coords must contain
-        the keys 'begin' and 'end'.
+        """If paginate is true, coords must contain
+           the keys 'begin' and 'end'.
         """
 
         if paginate:

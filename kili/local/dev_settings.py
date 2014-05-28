@@ -45,7 +45,7 @@ OPENSTACK_SSL_NO_VERIFY = True
 # MERCHANT SETTINGS
 HOST = getattr(settings, "HOST", "http://127.0.0.1")
 
-COMMON_INITIAL = { 
+COMMON_INITIAL = {
     'first_name': 'John',
     'last_name': 'Doe',
     'month': '06',
@@ -77,10 +77,10 @@ for k, v in INTEGRATION_INITIAL.iteritems():
     v.update(COMMON_INITIAL)
 
 
-MERCHANT_TEST_MODE = True # Toggle for live
-MERCHANT_SETTINGS = { 
+MERCHANT_TEST_MODE = True  # Toggle for live
+MERCHANT_SETTINGS = {
     "stripe": {
         "API_KEY": "sk_test_hXpCT9Oqs4PszDOhXK6TY9XS",
-        "PUBLISHABLE_KEY": "pk_test_1dOtVgHQSGxzXYHk2ghg5YI1", # Used for stripe integration
-        }   
+        "PUBLISHABLE_KEY": "pk_test_1dOtVgHQSGxzXYHk2ghg5YI1",
+    }
 }
