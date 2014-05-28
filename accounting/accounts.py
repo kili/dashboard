@@ -11,7 +11,8 @@ class AccountManager():
         self.valid_accounts = settings.ACCOUNTING_ASSET_SOURCES
         self.valid_accounts.append(settings.ACCOUNTING_PROMOTIONS_ACCOUNT)
         self.valid_accounts.append(settings.ACCOUNTING_REVENUE_ACCOUNT)
-        self.valid_accounts.append(settings.ACCOUNTING_USER_ACCOUNT_FORMAT)
+        self.valid_accounts.append(
+            settings.ACCOUNTING_USER_ACCOUNT_FORMAT["regex"])
 
         # accounts where credit and debit are negated
         self.credit_negative_accounts = settings.ACCOUNTING_ASSET_SOURCES
@@ -30,7 +31,7 @@ class AccountManager():
 
     def get_account(self, account_name):
         if not self.name_is_valid(account_name):
-            raise Exception(u"account name '{0}' is invalid"
+            raise Exception(u"account name '{0}' is not valid"
                             .format(account_name))
         book = books.BookManager().get_book()
         try:
@@ -42,3 +43,17 @@ class AccountManager():
                 positive_credit=self.is_credit_positive(account_name))
             account.save()
             return account
+
+    def get_user_account(self, user):
+        return self.get_account(self.format_user_account(user))
+
+    def format_user_account(self, user):
+        return settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(user)
+
+    def get_revenue_account(self):
+        return self.get_account(settings.ACCOUNTING_REVENUE_ACCOUNT)
+
+    def is_asset_source(self, account):
+        if account in settings.ACCOUNTING_ASSET_SOURCES:
+            return True
+        return False
