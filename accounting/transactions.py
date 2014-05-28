@@ -1,11 +1,11 @@
-from accounting import accounts
+from accounting import managers
 from django.conf import settings
 
 
 class UserTransactions():
 
     def __init__(self):
-        self.account_manager = accounts.AccountManager()
+        self.account_manager = managers.AccountManager()
 
     def receive_user_payment(self, user, asset_source, amount):
         if not self.account_manager.is_asset_source(asset_source):
@@ -31,5 +31,5 @@ class UserTransactions():
         promotion_account = self.account_manager.get_promotions_account()
         user_account.credit(
             amount,
-            promotion_account_account,
+            promotion_account,
             message)
