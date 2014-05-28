@@ -20,10 +20,10 @@ class TransactionManager():
             "received payment from {0}".format(asset_source))
 
     def consume_user_money(self, user, amount, resource):
-        user_account = self.account_manager.get_account("USER_{0}".format(user))
+        user_account = self.account_manager.get_account("USER_{0}"
+                                                        .format(user))
         revenue_account = self.account_manager.get_account("REVENUE")
         user_account.debit(
             amount,
             revenue_account,
             "resource usage: {0}".format(resource))
-
