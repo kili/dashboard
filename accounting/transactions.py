@@ -41,6 +41,20 @@ class TransactionHistory():
             self, account, paginate=False, coords=None):
         """
         If paginate is true, coords must contain
-        the keys 'limit' and 'offset'.
+        the keys 'begin' and 'end'.
         """
 
+        if paginate:
+            acc_entries = \
+                managers.AccountManager().get_account(account).entries.all()[
+                    coords['begin']:coords['end']
+                ]
+        else:
+            acc_entries = \
+                managers.AccountManager().get_account(account).entries.all()
+        return [
+            {"tid": x.transaction.tid,
+             "amount": x.amount,
+             "timestamp": x.transaction.t_stamp,
+             "description": x.transaction.description
+             } for x in acc_entries]
