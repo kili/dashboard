@@ -42,10 +42,18 @@ class AccountManager():
             return True
         return False
 
+    def format_user_account(self, user):
+        return settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(user)
+
     def is_credit_positive(self, account_name):
         if account_name in self.credit_negative_accounts:
             return False
         return True
+
+    def is_asset_source(self, account):
+        if account in settings.ACCOUNTING_ASSET_SOURCES:
+            return True
+        return False
 
     def get_account(self, account_name):
         if not self.name_is_valid(account_name):
@@ -65,16 +73,8 @@ class AccountManager():
     def get_user_account(self, user):
         return self.get_account(self.format_user_account(user))
 
-    def format_user_account(self, user):
-        return settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(user)
-
     def get_revenue_account(self):
         return self.get_account(settings.ACCOUNTING_REVENUE_ACCOUNT)
 
     def get_promotions_account(self):
         return self.get_account(settings.ACCOUNTING_PROMOTIONS_ACCOUNT)
-
-    def is_asset_source(self, account):
-        if account in settings.ACCOUNTING_ASSET_SOURCES:
-            return True
-        return False
