@@ -2,17 +2,22 @@ import datetime
 
 from billing import CreditCard, get_gateway, get_integration
 from billing.gateway import CardNotSupported
-
 from horizon import views
-
+from django.views import generic
 from .forms import CreditCardForm
-#from .urls import stripe_obj
-stripe_obj = get_integration("stripe_example")
 
+
+stripe_obj = get_integration("stripe")
 
 class IndexView(views.APIView):
     template_name = 'billing_app/payments/index.html'
 
     def get_data(self, request, context, *args, **kwargs):
-        # Add data to the context here...
+        status = request.GET.get("status")
+        stripe_obj.add_field("amount", 100)
+        stripe_vars = {'title': 'Stripe.js',
+                     "stripe_obj": stripe_obj,
+                     "status": status}
+        context.update(stripe_vars)
         return context
+

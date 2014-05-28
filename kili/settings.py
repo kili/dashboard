@@ -179,6 +179,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'south',
     'async',
+    'crispy_forms'
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

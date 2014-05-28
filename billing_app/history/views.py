@@ -6,7 +6,10 @@ class IndexView(tables.DataTableView):
     template_name = 'billing_app/history/index.html'
     table_class = PaymentsHistoryTable
 
-    transactions = []
+    def get_1_data(self):
+        transactions = []
+        return transactions
 
-    def get_data(self):
-        return self.transactions
+    def get_2_data(self):
+        transactions = []
+        return transactions
