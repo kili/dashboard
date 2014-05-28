@@ -37,7 +37,7 @@ class UserTransactions():
 
 class TransactionHistory():
 
-    def account_transaction_history(
+    def get_account_transaction_history(
             self, account, paginate=False, coords=None):
         """
         If paginate is true, coords must contain
@@ -58,3 +58,7 @@ class TransactionHistory():
              "timestamp": x.transaction.t_stamp,
              "description": x.transaction.description
              } for x in acc_entries]
+
+    def get_user_account_transaction_history(self, account, **kwargs):
+        account = managers.AccountManager().format_user_account(account)
+        return self.get_account_transaction_history(account, **kwargs)
