@@ -16,6 +16,8 @@ class AccountManager():
 
         # accounts where credit and debit are negated
         self.credit_negative_accounts = settings.ACCOUNTING_ASSET_SOURCES
+        self.credit_negative_accounts.append(
+            settings.ACCOUNTING_PROMOTIONS_ACCOUNT)
 
     def name_is_valid(self, account_name):
         if re.match(
@@ -52,6 +54,9 @@ class AccountManager():
 
     def get_revenue_account(self):
         return self.get_account(settings.ACCOUNTING_REVENUE_ACCOUNT)
+
+    def get_promotions_account(self):
+        return self.get_account(settings.ACCOUNTING_PROMOTIONS_ACCOUNT)
 
     def is_asset_source(self, account):
         if account in settings.ACCOUNTING_ASSET_SOURCES:

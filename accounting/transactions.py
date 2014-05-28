@@ -28,7 +28,8 @@ class UserTransactions():
 
     def grant_user_promotion(self, user, amount, message):
         user_account = self.account_manager.get_user_account(user)
-        user_account.debit(
+        promotion_account = self.account_manager.get_promotions_account()
+        user_account.credit(
             amount,
-            revenue_account,
-            u"resource usage: {0}".format(resource))
+            promotion_account_account,
+            message)
