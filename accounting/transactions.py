@@ -33,3 +33,14 @@ class UserTransactions():
             amount,
             promotion_account,
             message)
+
+
+class TransactionHistory():
+
+    def account_transaction_history(
+            self, account, paginate=False, coords=None):
+        """
+        If paginate is true, coords must contain
+        the keys 'limit' and 'offset'.
+        """
+
