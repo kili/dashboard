@@ -75,3 +75,11 @@ class SimpleTest(test.TestCase):
             self.user_id, self.asset_source_account.name, 4)
         self.user_transactions.receive_user_payment(
             self.user_id, self.asset_source_account.name, 5)
+        self.assertEqual(
+            self.transaction_history.get_user_account_transaction_history(
+                self.user_id, paginate=True, coords={"begin": 1, "end": 2}
+            )[0]["amount"], -2)
+        self.assertEqual(
+            self.transaction_history.get_user_account_transaction_history(
+                self.user_id, paginate=True, coords={"begin": 4, "end": 5}
+            )[0]["amount"], -5)
