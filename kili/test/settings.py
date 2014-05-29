@@ -8,6 +8,8 @@ INSTALLED_APPS += (
     'allauth',
     'allauth.account',
     'async',
+    'accounting',
+    'swingtix.bookkeeper',
 )
 
 CUSTOMIZATIONS = (
@@ -15,3 +17,15 @@ CUSTOMIZATIONS = (
 )
 
 ENV_NAME = "test"
+
+ACCOUNTING_BOOKS = {
+    "USD": "user_accounts_usd"
+}
+ACCOUNTING_ASSET_SOURCES = [
+    "STRIPE",
+    "KOPOKOPO",
+]
+ACCOUNTING_PROMOTIONS_ACCOUNT = "PROMOTIONS"
+ACCOUNTING_REVENUE_ACCOUNT = "REVENUE"
+ACCOUNTING_USER_ACCOUNT_FORMAT = {"regex": "USER_[a-z0-9]{32}",
+                                  "format": "USER_{0}"}
