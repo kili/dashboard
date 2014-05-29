@@ -11,7 +11,7 @@ class SimpleTest(test.TestCase):
         self.account_manager = managers.AccountManager()
         self.user_transactions = transactions.UserTransactions()
         self.transaction_history = transactions.TransactionHistory()
-        self.user_id = "{0:32x}".format(random.getrandbits(128))
+        self.user_id = "{0:032x}".format(random.getrandbits(128))
         self.user_account = self.account_manager.get_user_account(
             self.user_id)
         self.asset_source_account = self.account_manager.get_account(
