@@ -17,6 +17,5 @@ class PaymentsHistoryTable(tables.DataTable):
     class Meta:
         name = "PayHist"
         verbose_name = _("Payment History")
-        status_columns = ["status", "task"]
         table_actions = ()
         row_actions = ()
