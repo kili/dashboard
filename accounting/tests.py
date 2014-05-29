@@ -9,6 +9,7 @@ class SimpleTest(test.TestCase):
 
     def setUp(self):
         self.account_manager = managers.AccountManager()
+        self.book_manager = managers.BookManager()
         self.user_transactions = transactions.UserTransactions()
         self.transaction_history = transactions.TransactionHistory()
         self.user_id = "{0:032x}".format(random.getrandbits(128))
@@ -20,6 +21,12 @@ class SimpleTest(test.TestCase):
             settings.ACCOUNTING_REVENUE_ACCOUNT)
         self.promotions_account = self.account_manager.get_account(
             settings.ACCOUNTING_PROMOTIONS_ACCOUNT)
+
+    def test_get_book(self):
+        self.assertEqual(
+            self.book_manager.get_book(
+                settings.ACCOUNTING_BOOKS.keys()[0]).description,
+            settings.ACCOUNTING_BOOKS.values()[0])
 
     def test_account_charging(self):
         self.user_transactions.receive_user_payment(
