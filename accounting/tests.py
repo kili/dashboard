@@ -6,6 +6,7 @@ import random
 
 
 class SimpleTest(test.TestCase):
+
     def setUp(self):
         self.account_manager = managers.AccountManager()
         self.user_transactions = transactions.UserTransactions()

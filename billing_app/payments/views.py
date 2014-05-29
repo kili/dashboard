@@ -1,8 +1,8 @@
-from billing import get_integration
+import billing
 from horizon import views
 
 
-stripe_obj = get_integration("stripe")
+stripe_obj = billing.get_integration("stripe")
 
 
 class IndexView(views.APIView):

@@ -1,9 +1,7 @@
-
+import billing
 import datetime
-
 from django import forms
 
-from billing import CreditCard
 
 CARD_TYPES = [
     ('', ''),
@@ -38,7 +36,7 @@ class CreditCardForm(forms.Form):
 
     def clean(self):
         data = self.cleaned_data
-        credit_card = CreditCard(**data)
+        credit_card = billing.CreditCard(**data)
         if not credit_card.is_valid():
             raise forms.ValidationError('Credit card validation failed')
         return data
