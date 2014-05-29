@@ -12,9 +12,9 @@ class UserTransactions():
                 u"'{0}' is invalid asset source".format(asset_source))
         asset_source = self.account_manager.get_account(asset_source)
         user_account = self.account_manager.get_user_account(user)
-        asset_source.debit(
+        user_account.credit(
             amount,
-            user_account,
+            asset_source,
             u"received payment from {0}".format(asset_source))
 
     def consume_user_money(self, user, amount, resource):
@@ -37,7 +37,7 @@ class UserTransactions():
 class TransactionHistory():
 
     def get_account_transaction_history(
-            self, account, paginate=False, coords=None):
+            self, account, paginate=False, coords=None, user_values=False):
         """If paginate is true, coords must contain
            the keys 'begin' and 'end'.
         """
@@ -52,7 +52,7 @@ class TransactionHistory():
                 managers.AccountManager().get_account(account).entries.all()
         return [
             {"tid": x.transaction.tid,
-             "amount": x.amount,
+             "amount": x.amount if not user_values else x.amount * -1,
              "timestamp": x.transaction.t_stamp,
              "description": x.transaction.description
              } for x in acc_entries]

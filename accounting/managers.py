@@ -24,7 +24,7 @@ class BookManager():
 class AccountManager():
 
     def __init__(self):
-        self.valid_accounts = settings.ACCOUNTING_ASSET_SOURCES
+        self.valid_accounts = settings.ACCOUNTING_ASSET_SOURCES[:]
         self.valid_accounts.append(settings.ACCOUNTING_PROMOTIONS_ACCOUNT)
         self.valid_accounts.append(settings.ACCOUNTING_REVENUE_ACCOUNT)
         self.valid_accounts.append(
