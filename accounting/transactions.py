@@ -45,8 +45,7 @@ class TransactionHistory():
         if paginate:
             acc_entries = \
                 managers.AccountManager().get_account(account).entries.all()[
-                    coords['begin']:coords['end']
-                ]
+                    coords['begin']:coords['end']]
         else:
             acc_entries = \
                 managers.AccountManager().get_account(account).entries.all()
