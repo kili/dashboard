@@ -7,16 +7,16 @@ from swingtix.bookkeeper import models
 class BookManager():
 
     def __init__(self):
-        self.books = settings.ACCOUNTING_BOOKS
+        self.book_names = settings.ACCOUNTING_BOOKS
 
     def get_book(self, currency='USD'):
-        if currency not in self.books:
+        if currency not in self.book_names:
             raise Exception(u"no book for currency '{0}'".format(currency))
         try:
             self.book = models.BookSet.objects.get(
-                description=self.books[currency])
+                description=self.book_names[currency])
         except exceptions.ObjectDoesNotExist:
-            self.book = models.BookSet(description=self.books[currency])
+            self.book = models.BookSet(description=self.book_names[currency])
             self.book.save()
         return self.book
 
@@ -67,9 +67,8 @@ class AccountManager():
         if not self.name_is_valid(account_name):
             raise Exception(u"account name '{0}' is not valid"
                             .format(account_name))
-        book = BookManager().get_book()
         try:
-            return book.get_account(account_name)
+            return BookManager().get_book().get_account(account_name)
         except exceptions.ObjectDoesNotExist:
             return self.create_account(account_name)
 

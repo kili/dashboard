@@ -10,27 +10,21 @@ class UserTransactions():
         if not self.account_manager.is_asset_source(asset_source):
             raise Exception(
                 u"'{0}' is invalid asset source".format(asset_source))
-        asset_source = self.account_manager.get_account(asset_source)
-        user_account = self.account_manager.get_user_account(user)
-        user_account.credit(
+        self.account_manager.get_user_account(user).credit(
             amount,
-            asset_source,
+            self.account_manager.get_account(asset_source),
             u"received payment from {0}".format(asset_source))
 
     def consume_user_money(self, user, amount, resource):
-        user_account = self.account_manager.get_user_account(user)
-        revenue_account = self.account_manager.get_revenue_account()
-        user_account.debit(
+        self.account_manager.get_user_account(user).debit(
             amount,
-            revenue_account,
+            self.account_manager.get_revenue_account(),
             u"resource usage: {0}".format(resource))
 
     def grant_user_promotion(self, user, amount, message):
-        user_account = self.account_manager.get_user_account(user)
-        promotion_account = self.account_manager.get_promotions_account()
-        user_account.credit(
+        self.account_manager.get_user_account(user).credit(
             amount,
-            promotion_account,
+            self.account_manager.get_promotions_account(),
             message)
 
 
@@ -57,5 +51,6 @@ class TransactionHistory():
              } for x in acc_entries]
 
     def get_user_account_transaction_history(self, account, **kwargs):
-        account = managers.AccountManager().format_user_account(account)
-        return self.get_account_transaction_history(account, **kwargs)
+        return self.get_account_transaction_history(
+            managers.AccountManager().format_user_account(account),
+            **kwargs)
