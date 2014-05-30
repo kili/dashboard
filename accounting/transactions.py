@@ -31,21 +31,20 @@ class UserTransactions():
 class TransactionHistory():
 
     def get_account_transaction_history(
-            self, account, paginate=False, coords=None, user_values=False):
+            self, acc_name, paginate=False, coords=None, user_values=False):
         """If paginate is true, coords must contain
            the keys 'begin' and 'end'.
         """
 
+        account = managers.AccountManager().get_account(acc_name)
         if paginate:
-            acc_entries = \
-                managers.AccountManager().get_account(account).entries.all()[
-                    coords['begin']:coords['end']]
+            acc_entries = account.entries.all()[coords['begin']:coords['end']]
         else:
-            acc_entries = \
-                managers.AccountManager().get_account(account).entries.all()
+            acc_entries = account.entries.all()
         return [
-            {"tid": x.transaction.tid,
-             "amount": x.amount if not user_values else x.amount * -1,
+            {"tid": x.transaction.tid, "amount": x.amount
+             if not (account.positive_credit and user_values)
+             else x.amount * -1,
              "timestamp": x.transaction.t_stamp,
              "description": x.transaction.description
              } for x in acc_entries]
