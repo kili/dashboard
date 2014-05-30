@@ -52,6 +52,8 @@ class SimpleTest(test.TestCase):
         self.user_transactions.receive_user_payment(
             self.user_id, self.asset_source_account.name, 150)
         self.user_transactions.consume_user_money(self.user_id, 100, 'cpu')
+
+        # check values of first transaction
         self.assertEqual(
             self.transaction_history.get_account_transaction_history(
                 settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
@@ -59,11 +61,55 @@ class SimpleTest(test.TestCase):
         self.assertEqual(
             self.transaction_history.get_account_transaction_history(
                 settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
+                    self.user_id), user_values=False)[0]["amount"], -150)
+        self.assertEqual(
+            self.transaction_history.get_account_transaction_history(
+                settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
                     self.user_id), user_values=True)[0]["amount"], 150)
+        self.assertEqual(
+            self.transaction_history.get_account_transaction_history(
+                self.asset_source_account.name)[0]["amount"], 150)
+        self.assertEqual(
+            self.transaction_history.get_account_transaction_history(
+                self.asset_source_account.name,
+                user_values=False)[0]["amount"], 150)
+        self.assertEqual(
+            self.transaction_history.get_account_transaction_history(
+                self.asset_source_account.name,
+                user_values=True)[0]["amount"], 150)
+
+        # check values of second transaction
         self.assertEqual(
             self.transaction_history.get_account_transaction_history(
                 settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
                     self.user_id))[1]["amount"], 100)
+        self.assertEqual(
+            self.transaction_history.get_account_transaction_history(
+                settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
+                    self.user_id), user_values=False)[1]["amount"], 100)
+        self.assertEqual(
+            self.transaction_history.get_account_transaction_history(
+                settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
+                    self.user_id), user_values=True)[1]["amount"], -100)
+        self.assertEqual(
+            self.transaction_history.get_account_transaction_history(
+                settings.ACCOUNTING_REVENUE_ACCOUNT)[0]["amount"], -100)
+        self.assertEqual(
+            self.transaction_history.get_account_transaction_history(
+                settings.ACCOUNTING_REVENUE_ACCOUNT, user_values=False
+            )[0]["amount"], -100)
+        self.assertEqual(
+            self.transaction_history.get_account_transaction_history(
+                settings.ACCOUNTING_REVENUE_ACCOUNT, user_values=True
+            )[0]["amount"], 100)
+
+        # check the transaction description messages
+        self.assertEqual(
+            self.transaction_history.get_account_transaction_history(
+                settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
+                    self.user_id))[0]["description"],
+            u"received payment from {0}".format(
+                self.asset_source_account.name))
         self.assertEqual(
             self.transaction_history.get_account_transaction_history(
                 settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
