@@ -1,3 +1,4 @@
-"""
-Stub file to work around django bug: https://code.djangoproject.com/ticket/7198
-"""
+from django.db import models
+
+
+class (models.Model):
