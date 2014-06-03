@@ -80,7 +80,9 @@ for k, v in INTEGRATION_INITIAL.iteritems():
 MERCHANT_TEST_MODE = True  # Toggle for live
 MERCHANT_SETTINGS = {
     "stripe": {
-        "API_KEY": "sk_test_hXpCT9Oqs4PszDOhXK6TY9XS",
-        "PUBLISHABLE_KEY": "pk_test_1dOtVgHQSGxzXYHk2ghg5YI1",
+        #"API_KEY": "sk_test_hXpCT9Oqs4PszDOhXK6TY9XS",
+        #"PUBLISHABLE_KEY": "pk_test_1dOtVgHQSGxzXYHk2ghg5YI1",
+        "API_KEY": "sk_test_B6lIS1GVOAL8SenO3DeLlCQN",
+        "PUBLISHABLE_KEY": "pk_test_GV1PYwn9wFTVQ0yHyVEWT6Ib",
     }
 }
