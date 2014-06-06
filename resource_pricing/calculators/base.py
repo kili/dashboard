@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core import exceptions
 from resource_pricing import models as resource_price_models
 from resource_pricing import types
@@ -15,11 +16,9 @@ class CalculatorBase(object):
                 self.type_name))
 
     def _type_is_configured(self):
-        try:
-            self.types.get_id_by_name(self.type_name)
-        except KeyError:
-            return False
-        return True
+        if self.type_name in settings.BILLABLE_RESOURCE_TYPES.keys():
+            return True
+        return False
 
     def _validate_params(self, params):
         checking = params.copy()
