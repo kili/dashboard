@@ -1,12 +1,12 @@
 from django.conf import settings
 from django.core import exceptions
-from resource_pricing import models as resource_price_models
+from resource_pricing import models
 from resource_pricing import types
 
 
 class CalculatorBase(object):
     types = types.ResourceTypes()
-    type_name = 'base'
+    type_name = "base"
     required_params = []
     optional_params = []
 
@@ -32,9 +32,9 @@ class CalculatorBase(object):
                 raise Exception("the given parameter {0} is unknown".
                                 format(x))
 
-    def _get_resource_price(self, resource_id):
+    def _get_resource_price(self, resource_id, currency="USD"):
         try:
-            resource = resource_price_models.ResourcePrice.objects.get(
+            resource = models.ResourcePrice.objects.get(
                 resource_id=resource_id)
         except exceptions.ObjectDoesNotExist:
             raise Exception("Could not find resource_id {0}"

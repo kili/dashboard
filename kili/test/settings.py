@@ -10,6 +10,9 @@ INSTALLED_APPS += (
     'async',
     'accounting',
     'swingtix.bookkeeper',
+    'resource_pricing',
+    'resource_pricing.calculators.instance',
+    'resource_pricing.calculators.volume',
 )
 
 CUSTOMIZATIONS = (
