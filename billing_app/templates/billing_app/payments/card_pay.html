@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load render_integration from billing_tags %}
+{% block title %}{% trans "Add Funds" %}{% endblock %}
+
+{% block page_header %}
+    {% include "horizon/common/_page_header.html" with title=_("Add Funds") %}
+    <script type="text/javascript" src="https://js.stripe.com/v1/"></script>
+    <script>
+        Stripe.setPublishableKey('{{ integration.publishable_key }}');
+    </script>
+{% endblock page_header %}
+
+{% block main %}
+    {% include 'billing_app/payments/_add_card.html' %}
+{% endblock %}

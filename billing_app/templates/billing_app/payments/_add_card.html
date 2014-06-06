@@ -2,10 +2,9 @@
 {% load i18n %}
 {% load url from future %}
 {% load crispy_forms_tags %}
-{% load render_integration from billing_tags %}
 
 {% block form_id %}id_add_card_form{% endblock %}
-{% block form_action %}payments/cards/add{% endblock %}
+{% block form_action %}/billing/payments/cards/add{% endblock %}
 
 {% block modal_id %}add_card_modal{% endblock %}
 {% block modal-header %}{% trans "Add Credit/Debit Card" %}{% endblock %}
@@ -15,7 +14,6 @@
 <div class="left">
     <fieldset>
         {% include "horizon/common/_form_fields.html" %}
-        {#{% render_integration stripe_obj %}#}
     </fieldset>
 </div>
 
@@ -25,7 +23,7 @@
 
 {% block modal-footer %}
 <input id="id_submit_card" class="btn btn-primary pull-right" type="submit" value="{% trans "Add Card" %}" />
-<a href="payments/" class="btn secondary cancel close">{% trans "Cancel" %}</a>
+<a href="/billing/payments/" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 <script>
 $("#id_add_card_form").submit(function(event) {
         $('.submit-button').attr("disabled", "disabled");
@@ -49,6 +47,9 @@ $("#id_add_card_form").submit(function(event) {
                     for (var ii=0; ii < 12; ii++) {
                         redactedCCNum += "x";
                     }
+                    var CCNum = $("#id_add_card_form input[name=credit_card_number]").val();
+                    redactedCCNum += CCNum.substring(CCNum.length-4, CCNum.length);
+                    $("#id_add_card_form input[name=card_name]").val(redactedCCNum);
                     $("#id_add_card_form input[name=credit_card_number]").val("x");
                     $("#id_add_card_form input[name=credit_card_cvc]").val("x");
                     $("#id_add_card_form input[name=stripe_card_token]").val(token);

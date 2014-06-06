@@ -1,121 +1,16 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% load render_integration from billing_tags %}
-{% block title %}{% trans "Manage Payments!" %}{% endblock %}
+{% block title %}{% trans "Manage Payments" %}{% endblock %}
 
 {% block page_header %}
 {% include "horizon/common/_page_header.html" with title=_("Manage Payments") %}
 {% endblock page_header %}
 
 {% block main %}
-<style>
-.pricing ul.pricing-list.pricing1 > li .pricing-price .pricing-price-container {
-display: inline-block;
-width: 160px;
-height: 160px;
-line-height: 160px;
-border-radius: 160px;
-vertical-align: text-bottom;
-font-size: 24px;
-font-weight: 600;
-}
-</style>
 <script type="text/javascript" src="https://js.stripe.com/v1/"></script>
-<script>
-Stripe.setPublishableKey('{{ stripe_obj.publishable_key }}');
-
-function stripeResponseHandler(status, response) {
-    if (response.error) {
-        $(".payment-errors").html(response.error.message);
-    } else {
-        console.log(response);
-        var token = response['id'];
-        $("#payment-form input[name=stripeToken]").val(token);
-        var redactedCCNum = "";
-        for (var ii=0; ii < 12; ii++) {
-            redactedCCNum += "x";
-        }
-        var originalCCNum = $("#stripe-form input[name=credit_card_number]").val();
-        redactedCCNum += originalCCNum.substring(originalCCNum.length-4, originalCCNum.length);
-        $("#payment-form input[name=redactedCCNum]").val(redactedCCNum);
-        var expMonth = $("#stripe-form input[name=credit_card_expiration_month]").val();
-        var expYear = $("#stripe-form input[name=credit_card_expiration_year]").val();
-        $("#payment-form input[name=credit_card_expiration_month]").val(expMonth);
-        $("#payment-form input[name=credit_card_expiration_year]").val(expYear);
-        $("#payment-form").get(0).submit();
-    }
-}
-$("#stripe-form").submit(function(event) {
-        $('.submit-button').attr("disabled", "disabled");
-        var amount = $('#id_amount').val(); //amount you want to charge in cents
-        Stripe.createToken({
-number: $('#id_credit_card_number').val(),
-cvc: $('#id_credit_card_cvc').val(),
-exp_month: $('#id_credit_card_expiration_month').val(),
-exp_year: $('#id_credit_card_expiration_year').val()
-}, amount, stripeResponseHandler);
-        return false;
-        });
-</script>
-<style>[data-hide="true"]{display: none;}</style>
-<div class="payment-errors"></div>
-{% comment %}
-<div class="row">
-    <ul class="pricing-list pricing1 unstyled clearfix">
-        <li class="span3 aligncenter price_li">
-            <div class="pricing-title">
-                <h3 class="light">Micro</h3>
-            </div>
-            <div class="pricing-price">
-                <div class="pricing-price-container bg-color dark-grey" data-prinf="">
-                    <b>1.72</b><span>/hr</span>
-                </div>
-            </div>
-            <ul class="pricing-features unstyled">
-                <li><b>1</b> CPU</li>
-                <li><b>615MB</b> RAM</li>
-                <li><b>10GB</b> Local Storage</li>
-                <li>Unlimited Bandwidth</li>
-            </ul>
-        </li>
-        <li class="span3 aligncenter price_li">
-            <div class="pricing-title">
-                <h3 class="light">Small</h3>
-            </div>
-            <div class="pricing-price">
-                <div class="pricing-price-container bg-color dark-grey" data-prinf="">
-                    <b>6.02</b><span>/hr</span>
-                </div>
-            </div>
-            <ul class="pricing-features unstyled">
-                <li><b>1</b> CPU</li>
-                <li><b>1.7GB</b> RAM</li>
-                <li><b>20GB</b> Local Storage</li>
-                <li>Unlimited Bandwidth</li>
-            </ul>
-        </li>
-        <li class="span3 aligncenter price_li">
-            <div class="pricing-title">
-                <h3 class="light">Medium</h3>
-            </div>
-            <div class="pricing-price">
-                <div class="pricing-price-container bg-color dark-grey" data-prinf="">
-                    <b>11.18</b><span>/hr</span>
-                </div>
-            </div>
-            <ul class="pricing-features unstyled">
-            <li><b>1</b> CPU</li>
-            <li><b>3.75GB</b> RAM</li>
-            <li><b>20GB</b> Local Storage</li>
-            <li>Unlimited Bandwidth</li>
-            </ul>
-        </li>
-    </ul>
-</div>
-{% endcomment %}
+<script>Stripe.setPublishableKey('{{ stripe_obj.publishable_key }}');</script>
+<img src="/static/billing_app/img/credit-cards.gif" />
 {{ table.render }}
 <hr/>
-<h3>MPesa</h3>
-Not Yet Implemented
 {% endblock %}
 
