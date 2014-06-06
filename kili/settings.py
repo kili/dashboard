@@ -179,7 +179,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'south',
     'async',
-    'crispy_forms'
+    'crispy_forms',
+    'resource_pricing',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -543,3 +544,4 @@ ACCOUNTING_PROMOTIONS_ACCOUNT = "PROMOTIONS"
 ACCOUNTING_REVENUE_ACCOUNT = "REVENUE"
 ACCOUNTING_USER_ACCOUNT_FORMAT = {"regex": "USER_[a-f0-9]{32}",
                                   "format": "USER_{0}"}
+
