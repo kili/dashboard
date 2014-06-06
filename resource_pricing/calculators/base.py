@@ -34,9 +34,9 @@ class CalculatorBase(object):
 
     def _get_resource_price(self, resource_id, currency="USD"):
         try:
-            resource = models.ResourcePrice.objects.get(
-                resource_id=resource_id)
+            price = models.Price.objects.get(currency__iso=currency,
+                                             resource=resource_id)
         except exceptions.ObjectDoesNotExist:
-            raise Exception("Could not find resource_id {0}"
-                            .format(resource_id))
-        return resource.price
+            raise Exception("Could not find price for resource {0} with"
+                            " currency {1}".format(resource_id, currency))
+        return price.price

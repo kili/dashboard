@@ -6,10 +6,12 @@ from resource_pricing import models
 class SimpleTest(test.TestCase):
 
     def setUp(self):
-        curr_usd = models.Currency.objects.create(currency_iso="USD")
-        models.ResourcePrice.objects.create(resource_id=1,
-                                            currency=curr_usd,
-                                            price=100)
+        self.curr_usd = models.Currency.objects.create(iso="USD")
+        self.resource1 = models.Resource.objects.create(
+            resource_type_id=0, description="resource1")
+        self.price = models.Price.objects.create(currency=self.curr_usd,
+                                                 resource=self.resource1,
+                                                 price=90)
         base.CalculatorBase.type_name = "testtype1"
         self.cb = base.CalculatorBase()
 
@@ -46,11 +48,13 @@ class SimpleTest(test.TestCase):
             "the given parameter param5 is unknown")
 
     def test_get_resource_price(self):
-        self.assertEqual(self.cb._get_resource_price(1), 100)
+        self.assertEqual(self.cb._get_resource_price(
+            self.resource1.id, "USD"), 90)
         with self.assertRaises(Exception) as exception_context:
             self.cb._get_resource_price(2)
-        self.assertEqual(str(exception_context.exception),
-                         "Could not find resource_id 2")
+        self.assertEqual(
+            str(exception_context.exception),
+            "Could not find price for resource 2 with currency USD")
 
     def test_init(self):
         base.CalculatorBase.type_name = "idontexist"
