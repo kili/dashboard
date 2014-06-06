@@ -9,24 +9,13 @@ class VolumePriceCalculator(base.CalculatorBase):
     required_params = ['hours', 'gb_size', 'type']
     optional_params = []
 
-    def __init__(self):
-        if not self._type_is_configured():
-            raise Exception("the type {0} is not configured".format(
-                self.type_name))
-
     def _get_unit_price(self, vtype_id):
         try:
             volume_type = volume_models.VolumeType.objects.get(
                 os_type_id=vtype_id)
         except exceptions.ObjectDoesNotExist:
             raise Exception("Could not find volume type {0}".format(vtype_id))
-        try:
-            resource = resource_price_models.ResourcePrice.objects.get(
-                resource_id=volume_type.resource_id)
-        except exceptions.ObjectDoesNotExist:
-            raise Exception("Could not find resource_id {0}"
-                            .format(volume_type.resource_id))
-        return resource.price
+        return self._get_resource_price(volume_type.resource_id)
 
     def get_price(self, params=None):
         self._validate_params(params)
