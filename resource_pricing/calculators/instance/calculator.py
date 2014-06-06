@@ -1,25 +1,16 @@
 from django.core import exceptions
 from resource_pricing.calculators import base
-from resource_pricing.calculators.instance import models as instance_models
 
 
-class InstancePriceCalculator(base.CalculatorBase):
+class InstancePriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
     type_name = "instance"
+    resource_type_relation = "resource__flavor__os_flavor_id"
     required_params = ['hours', 'flavor']
     optional_params = []
+    type_key = "flavor"
 
     def __init__(self):
         super(InstancePriceCalculator, self).__init__()
 
-    def _get_unit_price(self, flavor_id):
-        try:
-            flavor = instance_models.Flavor.objects.get(
-                os_flavor_id=flavor_id)
-        except exceptions.ObjectDoesNotExist:
-            raise Exception("Could not find flavor {0}".format(flavor_id))
-        return self._get_resource_price(flavor.resource_id)
-
-    def get_price(self, params=None):
-        self._validate_params(params)
-        unit_price = self._get_unit_price(params['flavor'])
+    def _final_calculation(self, params, unit_price):
         return unit_price * params['hours']
