@@ -318,8 +318,7 @@ function run_tests_all {
   if [ "$NOSE_WITH_HTML_OUTPUT" = '1' ]; then
     export NOSE_HTML_OUT_FILE='kili_nose_results.html'
   fi
-  ${command_wrapper} ${coverage_run} $root/manage.py test kili resource_pricing accounting async customizations registration keystone_wrapper --settings=kili.test.settings $testopts
-  echo "${command_wrapper} ${coverage_run} $root/manage.py test kili accounting async customizations registration keystone_wrapper --settings=kili.test.settings $testopts"
+  ${command_wrapper} ${coverage_run} $root/manage.py test kili accounting async resource_pricing customizations registration keystone_wrapper --settings=kili.test.settings $testopts
   # get results of the kili tests
   KILI_RESULT=$?
 
