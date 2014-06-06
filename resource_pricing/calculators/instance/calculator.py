@@ -8,6 +8,9 @@ class InstancePriceCalculator(base.CalculatorBase):
     required_params = ['hours', 'flavor']
     optional_params = []
 
+    def __init__(self):
+        super(InstancePriceCalculator, self).__init__()
+
     def _get_unit_price(self, flavor_id):
         try:
             flavor = instance_models.Flavor.objects.get(

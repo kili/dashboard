@@ -1,13 +1,15 @@
 from django.core import exceptions
 from resource_pricing.calculators import base
 from resource_pricing.calculators.volume import models as volume_models
-from resource_pricing import models as resource_price_models
 
 
 class VolumePriceCalculator(base.CalculatorBase):
     type_name = "volume"
     required_params = ['hours', 'gb_size', 'type']
     optional_params = []
+
+    def __init__(self):
+        super(VolumePriceCalculator, self).__init__()
 
     def _get_unit_price(self, vtype_id):
         try:

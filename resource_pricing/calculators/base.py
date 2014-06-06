@@ -1,6 +1,6 @@
 from django.core import exceptions
-from resource_pricing import types
 from resource_pricing import models as resource_price_models
+from resource_pricing import types
 
 
 class CalculatorBase(object):
@@ -24,7 +24,7 @@ class CalculatorBase(object):
     def _validate_params(self, params):
         checking = params.copy()
         for x in self.required_params:
-            if not checking.has_key(x):
+            if x not in checking:
                 raise Exception("the required parameter {0} is missing".
                                 format(x))
             checking.pop(x)
