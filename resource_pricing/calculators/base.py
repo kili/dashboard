@@ -54,7 +54,7 @@ class VolumeAndInstancePriceCalculatorBase(CalculatorBase):
                    self.resource_type_relation: type_id})
         except exceptions.ObjectDoesNotExist:
             raise Exception("Could not get price of flavor {0} in currency "
-                            "{1}".format(flavor_id, currency))
+                            "{1}".format(type_id, currency))
         return price.price
 
     def get_price(self, params=None):

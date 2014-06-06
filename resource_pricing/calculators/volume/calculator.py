@@ -1,4 +1,3 @@
-from django.core import exceptions
 from resource_pricing.calculators import base
 
 
