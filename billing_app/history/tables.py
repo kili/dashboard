@@ -11,7 +11,7 @@ class PaymentsHistoryTable(tables.DataTable):
     description = tables.Column("Description")
     amount = tables.Column("Amount",
                            verbose_name=_("Transaction Amount"),
-                           attrs={'width': "200"},
+                           attrs={'width': "200", 'align': "right"},
                            )
 
     class Meta:

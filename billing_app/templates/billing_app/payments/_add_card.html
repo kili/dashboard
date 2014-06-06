@@ -1,0 +1,62 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load url from future %}
+{% load crispy_forms_tags %}
+{% load render_integration from billing_tags %}
+
+{% block form_id %}id_add_card_form{% endblock %}
+{% block form_action %}payments/cards/add{% endblock %}
+
+{% block modal_id %}add_card_modal{% endblock %}
+{% block modal-header %}{% trans "Add Credit/Debit Card" %}{% endblock %}
+
+{% block modal-body %}
+<div id="stripe_add_card_status" class="alert alert-error" data-hide="true" ></div>
+<div class="left">
+    <fieldset>
+        {% include "horizon/common/_form_fields.html" %}
+        {#{% render_integration stripe_obj %}#}
+    </fieldset>
+</div>
+
+<style>[data-hide="true"]{display: none;}</style>
+
+{% endblock %}
+
+{% block modal-footer %}
+<input id="id_submit_card" class="btn btn-primary pull-right" type="submit" value="{% trans "Add Card" %}" />
+<a href="payments/" class="btn secondary cancel close">{% trans "Cancel" %}</a>
+<script>
+$("#id_add_card_form").submit(function(event) {
+        $('.submit-button').attr("disabled", "disabled");
+        Stripe.createToken({
+            number: $('#id_credit_card_number').val(),
+            cvc: $('#id_credit_card_cvc').val(),
+            exp_month: $('#id_credit_card_expiration_month').val(),
+            exp_year: $('#id_credit_card_expiration_year').val()
+            }, 0, 
+            function (status, response) {
+                if (response.error) {
+                    $("#stripe_add_card_status").get(0).dataset.hide = "false";
+                    $("#stripe_add_card_status").html(response.error.message);
+                    $("#id_submit_card").removeAttr("disabled");
+                    $("#id_submit_card").className = "btn btn-primary pull-right disabled";
+                } else {
+                    console.log(response);
+                    var token = response['id'];
+                    $("#id_add_card_form input[name=stripeToken]").val(token);
+                    var redactedCCNum = "";
+                    for (var ii=0; ii < 12; ii++) {
+                        redactedCCNum += "x";
+                    }
+                    $("#id_add_card_form input[name=credit_card_number]").val("x");
+                    $("#id_add_card_form input[name=credit_card_cvc]").val("x");
+                    $("#id_add_card_form input[name=stripe_card_token]").val(token);
+                    $("#id_add_card_form").get(0).submit();
+                }
+            }
+        );
+        return false;
+ });
+</script>
+{% endblock %}

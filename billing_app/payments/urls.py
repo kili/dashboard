@@ -4,5 +4,8 @@ from django.conf.urls import url  # noqa
 
 urlpatterns = patterns('',
     url(r'^$', views.IndexView.as_view(), name='index'),
-    #url(r'offsite/stripe/$', offsite_stripe', name='app_offsite_stripe'),
+    url(r'cards/$', views.AddCardView.as_view(), name='add_card'),
+    url(r'cards/add$', views.AddCardView.as_view(), name='add_card'),
+    url(r'cards/drop$', views.AddCardView.as_view(), name='add_card'),
+    url(r'cards/makedefault$', views.AddCardView.as_view(), name='add_card'),
 )

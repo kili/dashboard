@@ -167,7 +167,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.sites',
-
+    'swingtix.bookkeeper',
     'billing',
     'billing_app',
     'stripe',
