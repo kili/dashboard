@@ -4,13 +4,14 @@ from django.db import models
 class Currency(models.Model):
     currency_iso = models.CharField(max_length=3)
 
-class Resource(models.Model):
-    counter_name = models.CharField(max_length=30)
+    class Meta:
+        db_table = "pricing_currency"
 
-class Price(models.Model):
-    resource = models.ForeignKey(Resource)
+
+class ResourcePrice(models.Model):
+    resource_id = models.IntegerField(primary_key=True)
     currency = models.ForeignKey(Currency)
-    price = models.IntegerField()
+    price = models.DecimalField(max_digits=19, decimal_places=10)
 
     class Meta:
-        unique_together = ("resource", "currency")
+        db_table = "pricing_resource_price"
