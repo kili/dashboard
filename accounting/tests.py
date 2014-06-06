@@ -24,13 +24,13 @@ class SimpleTest(test.TestCase):
 
     def test_receive_user_payment(self):
         self.user_transactions.receive_user_payment(
-            self.user_id, self.asset_source_account.name, 30)
+            self.user_id, self.asset_source_account.name, 30, "TESTS")
         self.assertEqual(self.user_account.balance(), 30)
         self.assertEqual(self.asset_source_account.balance(), 30)
 
     def test_consume_user_money(self):
         self.user_transactions.receive_user_payment(
-            self.user_id, self.asset_source_account.name, 150)
+            self.user_id, self.asset_source_account.name, 150, "TESTS")
         self.user_transactions.consume_user_money(self.user_id, 100, 'cpu')
         self.assertEqual(self.user_account.balance(), 50)
         self.assertEqual(self.revenue_account.balance(), 100)
@@ -50,7 +50,7 @@ class SimpleTest(test.TestCase):
 
     def test_transaction_history(self):
         self.user_transactions.receive_user_payment(
-            self.user_id, self.asset_source_account.name, 150)
+            self.user_id, self.asset_source_account.name, 150, "TESTS")
         self.user_transactions.consume_user_money(self.user_id, 100, 'cpu')
 
         # check values of first transaction
@@ -108,16 +108,15 @@ class SimpleTest(test.TestCase):
             self.transaction_history.get_account_transaction_history(
                 settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
                     self.user_id))[0]["description"],
-            u"received payment from {0}".format(
-                self.asset_source_account.name))
+            "TESTS")
         self.assertEqual(
             self.transaction_history.get_account_transaction_history(
                 settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
-                    self.user_id))[1]["description"], "resource usage: cpu")
+                    self.user_id))[1]["description"], "Resource usage: cpu")
 
     def test_user_transaction_history(self):
         self.user_transactions.receive_user_payment(
-            self.user_id, self.asset_source_account.name, 150)
+            self.user_id, self.asset_source_account.name, 150, "TESTS")
         self.user_transactions.consume_user_money(self.user_id, 100, 'cpu')
         self.assertEqual(
             self.transaction_history.get_user_account_transaction_history(
@@ -125,15 +124,15 @@ class SimpleTest(test.TestCase):
 
     def test_transaction_history_pagination(self):
         self.user_transactions.receive_user_payment(
-            self.user_id, self.asset_source_account.name, 1)
+            self.user_id, self.asset_source_account.name, 1, "TESTS")
         self.user_transactions.receive_user_payment(
-            self.user_id, self.asset_source_account.name, 2)
+            self.user_id, self.asset_source_account.name, 2, "TESTS")
         self.user_transactions.receive_user_payment(
-            self.user_id, self.asset_source_account.name, 3)
+            self.user_id, self.asset_source_account.name, 3, "TESTS")
         self.user_transactions.receive_user_payment(
-            self.user_id, self.asset_source_account.name, 4)
+            self.user_id, self.asset_source_account.name, 4, "TESTS")
         self.user_transactions.receive_user_payment(
-            self.user_id, self.asset_source_account.name, 5)
+            self.user_id, self.asset_source_account.name, 5, "TESTS")
         self.assertEqual(
             self.transaction_history.get_user_account_transaction_history(
                 self.user_id, paginate=True, coords={"begin": 1, "end": 2}

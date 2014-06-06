@@ -4,13 +4,14 @@ from horizon import tables
 
 class PaymentsHistoryTable(tables.DataTable):
     name = tables.Column("Date",
-                         verbose_name=_("Transaction Date"),
+                         verbose_name=_("Transaction Date (UTC)"),
                          attrs={'data-type': "date", 'width': "200"},
                          sortable=True,
                          )
     description = tables.Column("Description")
     amount = tables.Column("Amount",
-                           verbose_name=_("Transaction Amount"),
+                           verbose_name=_("Transaction Amount (USD)"),
+                           classes=('text-right',),
                            attrs={'width': "200", 'align': "right"},
                            )
 

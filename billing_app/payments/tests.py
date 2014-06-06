@@ -1,4 +1,4 @@
-from horizon.test import helpers as test
+from horizon.test import helpers as test  # noqa
 
 
 class PaymentsTests(test.TestCase):

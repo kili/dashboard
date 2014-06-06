@@ -56,4 +56,6 @@ coverage.xml
 docs/_build/
 
 *.sw?
-
+dev_settings.py
+.venv
+.environment_version
