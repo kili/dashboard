@@ -1,3 +1,4 @@
+import decimal
 from django import test
 from resource_pricing.calculators.instance import calculator
 from resource_pricing.calculators.instance import models as instance_models
@@ -27,11 +28,14 @@ class SimpleTest(test.TestCase):
 
     def test_final_price_calculation(self):
         self.assertEqual(
-            self.ipc.get_price({'flavor': 'flavor1', 'hours': 3}),
-            270)
+            self.ipc.get_price({'flavor': 'flavor1', 'hours': 3}).compare(
+                decimal.Decimal(270)), decimal.Decimal(0))
         self.assertEqual(
-            self.ipc.get_price({'flavor': 'flavor2', 'hours': 3}),
-            30)
+            self.ipc.get_price({'flavor': 'flavor1', 'hours': 1.5}).compare(
+                decimal.Decimal(135)), decimal.Decimal(0))
+        self.assertEqual(
+            self.ipc.get_price({'flavor': 'flavor2', 'hours': 3}).compare(
+                decimal.Decimal(30)), decimal.Decimal(0))
         with self.assertRaises(Exception) as exception_context:
             self.ipc.get_price({'flavor': 'flavor1', 'hours': -1})
         self.assertEqual(str(exception_context.exception),

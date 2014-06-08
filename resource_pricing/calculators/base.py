@@ -21,14 +21,13 @@ class CalculatorBase(object):
         return False
 
     def _validate_params(self, params):
-        checking = params.copy()
         for x in self.required_params:
-            if x not in checking:
+            if x not in params:
                 raise Exception("the required parameter {0} is missing".
                                 format(x))
-            checking.pop(x)
-        for x in checking.keys():
-            if x not in self.optional_params:
+        for x in params.keys():
+            if (x not in self.optional_params and
+                    x not in self.required_params):
                 raise Exception("the given parameter {0} is unknown".
                                 format(x))
         self._specific_param_checks(params)

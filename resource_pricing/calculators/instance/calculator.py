@@ -1,3 +1,4 @@
+import decimal
 from resource_pricing.calculators import base
 
 
@@ -12,4 +13,4 @@ class InstancePriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
         super(InstancePriceCalculator, self).__init__()
 
     def _final_calculation(self, params, unit_price):
-        return unit_price * params['hours']
+        return unit_price * decimal.Decimal(params['hours'])
