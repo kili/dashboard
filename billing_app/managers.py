@@ -1,8 +1,10 @@
 import billing
-from django.db import models
+from django.db import (models, IntegrityError)
+from django.utils.translation import ugettext_lazy as _
 
 
 class StripeCustomerManager(models.Manager):
+
     def create_stripe_customer(self, name, is_default,
                                keystone_id, stripe_customer_id):
         card = self.model(name=name,
@@ -10,11 +12,15 @@ class StripeCustomerManager(models.Manager):
                           keystone_id=keystone_id,
                           stripe_customer_id=stripe_customer_id)
 
-        #make the card default there's no other
+        # make the card default there's no other
         if not self.all():
             card.is_default = True
-
-        card.save()
+        try:
+            card.save()
+        except IntegrityError as e:
+            return (False, _("You already have a card by the number :- %s") % card.name)
+        except Exception:
+            return (False, _("Could not add card. Try again later."))
 
         if card.is_default:
             return self.ensure_default(card.id, keystone_id)
@@ -34,9 +40,9 @@ class StripeCustomerManager(models.Manager):
 
             new_default.is_default = True
             new_default.save()
-            return True
+            return (True, )
         except Exception:
-            return False
+            return (False, _("Card added but not as default."))
 
     def delete_card(self, id, keystone_id):
         stripe = billing.get_gateway("stripe").stripe
@@ -48,6 +54,6 @@ class StripeCustomerManager(models.Manager):
             stripe_cust = stripe.Customer.retrieve(card.stripe_customer_id)
             stripe_cust.delete()
             card.delete()
-            return True
+            return (True,)
         except Exception:
-            return False
+            return (False, _("Could not delete card. Try again later"))

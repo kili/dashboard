@@ -10,23 +10,26 @@
 {% block modal-header %}{% trans "Add Credit/Debit Card" %}{% endblock %}
 
 {% block modal-body %}
-<div id="stripe_add_card_status" class="alert alert-error" data-hide="true" ></div>
+<img src="/static/billing_app/img/credit-cards.gif" style="margin-right:10px;">
+<div id="stripe_error" class="alert alert-error" data-hide="true" ></div>
 <div class="left">
     <fieldset>
         {% include "horizon/common/_form_fields.html" %}
     </fieldset>
 </div>
 
-<style>[data-hide="true"]{display: none;}</style>
+<style>[data-hide="true"]{ display:none;}</style>
 
 {% endblock %}
 
 {% block modal-footer %}
 <input id="id_submit_card" class="btn btn-primary pull-right" type="submit" value="{% trans "Add Card" %}" />
 <a href="/billing/payments/" class="btn secondary cancel close">{% trans "Cancel" %}</a>
+<h2 id="stripe_progress_indicator" data-hide="true" style="margin:0 3px"><i class="fa fa-refresh fa-spin pull-right"></i></h2>
 <script>
 $("#id_add_card_form").submit(function(event) {
-        $('.submit-button').attr("disabled", "disabled");
+        $("#stripe_progress_indicator").get(0).dataset.hide = "false";
+        $("#stripe_error").get(0).dataset.hide = "true";
         Stripe.createToken({
             number: $('#id_credit_card_number').val(),
             cvc: $('#id_credit_card_cvc').val(),
@@ -34,27 +37,30 @@ $("#id_add_card_form").submit(function(event) {
             exp_year: $('#id_credit_card_expiration_year').val()
             }, 0, 
             function (status, response) {
+                $("#stripe_progress_indicator").get(0).dataset.hide = "true";
                 if (response.error) {
-                    $("#stripe_add_card_status").get(0).dataset.hide = "false";
-                    $("#stripe_add_card_status").html(response.error.message);
+                    $("#stripe_error").get(0).dataset.hide = "false";
+                    $("#stripe_error").html(response.error.message);
+                    $("#stripe_error").html(response.error.message);
                     $("#id_submit_card").removeAttr("disabled");
-                    $("#id_submit_card").className = "btn btn-primary pull-right disabled";
-                } else {
-                    console.log(response);
-                    var token = response['id'];
-                    $("#id_add_card_form input[name=stripeToken]").val(token);
-                    var redactedCCNum = "";
-                    for (var ii=0; ii < 12; ii++) {
-                        redactedCCNum += "x";
-                    }
-                    var CCNum = $("#id_add_card_form input[name=credit_card_number]").val();
-                    redactedCCNum += CCNum.substring(CCNum.length-4, CCNum.length);
-                    $("#id_add_card_form input[name=card_name]").val(redactedCCNum);
-                    $("#id_add_card_form input[name=credit_card_number]").val("x");
-                    $("#id_add_card_form input[name=credit_card_cvc]").val("x");
-                    $("#id_add_card_form input[name=stripe_card_token]").val(token);
-                    $("#id_add_card_form").get(0).submit();
+                    $("#id_submit_card").removeClass("disabled");
+                    return;
                 }
+                console.log(response);
+                var token = response['id'];
+                $("#id_add_card_form input[name=stripeToken]").val(token);
+                var redactedCCNum = "";
+                for (var ii=0; ii < 12; ii++) {
+                    redactedCCNum += "x";
+                }
+                var CCNum = $("#id_add_card_form input[name=credit_card_number]").val();
+                redactedCCNum += CCNum.substring(CCNum.length-4, CCNum.length);
+                $("#id_add_card_form input[name=card_name]").val(redactedCCNum);
+                $("#id_add_card_form input[name=credit_card_number]").val("x");
+                $("#id_add_card_form input[name=credit_card_cvc]").val("x");
+                $("#id_add_card_form input[name=stripe_card_token]").val(token);
+                $("#id_add_card_form").get(0).submit();
+            
             }
         );
         return false;

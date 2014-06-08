@@ -33,19 +33,42 @@ class AddCardForm(stripe_forms.StripeForm, forms.SelfHandlingForm):
                 card=data['stripe_card_token'],
                 description=data['card_name']
             )
-            StripeCustomer.objects.create_stripe_customer(
+
+            result = StripeCustomer.objects.create_stripe_customer(
                 data['card_name'],
                 data['make_default'],
                 request.user.id,
                 stripe_customer.id
             )
+
+            if not result[0]:
+                stripe_customer.delete()
+                raise ValidationError(result[1])
+
             messages.success(
                 request,
                 _('Credit card "%s" has been tied to your account.')
                 % data['card_name']
             )
             return True
-        except stripe.InvalidRequestError as e:
+        except stripe.error.CardError as e:
+            # Card declined
+            self.api_error(e.message)
+            return False
+        except stripe.error.InvalidRequestError as e:
+            # Invalid parameters were supplied to Stripe's API
+            self.api_error(e.message)
+            return False
+        except stripe.error.AuthenticationError as e:
+            # Authentication with Stripe's API failed
+            self.api_error(e.message)
+            return False
+        except stripe.error.APIConnectionError as e:
+            # Network communication with Stripe failed
+            self.api_error(e.message)
+            return False
+        except stripe.error.StripeError as e:
+            # Display a very generic error to the user
             self.api_error(e.message)
             return False
         except ValidationError as e:
@@ -99,7 +122,24 @@ class CardPayForm(forms.SelfHandlingForm):
                 % data['amount']
             )
             return True
-        except stripe.InvalidRequestError as e:
+        except stripe.error.CardError as e:
+            # Card declined
+            self.api_error(e.message)
+            return False
+        except stripe.error.InvalidRequestError as e:
+            # Invalid parameters were supplied to Stripe's API
+            self.api_error(e.message)
+            return False
+        except stripe.error.AuthenticationError as e:
+            # Authentication with Stripe's API failed
+            self.api_error(e.message)
+            return False
+        except stripe.error.APIConnectionError as e:
+            # Network communication with Stripe failed
+            self.api_error(e.message)
+            return False
+        except stripe.error.StripeError as e:
+            # Display a very generic error to the user
             self.api_error(e.message)
             return False
         except ValidationError as e:
