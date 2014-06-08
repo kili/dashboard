@@ -31,6 +31,7 @@ class CalculatorBase(object):
             if x not in self.optional_params:
                 raise Exception("the given parameter {0} is unknown".
                                 format(x))
+        self._specific_param_checks(params)
 
     def _get_resource_price(self, resource_id, currency="USD"):
         try:
@@ -40,6 +41,9 @@ class CalculatorBase(object):
             raise Exception("Could not find price for resource {0} with"
                             " currency {1}".format(resource_id, currency))
         return price.price
+
+    def _specific_param_checks(self, params):
+        pass
 
 
 class VolumeAndInstancePriceCalculatorBase(CalculatorBase):
@@ -53,9 +57,13 @@ class VolumeAndInstancePriceCalculatorBase(CalculatorBase):
                 **{"currency__iso": currency,
                    self.resource_type_relation: type_id})
         except exceptions.ObjectDoesNotExist:
-            raise Exception("Could not get price of flavor {0} in currency "
+            raise Exception("Could not get price of type {0} in currency "
                             "{1}".format(type_id, currency))
         return price.price
+
+    def _specific_param_checks(self, params):
+        if params['hours'] < 0:
+            raise Exception('the consumed hours cannot be less than 0')
 
     def get_price(self, params=None):
         self._validate_params(params)

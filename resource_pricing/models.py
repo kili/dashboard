@@ -9,7 +9,7 @@ class Currency(models.Model):
 
 
 class Resource(models.Model):
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=100, db_index=True)
     resource_type_id = models.IntegerField()
 
     class Meta:
