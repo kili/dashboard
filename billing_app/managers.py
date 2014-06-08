@@ -1,5 +1,5 @@
 import billing
-from django.db import (models, IntegrityError)
+from django.db import (models, IntegrityError)  # noqa
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -17,8 +17,9 @@ class StripeCustomerManager(models.Manager):
             card.is_default = True
         try:
             card.save()
-        except IntegrityError as e:
-            return (False, _("You already have a card by the number :- %s") % card.name)
+        except IntegrityError:
+            return (False, _("You already have a card"
+                             " by the number :- %s") % card.name)
         except Exception:
             return (False, _("Could not add card. Try again later."))
 

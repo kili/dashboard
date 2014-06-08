@@ -318,16 +318,17 @@ function run_tests_all {
   if [ "$NOSE_WITH_HTML_OUTPUT" = '1' ]; then
     export NOSE_HTML_OUT_FILE='kili_nose_results.html'
   fi
-  ${command_wrapper} ${coverage_run} $root/manage.py test kili accounting async customizations registration keystone_wrapper --settings=kili.test.settings $testopts
-  echo "${command_wrapper} ${coverage_run} $root/manage.py test kili accounting async customizations registration keystone_wrapper --settings=kili.test.settings $testopts"
+  ${command_wrapper} ${coverage_run} $root/manage.py test kili accounting async resource_pricing customizations registration keystone_wrapper --settings=kili.test.settings $testopts
   # get results of the kili tests
   KILI_RESULT=$?
 
   if [ $with_coverage -eq 1 ]; then
     echo "Generating coverage reports"
+    check_paths="accounting/*,customizations/*,kili/*,registration/*,async/*,keystone_wrapper/*,resource_pricing/*"
+    omit_paths="setup.py,*egg*,.venv/*,*/migrations/*"
     ${command_wrapper} coverage combine
-    ${command_wrapper} coverage xml -i --include="horizon/*,openstack_dashboard/*" --omit='/usr*,setup.py,*egg*,.venv/*'
-    ${command_wrapper} coverage html -i --include="horizon/*,openstack_dashboard/*" --omit='/usr*,setup.py,*egg*,.venv/*' -d reports
+    ${command_wrapper} coverage xml -i --include="${check_paths}" --omit="${omit_paths}"
+    ${command_wrapper} coverage html -i --include="${check_paths}" --omit="${omit_paths}" -d reports
   fi
   # Remove the leftover coverage files from the -p flag earlier.
   rm -f .coverage.*

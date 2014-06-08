@@ -2,17 +2,25 @@ from django.db import models
 
 
 class Currency(models.Model):
-    currency_iso = models.CharField(max_length=3)
+    iso = models.CharField(max_length=3, db_index=True)
+
+    class Meta:
+        db_table = "pricing_currency"
 
 
 class Resource(models.Model):
-    counter_name = models.CharField(max_length=30)
+    description = models.CharField(max_length=100, db_index=True)
+    resource_type_id = models.IntegerField()
+
+    class Meta:
+        db_table = "pricing_resource"
 
 
 class Price(models.Model):
-    resource = models.ForeignKey(Resource)
     currency = models.ForeignKey(Currency)
-    price = models.IntegerField()
+    resource = models.ForeignKey(Resource)
+    price = models.DecimalField(max_digits=19, decimal_places=10)
 
     class Meta:
-        unique_together = ("resource", "currency")
+        db_table = "pricing_resource_currency_price"
+        unique_together = ('currency', 'resource')
