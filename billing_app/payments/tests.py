@@ -1,5 +1,4 @@
 from openstack_dashboard.test import helpers as test  # noqa
-from django.conf import settings
 
 
 class PaymentsTests(test.TestCase):
