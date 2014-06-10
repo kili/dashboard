@@ -183,6 +183,7 @@ INSTALLED_APPS = [
     'resource_pricing',
     'resource_pricing.calculators.instance',
     'resource_pricing.calculators.volume',
+    'user_billing',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -549,9 +550,13 @@ ACCOUNTING_USER_ACCOUNT_FORMAT = {"regex": "USER_[a-f0-9]{32}",
 
 BILLABLE_RESOURCE_TYPES = {
     'instance': {'id': 0,
-                 'price_calculator': 'resource_pricing.calculators.instance'},
+                 'price_calculator': 'resource_pricing.calculators.instance',
+                 'meters': ['Instance:Small',
+                            'Instance:Medium',
+                            'Instance:Large']},
     'volume': {'id': 1,
-               'price_calculator': 'resource_pricing.calculators.volume'},
+               'price_calculator': 'resource_pricing.calculators.volume',
+               'meters': ['testmeter']},
     'network': {'id': 2,
                 'price_calculator': 'resource_pricing.calculators.network'},
 }
