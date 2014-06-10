@@ -1,9 +1,13 @@
 from openstack_dashboard.test.settings import *  # noqa
 
+
 HORIZON_CONFIG['customization_module'] = 'customizations.loader'
 
 INSTALLED_APPS += (
     'kili',
+    'billing_app',
+    'billing',
+    'stripe',
     'registration',
     'allauth',
     'allauth.account',
@@ -42,4 +46,12 @@ BILLABLE_RESOURCE_TYPES = {
                 'price_calculator': 'resource_pricing.calculators.network'},
     'testtype1': {'id': 3,
                   'price_calculator': 'testcalculator1'},
+}
+
+MERCHANT_TEST_MODE = True
+MERCHANT_SETTINGS = {
+    "stripe": {
+        "API_KEY": "sk_test_B6lIS1GVOAL8SenO3DeLlCQN",
+        "PUBLISHABLE_KEY": "pk_test_GV1PYwn9wFTVQ0yHyVEWT6Ib",
+    }
 }

@@ -4,12 +4,13 @@
 
 {% block page_header %}
 {% include "horizon/common/_page_header.html" with title=_("Manage Payments") %}
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel=    "stylesheet">
 {% endblock page_header %}
 
 {% block main %}
 <script type="text/javascript" src="https://js.stripe.com/v1/"></script>
 <script>Stripe.setPublishableKey('{{ stripe_obj.publishable_key }}');</script>
-<img src="/static/billing_app/img/credit-cards.gif" />
+<img src="/static/billing_app/img/credit-cards.gif" style="float:right;margin-right:10px;" />
 {{ table.render }}
 <hr/>
 {% endblock %}
