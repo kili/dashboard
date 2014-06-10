@@ -1,6 +1,6 @@
-from datetime import datetime
-from datetime import timedelta
+import datetime
 from django.conf import settings
+from django.db import utils
 from keystoneclient.v2_0 import client
 from user_billing import models
 
@@ -21,7 +21,8 @@ class StatisticsIndexBuilder(object):
 
     def _get_last_month(self):
         if not self.month:
-            last_month = datetime.utcnow().replace(day=1) - timedelta(days=1)
+            last_month = (datetime.datetime.utcnow().replace(day=1)
+                          - datetime.timedelta(days=1))
             self.month = {'year': last_month.year,
                           'month': last_month.month}
         return self.month
@@ -46,13 +47,20 @@ class StatisticsIndexBuilder(object):
               'month': self._get_last_month}
 
         # create a list of every possible combination of uid, meter and date
-        return [dict({'uid': uid, 'meter': meter}.items() +
+        return [dict({'user_id': uid, 'meter': meter}.items() +
                      dc['month']().items())
                 for uid in dc['uids']()
                 for meter in dc['meters']()]
 
     def _save_index(self, index_data):
-        pass
+        added_count = 0
+        for index_element in index_data:
+            try:
+                models.RawStatisticsIndex.objects.create(**index_element)
+                added_count += 1
+            except utils.IntegrityError:
+                pass
+        return added_count
 
     def build(self):
         self._save_index(self._merge_indexing_data())

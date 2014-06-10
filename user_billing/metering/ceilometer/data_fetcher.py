@@ -1,6 +1,5 @@
 from ceilometerclient import client
-from datetime import datetime
-from datetime import timedelta
+import datetime
 from django.conf import settings
 from django.core import exceptions as django_exceptions
 from django.utils import timezone
@@ -9,6 +8,35 @@ from user_billing.metering.ceilometer import models
 
 
 class CeilometerDataFetcher(object):
+
+    def __init__(self):
+        try:
+            self.cm_client = client.get_client(
+                settings.CEILOMETER_API_VERSION,
+                **settings.CEILOMETER_AUTH_DATA)
+        except ks_exceptions.AuthorizationFailure:
+            raise Exception("failed to connect/authenticate to ceilometer")
+
+    def _datetime_to_mongo(self, datetime):
+        return datetime.strftime("%Y-%m-%dT%H:%M:%S")
+
+    def _get_query(self, *args, **kwargs):
+        return {'meter_name': kwargs['meter'],
+                'q': [{'field': 'user_id', 'op': 'eq',
+                       'value': kwargs['user_id']},
+                      {'field': 'timestamp', 'op': 'ge',
+                       'value': self._datetime_to_mongo(kwargs['from_dt'])},
+                      {'field': 'timestamp', 'op': 'lt',
+                       'value': self._datetime_to_mongo(kwargs['until_dt'])}]}
+
+    def get(self, **kwargs):
+        data = self.cm_client.statistics.list(**self._get_query(**kwargs))
+        import pdb
+        pdb.set_trace()
+        return data
+
+
+class CeilometerDataFetcherDeprecated(object):
 
     def __init__(self, meter_name, iter_time_span=3600):
         try:
@@ -34,7 +62,7 @@ class CeilometerDataFetcher(object):
         return self
 
     def _set_until_dt(self):
-        until_dt = self.position.position + timedelta(
+        until_dt = self.position.position + datetime.timedelta(
             seconds=self.iter_time_span)
         if until_dt > timezone.now():
             until_dt = timezone.now()
