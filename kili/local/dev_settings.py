@@ -1,6 +1,6 @@
 from kili.settings import *  # noqa
 
-KEYSTONE_TOKEN = "HWXvI5jbn3pln5m1u0Iw"
+KEYSTONE_TOKEN = "5zoNv.aryGlnlXu7,oZM"
 KEYSTONE_URL = "http://10.0.1.223:35357/v2.0"
 
 BROKER_URL = \
@@ -86,3 +86,9 @@ MERCHANT_SETTINGS = {
         "PUBLISHABLE_KEY": "pk_test_GV1PYwn9wFTVQ0yHyVEWT6Ib",
     }
 }
+
+CEILOMETER_AUTH_DATA = {
+    'os_username': 'ceilometer',
+    'os_password': 'imwUsoT8uNy2UgRwTD7k',
+    'os_tenant_name': 'service',
+    'os_auth_url': 'http://10.0.1.223/keystone/v2.0'}
