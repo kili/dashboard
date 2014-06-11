@@ -10,7 +10,10 @@
 {% block main %}
 <script type="text/javascript" src="https://js.stripe.com/v1/"></script>
 <script>Stripe.setPublishableKey('{{ stripe_obj.publishable_key }}');</script>
-<img src="/static/billing_app/img/credit-cards.gif" style="float:right;margin-right:10px;" />
+<div style="text-align:right;"> 
+    <img src="/static/billing_app/img/credit-cards.gif" style="margin-right:10px"/>
+    <img src="/static/billing_app/img/powered_by_stripe.png" />
+</div>
 {{ table.render }}
 <hr/>
 {% endblock %}
