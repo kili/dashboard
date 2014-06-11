@@ -31,7 +31,8 @@ class AddCardForm(stripe_forms.StripeForm, forms.SelfHandlingForm):
             # Create a Stripe Customer
             stripe_customer = stripe.Customer.create(
                 card=data['stripe_card_token'],
-                description=data['card_name']
+                description=data['card_name'],
+                email=request.user.username
             )
 
             result = StripeCustomer.objects.create_stripe_customer(
