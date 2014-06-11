@@ -183,6 +183,7 @@ INSTALLED_APPS = [
     'resource_pricing',
     'resource_pricing.calculators.instance',
     'resource_pricing.calculators.volume',
+    'user_billing',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -547,9 +548,19 @@ ACCOUNTING_REVENUE_ACCOUNT = "REVENUE"
 ACCOUNTING_USER_ACCOUNT_FORMAT = {"regex": "USER_[a-f0-9]{32}",
                                   "format": "USER_{0}"}
 
+CEILOMETER_API_VERSION = 2
+CEILOMETER_AUTH_DATA = {
+    'os_username': '',
+    'os_password': '',
+    'os_tenant_name': '',
+    'os_auth_url': ''}
+
 BILLABLE_RESOURCE_TYPES = {
     'instance': {'id': 0,
-                 'price_calculator': 'resource_pricing.calculators.instance'},
+                 'price_calculator': 'resource_pricing.calculators.instance',
+                 'meters': ['Instance:Small',
+                            'Instance:Medium',
+                            'Instance:Large']},
     'volume': {'id': 1,
                'price_calculator': 'resource_pricing.calculators.volume'},
     'network': {'id': 2,
