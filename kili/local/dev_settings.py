@@ -1,7 +1,7 @@
 from kili.settings import *  # noqa
 
 KEYSTONE_TOKEN = "5zoNv.aryGlnlXu7,oZM"
-KEYSTONE_URL = "http://10.0.1.223:35357/v2.0"
+KEYSTONE_URL = "http://10.0.1.222:35357/v2.0"
 
 BROKER_URL = \
     'amqp://horizon_dashboard:iamapassword@127.0.0.1//horizon_dashboard'
@@ -11,7 +11,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'horizon_dashboard',
         'USER': 'horizon',
-        'PASSWORD': '8JN7lebKW.EbGYrYSGwe',
+        'PASSWORD': 'e-U4T93XbLlBXcLnvW-a',
         'HOST': '10.0.1.222',
         'PORT': '3306',
     },

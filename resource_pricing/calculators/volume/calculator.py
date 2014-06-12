@@ -1,8 +1,9 @@
 import decimal
+from django.conf import settings
 from resource_pricing.calculators import base
 
 
-class VolumePriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
+class PriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
     type_name = "volume"
     required_params = ['hours', 'gb_size', 'type']
     optional_params = []
@@ -10,14 +11,22 @@ class VolumePriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
     type_key = "type"
 
     def __init__(self):
-        super(VolumePriceCalculator, self).__init__()
+        super(PriceCalculator, self).__init__()
 
     def _specific_param_checks(self, params):
-        super(VolumePriceCalculator, self)._specific_param_checks(params)
+        super(PriceCalculator, self)._specific_param_checks(params)
         if decimal.Decimal(params['gb_size']) < decimal.Decimal(1.0):
             raise Exception('the given gb_size cannot be less than 1')
 
-    def _final_calculation(self, params, unit_price):
-        return (unit_price *
+    def _final_calculation(self, params):
+        return (self._get_unit_price(params['type']) *
                 decimal.Decimal(params['gb_size']) *
                 decimal.Decimal(params['hours']))
+
+    def _get_params_from_raw_stats(self, meter, raw_data):
+        return {
+            'hours': decimal.Decimal(raw_data['count'] *
+                                     settings.CEILOMETER_CINDER_PERIOD_LENGTH
+                                     ) / 60,
+            'gb_size': raw_data['gb_size'],
+            'type': meter}

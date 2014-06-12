@@ -318,13 +318,13 @@ function run_tests_all {
   if [ "$NOSE_WITH_HTML_OUTPUT" = '1' ]; then
     export NOSE_HTML_OUT_FILE='kili_nose_results.html'
   fi
-  ${command_wrapper} ${coverage_run} $root/manage.py test kili accounting async resource_pricing customizations registration billing_app keystone_wrapper --settings=kili.test.settings $testopts
+  ${command_wrapper} ${coverage_run} $root/manage.py test kili accounting async resource_pricing customizations registration user_billing billing_app keystone_wrapper --settings=kili.test.settings $testopts
   # get results of the kili tests
   KILI_RESULT=$?
 
   if [ $with_coverage -eq 1 ]; then
     echo "Generating coverage reports"
-    check_paths="accounting/*,customizations/*,kili/*,registration/*,async/*,keystone_wrapper/*,resource_pricing/*,billing_app/*"
+    check_paths="accounting/*,customizations/*,kili/*,registration/*,async/*,keystone_wrapper/*,resource_pricing/*,billing_app/*,user_billing/*,billing_app/*"
     omit_paths="setup.py,*egg*,.venv/*,*/migrations/*"
     ${command_wrapper} coverage combine
     ${command_wrapper} coverage xml -i --include="${check_paths}" --omit="${omit_paths}"

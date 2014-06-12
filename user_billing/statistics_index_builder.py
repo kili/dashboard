@@ -24,7 +24,7 @@ class StatisticsIndexBuilder(object):
             last_month = (datetime.datetime.utcnow().replace(day=1)
                           - datetime.timedelta(days=1))
             self.month = {'year': last_month.year,
-                          'month': last_month.month}
+                          'month': last_month.month + 1}
         return self.month
 
     def _list_billable_resource_type_meters(self):

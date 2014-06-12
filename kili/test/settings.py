@@ -1,6 +1,5 @@
 from openstack_dashboard.test.settings import *  # noqa
 
-
 HORIZON_CONFIG['customization_module'] = 'customizations.loader'
 
 INSTALLED_APPS += (
@@ -17,6 +16,9 @@ INSTALLED_APPS += (
     'resource_pricing',
     'resource_pricing.calculators.instance',
     'resource_pricing.calculators.volume',
+    'user_billing',
+    'user_billing.metering',
+    'user_billing.metering.ceilometer',
 )
 
 CUSTOMIZATIONS = (
@@ -55,3 +57,5 @@ MERCHANT_SETTINGS = {
         "PUBLISHABLE_KEY": "pk_test_GV1PYwn9wFTVQ0yHyVEWT6Ib",
     }
 }
+CEILOMETER_NOVA_PERIOD_LENGTH = 10
+CEILOMETER_CINDER_PERIOD_LENGTH = 10

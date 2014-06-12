@@ -44,6 +44,18 @@ class CalculatorBase(object):
     def _specific_param_checks(self, params):
         pass
 
+    def _get_params_from_raw_stats(self, *args, **kwargs):
+        raise NotImplemented
+
+    def price_from_raw_stats(self, meter, raw_data):
+        params = self._get_params_from_raw_stats(meter, raw_data)
+        self._validate_params(params)
+        price = self._final_calculation(params)
+        #print("{0} for {1} periods of {2}min is going to cost you {3} {4}"
+        #      .format(meter, raw_data['count'],
+        #              settings.CEILOMETER_NOVA_PERIOD_LENGTH, price, "USD"))
+        return price
+
 
 class VolumeAndInstancePriceCalculatorBase(CalculatorBase):
 
@@ -63,8 +75,3 @@ class VolumeAndInstancePriceCalculatorBase(CalculatorBase):
     def _specific_param_checks(self, params):
         if params['hours'] < 0:
             raise Exception('the consumed hours cannot be less than 0')
-
-    def get_price(self, params=None):
-        self._validate_params(params)
-        return self._final_calculation(params, self._get_unit_price(
-            params[self.type_key]))

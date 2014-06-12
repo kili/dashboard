@@ -184,6 +184,8 @@ INSTALLED_APPS = [
     'resource_pricing.calculators.instance',
     'resource_pricing.calculators.volume',
     'user_billing',
+    'user_billing.metering',
+    'user_billing.metering.ceilometer',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -554,13 +556,19 @@ CEILOMETER_AUTH_DATA = {
     'os_password': '',
     'os_tenant_name': '',
     'os_auth_url': ''}
+CEILOMETER_NOVA_PERIOD_LENGTH = 10
+CEILOMETER_CINDER_PERIOD_LENGTH = 10
 
 BILLABLE_RESOURCE_TYPES = {
     'instance': {'id': 0,
                  'price_calculator': 'resource_pricing.calculators.instance',
-                 'meters': ['Instance:Small',
-                            'Instance:Medium',
-                            'Instance:Large']},
+                 'meters': ['instance:MIcro',
+                            'instance:Small',
+                            'instance:Medium',
+                            'instance:High CPU',
+                            'instance:LArge',
+                            'instance:High RAM',
+                            'instance:Extra Large']},
     'volume': {'id': 1,
                'price_calculator': 'resource_pricing.calculators.volume'},
     'network': {'id': 2,

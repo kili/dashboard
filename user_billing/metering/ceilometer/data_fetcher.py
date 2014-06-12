@@ -30,10 +30,7 @@ class CeilometerDataFetcher(object):
                        'value': self._datetime_to_mongo(kwargs['until_dt'])}]}
 
     def get(self, **kwargs):
-        data = self.cm_client.statistics.list(**self._get_query(**kwargs))
-        import pdb
-        pdb.set_trace()
-        return data
+        return self.cm_client.statistics.list(**self._get_query(**kwargs))
 
 
 class CeilometerDataFetcherDeprecated(object):

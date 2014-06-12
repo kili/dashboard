@@ -23,24 +23,24 @@ class SimpleTest(test.TestCase):
             os_flavor_id='flavor1', resource=self.resource1)
         self.flavor2 = instance_models.Flavor.objects.create(
             os_flavor_id='flavor2', resource=self.resource2)
-        calculator.InstancePriceCalculator.type_name = 'testtype1'
-        self.ipc = calculator.InstancePriceCalculator()
+        calculator.PriceCalculator.type_name = 'testtype1'
+        self.ipc = calculator.PriceCalculator()
 
     def test_final_price_calculation(self):
         self.assertEqual(
-            self.ipc.get_price({'flavor': 'flavor1', 'hours': 3}).compare(
+            self.ipc.price_from_raw_stats('flavor1', {'count': 18}).compare(
                 decimal.Decimal(270)), decimal.Decimal(0))
         self.assertEqual(
-            self.ipc.get_price({'flavor': 'flavor1', 'hours': 1.5}).compare(
+            self.ipc.price_from_raw_stats('flavor1', {'count': 9}).compare(
                 decimal.Decimal(135)), decimal.Decimal(0))
         self.assertEqual(
-            self.ipc.get_price({'flavor': 'flavor2', 'hours': 3}).compare(
+            self.ipc.price_from_raw_stats('flavor2', {'count': 18}).compare(
                 decimal.Decimal(30)), decimal.Decimal(0))
         with self.assertRaises(Exception) as exception_context:
-            self.ipc.get_price({'flavor': 'flavor1', 'hours': -1})
+            self.ipc.price_from_raw_stats('flavor1', {'count': -1})
         self.assertEqual(str(exception_context.exception),
                          'the consumed hours cannot be less than 0')
         with self.assertRaises(Exception) as exception_context:
-            self.ipc.get_price({'abc': 'flavor1', 'hours': 3})
+            self.ipc._validate_params({'abc': 'flavor1', 'hours': 3})
         self.assertEqual(str(exception_context.exception),
                          'the required parameter flavor is missing')
