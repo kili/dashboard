@@ -10,16 +10,31 @@
 {% block modal-header %}{% trans "Add Credit/Debit Card" %}{% endblock %}
 
 {% block modal-body %}
-<img src="/static/billing_app/img/credit-cards.gif" style="margin-right:10px;">
 <div id="stripe_error" class="alert alert-error" data-hide="true" ></div>
 <div class="left">
     <fieldset>
         {% include "horizon/common/_form_fields.html" %}
     </fieldset>
 </div>
-
-<style>[data-hide="true"]{ display:none;}</style>
-
+<div class="right">
+    <p>
+        <img src="/static/billing_app/img/credit-cards.gif" class="pull-right">
+        <div class="clearfix"></div>
+        Your credit card number is the sequence of digits located 
+        near the vertical center on the front of your card.
+    </p>
+    <p>
+        <img src="/static/billing_app/img/card_cvc.png" /><br>
+        On <b>VISA, MasterCard (&amp; others)</b>, you can find the security code
+        (CVC, CCV, CVD, CVN or CVVC) on the back of your credit or debit card. 
+        It is typically a separate group of 3 digits to the right of the 
+        signature strip.<br>
+        On <b>American Express</b> cards, the card security code is a printed group of 
+        four digits on the front towards the right of the card.
+    </p>
+    <b>Note:</b> In order to verify your card, there will be a charge of 1 USD followed by a refund of the same amount within 5 to 10 business days.
+</div>
+<style>[data-hide="true"]{ display:none; }</style>
 {% endblock %}
 
 {% block modal-footer %}
