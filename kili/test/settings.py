@@ -41,12 +41,23 @@ ACCOUNTING_USER_ACCOUNT_FORMAT = {"regex": "USER_[a-f0-9]{32}",
 
 BILLABLE_RESOURCE_TYPES = {
     'instance': {'id': 0,
-                 'price_calculator': 'resource_pricing.calculators.instance'},
+                 'price_calculator': 'resource_pricing.calculators.instance',
+                 'period_length': 10,
+                 'meters': ['instance:MIcro',
+                            'instance:Small',
+                            'instance:Medium',
+                            'instance:High CPU',
+                            'instance:LArge',
+                            'instance:High RAM',
+                            'instance:Extra Large']},
     'volume': {'id': 1,
+               'period_length': 10,
                'price_calculator': 'resource_pricing.calculators.volume'},
     'network': {'id': 2,
+                'period_length': 10,
                 'price_calculator': 'resource_pricing.calculators.network'},
     'testtype1': {'id': 3,
+                  'period_length': 10,
                   'price_calculator': 'testcalculator1'},
 }
 
@@ -57,5 +68,3 @@ MERCHANT_SETTINGS = {
         "PUBLISHABLE_KEY": "pk_test_GV1PYwn9wFTVQ0yHyVEWT6Ib",
     }
 }
-CEILOMETER_NOVA_PERIOD_LENGTH = 10
-CEILOMETER_CINDER_PERIOD_LENGTH = 10

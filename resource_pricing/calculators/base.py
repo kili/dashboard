@@ -1,3 +1,4 @@
+import decimal
 from django.conf import settings
 from django.core import exceptions
 from resource_pricing import models
@@ -5,10 +6,11 @@ from resource_pricing import types
 
 
 class CalculatorBase(object):
+    type_settings = None
+    optional_params = []
+    required_params = []
     types = types.ResourceTypes()
     type_name = None
-    required_params = []
-    optional_params = []
 
     def __init__(self):
         if not self._type_is_configured():
@@ -17,6 +19,8 @@ class CalculatorBase(object):
 
     def _type_is_configured(self):
         if self.type_name in settings.BILLABLE_RESOURCE_TYPES.keys():
+            self.type_settings = settings.BILLABLE_RESOURCE_TYPES[
+                self.type_name]
             return True
         return False
 
@@ -47,14 +51,15 @@ class CalculatorBase(object):
     def _get_params_from_raw_stats(self, *args, **kwargs):
         raise NotImplemented
 
+    def get_hours_from_periods(self, periods):
+        return (decimal.Decimal(self.type_settings['period_length']) *
+                decimal.Decimal(periods) / decimal.Decimal(60))
+
     def price_from_raw_stats(self, meter, raw_data):
         params = self._get_params_from_raw_stats(meter, raw_data)
         self._validate_params(params)
-        price = self._final_calculation(params)
-        #print("{0} for {1} periods of {2}min is going to cost you {3} {4}"
-        #      .format(meter, raw_data['count'],
-        #              settings.CEILOMETER_NOVA_PERIOD_LENGTH, price, "USD"))
-        return price
+        return {'price': self._final_calculation(params),
+                'hours': params['hours']}
 
 
 class VolumeAndInstancePriceCalculatorBase(CalculatorBase):

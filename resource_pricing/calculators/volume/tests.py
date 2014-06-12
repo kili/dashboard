@@ -28,22 +28,19 @@ class SimpleTest(test.TestCase):
 
     def test_final_price_calculation(self):
         self.assertEqual(
-            self.vpc.price_from_raw_stats('type1',
-                                          {'count': 18,
-                                           'gb_size': 100}).
-            compare_total(decimal.Decimal('3.00')),
+            self.vpc.price_from_raw_stats(
+                'type1', {'count': 18, 'gb_size': 100}
+            )['price'].compare_total(decimal.Decimal('3.00')),
             decimal.Decimal(0))
         self.assertEqual(
-            self.vpc.price_from_raw_stats('type1',
-                                          {'count': 21,
-                                           'gb_size': 50}).
-            compare_total(decimal.Decimal('1.750')),
+            self.vpc.price_from_raw_stats(
+                'type1', {'count': 21, 'gb_size': 50}
+            )['price'].compare_total(decimal.Decimal('1.750')),
             decimal.Decimal(0))
         self.assertEqual(
-            self.vpc.price_from_raw_stats('type2',
-                                          {'count': 18,
-                                           'gb_size': 2})
-            .compare(decimal.Decimal('59.70')),
+            self.vpc.price_from_raw_stats(
+                'type2', {'count': 18, 'gb_size': 2}
+            )['price'].compare_total(decimal.Decimal('59.70')),
             decimal.Decimal(0))
         with self.assertRaises(Exception) as exception_context:
             self.vpc.price_from_raw_stats('type1',

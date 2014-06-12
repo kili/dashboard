@@ -1,5 +1,4 @@
 import decimal
-from django.conf import settings
 from resource_pricing.calculators import base
 
 
@@ -19,7 +18,5 @@ class PriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
 
     def _get_params_from_raw_stats(self, meter, raw_data):
         return {
-            'hours': (decimal.Decimal(raw_data['count'] *
-                                      settings.CEILOMETER_NOVA_PERIOD_LENGTH
-                                      ) / 60),
+            'hours': self.get_hours_from_periods(raw_data['count']),
             'flavor': meter}

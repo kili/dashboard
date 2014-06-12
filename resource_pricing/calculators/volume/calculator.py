@@ -1,5 +1,4 @@
 import decimal
-from django.conf import settings
 from resource_pricing.calculators import base
 
 
@@ -26,7 +25,7 @@ class PriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
     def _get_params_from_raw_stats(self, meter, raw_data):
         return {
             'hours': decimal.Decimal(raw_data['count'] *
-                                     settings.CEILOMETER_CINDER_PERIOD_LENGTH
+                                     self.type_settings['period_length']
                                      ) / 60,
             'gb_size': raw_data['gb_size'],
             'type': meter}

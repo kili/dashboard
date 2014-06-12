@@ -15,11 +15,11 @@ class UserTransactions():
             self.account_manager.get_account(asset_source),
             comment)
 
-    def consume_user_money(self, user, amount, resource):
+    def consume_user_money(self, user, amount, msg):
         self.account_manager.get_user_account(user).debit(
             amount,
             self.account_manager.get_revenue_account(),
-            u"Resource usage: {0}".format(resource))
+            msg)
 
     def grant_user_promotion(self, user, amount, message):
         self.account_manager.get_user_account(user).credit(

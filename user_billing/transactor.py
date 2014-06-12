@@ -26,6 +26,9 @@ class UserTransactor(object):
         return pickle.loads(
             models.RawStatistics.objects.get(statistics_index=id).data)
 
+    def _get_transaction_message(self, resource, hours):
+        return u'{0} hours of {1} usage'.format(resource, hours)
+
     def _get_unbilled_statistics(self):
         return models.RawStatisticsIndex.objects.filter(fetched=True,
                                                         has_data=True,
@@ -39,10 +42,12 @@ class UserTransactor(object):
             except Exception:
                 raise Exception('failed to get price calculator for {0}'
                                 .format(stat.meter))
+            price_result = pc.price_from_raw_stats(stat.meter, data)
             self.ut.consume_user_money(
                 stat.user_id,
-                pc.price_from_raw_stats(stat.meter, data),
-                stat.meter)
+                price_result['price'],
+                self._get_transaction_message(
+                    stat.meter,
+                    price_result['hours']))
             stat.billed = True
             stat.save()
-

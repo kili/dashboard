@@ -28,14 +28,17 @@ class SimpleTest(test.TestCase):
 
     def test_final_price_calculation(self):
         self.assertEqual(
-            self.ipc.price_from_raw_stats('flavor1', {'count': 18}).compare(
-                decimal.Decimal(270)), decimal.Decimal(0))
+            self.ipc.price_from_raw_stats(
+                'flavor1', {'count': 18})['price'].compare(
+                    decimal.Decimal(270)), decimal.Decimal(0))
         self.assertEqual(
-            self.ipc.price_from_raw_stats('flavor1', {'count': 9}).compare(
-                decimal.Decimal(135)), decimal.Decimal(0))
+            self.ipc.price_from_raw_stats(
+                'flavor1', {'count': 9})['price'].compare(
+                    decimal.Decimal(135)), decimal.Decimal(0))
         self.assertEqual(
-            self.ipc.price_from_raw_stats('flavor2', {'count': 18}).compare(
-                decimal.Decimal(30)), decimal.Decimal(0))
+            self.ipc.price_from_raw_stats(
+                'flavor2', {'count': 18})['price'].compare(
+                    decimal.Decimal(30)), decimal.Decimal(0))
         with self.assertRaises(Exception) as exception_context:
             self.ipc.price_from_raw_stats('flavor1', {'count': -1})
         self.assertEqual(str(exception_context.exception),
