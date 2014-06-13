@@ -1,4 +1,3 @@
-import datetime
 from resource_pricing.calculators.instance import calculator
 from user_billing.metering.ceilometer import data_fetcher
 
@@ -6,8 +5,9 @@ from user_billing.metering.ceilometer import data_fetcher
 class PricedUsageManager(object):
 
     @classmethod
-    def get_overview(cls, user):
-        return cls._get_priced_stats(cls._get_stats(user))
+    def get_overview(cls, project_id, timerange):
+        return cls._get_priced_stats(cls._get_stats(project_id,
+                                                    timerange))
 
     @classmethod
     def _get_priced_stats(cls, stats):
@@ -23,9 +23,9 @@ class PricedUsageManager(object):
         return retval
 
     @classmethod
-    def _get_stats(cls, user):
-        sq = data_fetcher.StatsQuery(user,
+    def _get_stats(cls, project_id, timerange):
+        sq = data_fetcher.StatsQuery(project_id,
                                      'instance',
-                                     datetime.datetime(2014, 1, 1),
-                                     datetime.datetime(2014, 7, 1))
+                                     timerange[0],
+                                     timerange[1])
         return data_fetcher.CeilometerStats().get_stats(sq)

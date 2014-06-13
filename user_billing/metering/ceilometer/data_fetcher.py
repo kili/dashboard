@@ -18,8 +18,8 @@ class CeilometerDataFetcher(object):
 
     def _get_query(self, *args, **kwargs):
         return {'meter_name': kwargs['meter'],
-                'q': [{'field': 'user_id', 'op': 'eq',
-                       'value': kwargs['user_id']},
+                'q': [{'field': 'project_id', 'op': 'eq',
+                       'value': kwargs['project_id']},
                       {'field': 'timestamp', 'op': 'ge',
                        'value': self._datetime_to_mongo(kwargs['from_dt'])},
                       {'field': 'timestamp', 'op': 'lt',
@@ -47,15 +47,15 @@ class QueryTimeRange(object):
 
 class StatsQuery(object):
 
-    def __init__(self, user, meter, from_dt, until_dt):
+    def __init__(self, project, meter, from_dt, until_dt):
         self.meter = meter
         self.timerange = QueryTimeRange(from_dt, until_dt)
-        self.user = user
+        self.project = project
 
     def get_stats_query(self):
-        return {'q': [{'field': 'user_id',
+        return {'q': [{'field': 'project_id',
                        'op': 'eq',
-                       'value': self.get_user()},
+                       'value': self.get_project()},
                       {'field': 'timestamp',
                        'op': 'ge',
                        'value': self.get_timerange().get_from()},
@@ -70,8 +70,8 @@ class StatsQuery(object):
     def get_timerange(self):
         return self.timerange
 
-    def get_user(self):
-        return self.user
+    def get_project(self):
+        return self.project
 
 
 class StatsContainer(object):
