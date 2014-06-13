@@ -20,9 +20,9 @@ class AddCard(tables.LinkAction):
 class AddFunds(tables.LinkAction):
 
     name = "Add Funds"
-    verbose_name = _("$ Add Funds to Your Kili Account")
+    verbose_name = _("Add Funds to Your Account")
     url = "payments/cards/addfunds"
-    classes = ("btn-success", "btn-lg", "ajax-modal")
+    classes = ("btn-success", "ajax-modal")
     ajax = True
 
     def single(self, table, request, object_id=None):
@@ -76,9 +76,13 @@ class StripeCardCustomerTable(tables.DataTable):
                          verbose_name=_("Card Name"))
     default = tables.Column("default",
                             verbose_name=_("Is Default"))
+    actions = tables.Column("Actions",
+                            verbose_name=_("Actions"),
+                            classes=('text-right',),
+                            attrs={'width': "800", 'align': "right"},)
 
     class Meta:
         name = "Cards"
         verbose_name = _("Your Credit/Debit Cards")
-        table_actions = (AddFunds, AddCard, DeleteCard)
+        table_actions = (AddFunds, AddCard)
         row_actions = (DeleteCard, MakeDefault)

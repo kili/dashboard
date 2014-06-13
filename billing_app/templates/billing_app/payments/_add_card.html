@@ -64,15 +64,12 @@ $("#id_add_card_form").submit(function(event) {
                 console.log(response);
                 var token = response['id'];
                 $("#id_add_card_form input[name=stripeToken]").val(token);
-                var redactedCCNum = "";
-                for (var ii=0; ii < 12; ii++) {
-                    redactedCCNum += "x";
-                }
+                var redactedCCNum = "x";
                 var CCNum = $("#id_add_card_form input[name=credit_card_number]").val();
                 redactedCCNum += CCNum.substring(CCNum.length-4, CCNum.length);
                 $("#id_add_card_form input[name=card_name]").val(redactedCCNum);
-                $("#id_add_card_form input[name=credit_card_number]").val("x");
-                $("#id_add_card_form input[name=credit_card_cvc]").val("x");
+                $("#id_add_card_form input[name=credit_card_number]").val(redactedCCNum);
+                $("#id_add_card_form input[name=credit_card_cvc]").val("xxx");
                 $("#id_add_card_form input[name=stripe_card_token]").val(token);
                 $("#id_add_card_form").get(0).submit();
             

@@ -41,7 +41,6 @@ class AddCardForm(stripe_forms.StripeForm, forms.SelfHandlingForm):
                 request.user.id,
                 stripe_customer.id
             )
-
             if not result[0]:
                 stripe_customer.delete()
                 raise ValidationError(result[1])
