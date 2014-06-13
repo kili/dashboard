@@ -18,4 +18,5 @@ class IndexView(horizon_tables.DataTableView):
 
     def get_data(self):
         return [UsageTableEntry(x['id'], x['resource'], x['hours'], x['price'])
-                for x in managers.PricedUsageManager.get_overview('291ee2b894884bf0ad3754de434ae690')]
+                for x in managers.PricedUsageManager.get_overview(
+                    '291ee2b894884bf0ad3754de434ae690')]

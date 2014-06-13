@@ -1,10 +1,6 @@
 from ceilometerclient import client
-import datetime
 from django.conf import settings
-from django.core import exceptions as django_exceptions
-from django.utils import timezone
 from keystoneclient import exceptions as ks_exceptions
-from user_billing.metering.ceilometer import models
 
 
 class CeilometerDataFetcher(object):
