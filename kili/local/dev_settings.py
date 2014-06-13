@@ -11,7 +11,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'horizon_dashboard',
         'USER': 'horizon',
-        'PASSWORD': 'e-U4T93XbLlBXcLnvW-a',
+        'PASSWORD': '9B_Gt-IvDEWC7HYBpAou',
         'HOST': '10.0.1.222',
         'PORT': '3306',
     },
