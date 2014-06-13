@@ -33,58 +33,91 @@ class CeilometerDataFetcher(object):
         return self.cm_client.statistics.list(**self._get_query(**kwargs))
 
 
-class CeilometerDataFetcherDeprecated(object):
+class QueryTimeRange(object):
 
-    def __init__(self, meter_name, iter_time_span=3600):
+    def __init__(self, from_dt, until_dt):
+        self.from_dt = self._convert_to_mongo(from_dt)
+        self.until_dt = self._convert_to_mongo(until_dt)
+
+    def _convert_to_mongo(self, dt):
+        return dt.strftime("%Y-%m-%dT%H:%M:%S")
+
+    def get_from(self):
+        return self.from_dt
+
+    def get_until(self):
+        return self.until_dt
+
+
+class StatsQuery(object):
+
+    def __init__(self, user, meter, from_dt, until_dt):
+        self.meter = meter
+        self.timerange = QueryTimeRange(from_dt, until_dt)
+        self.user = user
+
+    def get_stats_query(self):
+        return {'q': [{'field': 'user_id',
+                       'op': 'eq',
+                       'value': self.get_user()},
+                      {'field': 'timestamp',
+                       'op': 'ge',
+                       'value': self.get_timerange().get_from()},
+                      {'field': 'timestamp',
+                       'op': 'lt',
+                       'value': self.get_timerange().get_until()}],
+                'groupby': ['resource_id']}
+
+    def get_meter(self):
+        return self.meter
+
+    def get_timerange(self):
+        return self.timerange
+
+    def get_user(self):
+        return self.user
+
+
+class StatsContainer(object):
+
+    def __init__(self, stats, resources):
+        self.stats = stats
+        self.resources = resources
+
+    def _get_resource(self, res_id):
+        for resource in self.resources:
+            if resource.resource_id == res_id:
+                return resource
+
+    def get_merged_by(self, keygen):
+        retval = {}
+        for stat in self.stats:
+            res = self._get_resource(stat.groupby['resource_id'])
+            retval[keygen(res)] = {'stats': stat, 'resource': res}
+        return retval
+
+
+class CeilometerStats(object):
+
+    def __init__(self):
         try:
             self.cm_client = client.get_client(
                 settings.CEILOMETER_API_VERSION,
                 **settings.CEILOMETER_AUTH_DATA)
         except ks_exceptions.AuthorizationFailure:
-            raise Exception("failed to authenticate to ceilometer")
-        self.iter_time_span = iter_time_span
-        self.meter_name = meter_name
-        try:
-            self.position = models.CeilometerFetcherPosition.objects.get(
-                meter_name=self.meter_name)
-        except django_exceptions.ObjectDoesNotExist:
-            self.position = models.CeilometerFetcherPosition.objects.create(
-                meter_name=self.meter_name,
-                position=datetime.datetime.utcnow())
-        self.position_dt = self.position.position
-        self._set_until_dt()
-        self.finished = False
+            raise Exception("failed to connect/authenticate to ceilometer")
 
-    def __iter__(self):
-        return self
+    def _extract_resource_ids(self, stats):
+        return [stat.groupby['resource_id'] for stat in stats]
 
-    def _set_until_dt(self):
-        until_dt = self.position.position + datetime.timedelta(
-            seconds=self.iter_time_span)
-        if until_dt > timezone.now():
-            until_dt = timezone.now()
-            self.finished = True
-        self.until_dt = until_dt
+    def _get_stats(self, cm_query):
+        return self.cm_client.statistics.list(cm_query.get_meter(),
+                                              **cm_query.get_stats_query())
 
-    def _get_query(self):
-        return {'meter_name': self.meter_name,
-                'q': [{'field': 'timestamp',
-                       'op': 'gt', 'value': self._datetime_to_mongo(
-                       self.position_dt)},
-                      {'field': 'timestamp',
-                       'op': 'le', 'value': self._datetime_to_mongo(
-                       self.until_dt)}]}
+    def _get_resources(self, res_ids):
+        return map(self.cm_client.resources.get, res_ids)
 
-    def _datetime_to_mongo(self, datetime):
-        return datetime.strftime("%Y-%m-%dT%H:%M:%S")
-
-    def confirm_data_is_received(self):
-        self.position.position = self.until_dt
-        self.position.save()
-        self.position_dt = self.until_dt
-        self._set_until_dt()
-
-    def next(self):
-        if self.finished:
-            raise StopIteration
-        return self.cm_client.statistics.list(**self._get_query())
+    def get_stats(self, cm_query):
+        stats = self._get_stats(cm_query)
+        return StatsContainer(
+            stats, self._get_resources(self._extract_resource_ids(stats)))
