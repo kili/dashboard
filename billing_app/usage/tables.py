@@ -5,10 +5,10 @@ from horizon import tables
 class FormattingHelpers(object):
 
     @staticmethod
-    def price(table_element):
-        price = decimal.Decimal(table_element.price).quantize(
+    def price(price):
+        price = decimal.Decimal(price).quantize(
             decimal.Decimal('0.00'))
-        return "{0}$".format(price)
+        return "${0}".format(price)
 
     @staticmethod
     def hours(table_element):
@@ -40,12 +40,15 @@ class InstanceUsageTable(tables.DataTable):
     hours = tables.Column(FormattingHelpers.hours,
                           verbose_name='Hours',
                           sortable=True)
-    price = tables.Column(FormattingHelpers.price,
+    price = tables.Column('price',
+                          filters=[FormattingHelpers.price],
                           verbose_name='Price',
-                          sortable=True)
+                          sortable=True,
+                          summation='sum')
 
     class Meta:
         name = 'instances'
         verbose_name = 'Instances'
         table_actions = ()
         row_actions = ()
+        template = "billing_app/usage/_totalled_table.html"
