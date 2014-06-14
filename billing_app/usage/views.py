@@ -1,38 +1,26 @@
+from billing_app.usage import forms
 from billing_app.usage import tables as usage_tables
 from horizon import tables as horizon_tables
-from openstack_dashboard import usage
 from resource_pricing import managers
-
-
-class ResourceUsage(usage.BaseUsage):
-    attrs = ('resource', 'hours', 'price')
-
-    def summarize(self, *args, **kwargs):
-        return managers.PricedUsageManager.get_overview(self.project_id,
-                                                        args)
-
-
-class UsageTableEntry():
-
-    def __init__(self, id, resource, hours, price):
-        self.id = id
-        self.resource = resource
-        self.hours = hours
-        self.price = price
 
 
 class IndexView(horizon_tables.DataTableView):
     template_name = 'billing_app/usage/index.html'
-    table_class = usage_tables.UsageTable
-    usage_class = ResourceUsage
+    table_class = usage_tables.InstanceUsageTable
+    date_range_class = forms.DateRangeForm
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['form'] = self.usage.form
+        context['form'] = self.date_range.form
         return context
 
     def get_data(self):
         project_id = self.kwargs.get('project_id', self.request.user.tenant_id)
-        self.usage = self.usage_class(self.request, project_id)
-        return [UsageTableEntry(x['id'], x['resource'], x['hours'], x['price'])
-                for x in self.usage.summarize(*self.usage.get_date_range())]
+        self.date_range = self.date_range_class(self.request)
+        return [usage_tables.InstanceUsageTableEntry(id=x['id'],
+                                                     name=x['name'],
+                                                     flavor=x['flavor'],
+                                                     hours=x['hours'],
+                                                     price=x['price'])
+                for x in managers.PricedInstanceUsage.get_overview(
+                    project_id, self.date_range.get_date_range())]
