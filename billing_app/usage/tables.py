@@ -1,23 +1,5 @@
-import decimal
+from billing_app import helpers
 from horizon import tables
-
-
-class FormattingHelpers(object):
-
-    @staticmethod
-    def price(price):
-        price = decimal.Decimal(price).quantize(
-            decimal.Decimal('0.00'))
-        return "${0}".format(price)
-
-    @staticmethod
-    def hours(table_element):
-        hours = table_element.hours.quantize(
-            decimal.Decimal('0'))
-        mins = (table_element.hours.remainder_near(
-            decimal.Decimal('1')) * 60).quantize(
-                decimal.Decimal('0'))
-        return "{0}:{1:02}".format(hours, mins)
 
 
 class InstanceUsageTableEntry(object):
@@ -37,11 +19,13 @@ class InstanceUsageTable(tables.DataTable):
     flavor = tables.Column('flavor',
                            verbose_name='Flavor',
                            sortable=True)
-    hours = tables.Column(FormattingHelpers.hours,
+    hours = tables.Column('hours',
+                          filters=[helpers.FormattingHelpers.hours],
                           verbose_name='Hours',
-                          sortable=True)
+                          sortable=True,
+                          summation='sum')
     price = tables.Column('price',
-                          filters=[FormattingHelpers.price],
+                          filters=[helpers.FormattingHelpers.price],
                           verbose_name='Price',
                           sortable=True,
                           summation='sum')
