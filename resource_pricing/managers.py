@@ -13,7 +13,7 @@ class PricedUsageBase(object):
     @classmethod
     def _get_stats(cls, project_id, timerange):
         sq = data_fetcher.StatsQuery(project_id,
-                                     'instance',
+                                     cls.meter_name,
                                      timerange[0],
                                      timerange[1])
         return data_fetcher.CeilometerStats().get_stats(sq)
