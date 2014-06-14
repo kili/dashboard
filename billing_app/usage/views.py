@@ -4,9 +4,9 @@ from horizon import tables as horizon_tables
 from resource_pricing import managers
 
 
-class IndexView(horizon_tables.DataTableView):
+class IndexView(horizon_tables.MultiTableView):
     template_name = 'billing_app/usage/index.html'
-    table_class = usage_tables.InstanceUsageTable
+    table_classes = (usage_tables.InstanceUsageTable,)
     date_range_class = forms.DateRangeForm
 
     def get_context_data(self, **kwargs):
@@ -14,7 +14,7 @@ class IndexView(horizon_tables.DataTableView):
         context['form'] = self.date_range.form
         return context
 
-    def get_data(self):
+    def get_instances_data(self):
         project_id = self.kwargs.get('project_id', self.request.user.tenant_id)
         self.date_range = self.date_range_class(self.request)
         return [usage_tables.InstanceUsageTableEntry(id=x['id'],
