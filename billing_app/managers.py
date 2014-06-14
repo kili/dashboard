@@ -26,7 +26,7 @@ class StripeCustomerManager(models.Manager):
         if card.is_default:
             return self.ensure_default(card.id, keystone_id)
 
-        return True
+        return (True, "")
 
     def ensure_default(self, id, keystone_id):
         try:
@@ -41,7 +41,7 @@ class StripeCustomerManager(models.Manager):
 
             new_default.is_default = True
             new_default.save()
-            return (True, )
+            return (True, "")
         except Exception:
             return (False, _("Card added but not as default."))
 
@@ -55,6 +55,13 @@ class StripeCustomerManager(models.Manager):
             stripe_cust = stripe.Customer.retrieve(card.stripe_customer_id)
             stripe_cust.delete()
             card.delete()
-            return (True,)
+            return (True, "")
+        except stripe.error.StripeError as e:
+            # Display a very generic error to the user
+            if e.http_status == 404:
+                card.delete()
+                return (True, "")
+            return (False, e.message)
         except Exception:
-            return (False, _("Could not delete card. Try again later"))
+            return (False, "")
+

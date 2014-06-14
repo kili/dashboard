@@ -1,8 +1,12 @@
 from billing_app.models import StripeCustomer
 from django.http import HttpResponse  # noqa
 from django.utils.translation import ugettext_lazy as _
+from horizon import exceptions
 from horizon import tables
+import logging
 
+
+LOG = logging.getLogger(__name__)
 
 class AddCard(tables.LinkAction):
 
@@ -22,15 +26,19 @@ class AddFunds(tables.LinkAction):
     name = "Add Funds"
     verbose_name = _("Add Funds to Your Account")
     url = "payments/cards/addfunds"
-    classes = ("btn-success", "ajax-modal")
+    classes = ('btn-success', 'ajax-modal', 'btn-terminate')
     ajax = True
 
     def single(self, table, request, object_id=None):
         self.allowed(request, None)
         return HttpResponse(self.render())
 
+    def allowed(self, request, datum=None):
+        if not self.table.data and not datum:
+            return False
+        return True 
 
-class DeleteCard(tables.BatchAction):
+class DeleteCard(tables.DeleteAction):
     name = "DeleteCard"
     verbose_name = _("Delete Credit/Debit Card")
     ajax = True
@@ -40,21 +48,21 @@ class DeleteCard(tables.BatchAction):
     data_type_plural = _("Cards")
     classes = ('btn-danger', 'btn-terminate')
 
-    def allowed(self, request, instance=None):
-        return True
-
-    def action(self, request, obj_id):
-        return StripeCustomer.objects.delete_card(
-            int(obj_id),
-            request.user.id
+    def delete(self, request, card_id):
+        result = StripeCustomer.objects.delete_card(
+           int(card_id),
+           request.user.id
         )
+        if not result[0]:
+            LOG.error('Could not delete card: %s, %s' %(card_id,result[1]))
+            raise exceptions.Conflict(result[1])
 
 
 class MakeDefault(tables.BatchAction):
     name = "Make Default"
     verbose_name = _("Make this my default card")
     ajax = True
-    action_present = _("Make Default")
+    action_present = _("Set as Default")
     action_past = _("New Default")
     data_type_singular = _("Card")
     data_type_plural = _("Cards")
@@ -73,13 +81,9 @@ class MakeDefault(tables.BatchAction):
 class StripeCardCustomerTable(tables.DataTable):
 
     name = tables.Column("name",
-                         verbose_name=_("Card Name"))
+                         verbose_name=_("Card"))
     default = tables.Column("default",
-                            verbose_name=_("Is Default"))
-    actions = tables.Column("Actions",
-                            verbose_name=_("Actions"),
-                            classes=('text-right',),
-                            attrs={'width': "800", 'align': "right"},)
+                            verbose_name=_("Default?"))
 
     class Meta:
         name = "Cards"
