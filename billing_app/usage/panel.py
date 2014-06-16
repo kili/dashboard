@@ -1,8 +1,6 @@
-from django.utils.translation import ugettext_lazy as _
-
-import horizon
-
 from billing_app import dashboard
+from django.utils.translation import ugettext_lazy as _
+import horizon
 
 
 class Usage(horizon.Panel):
