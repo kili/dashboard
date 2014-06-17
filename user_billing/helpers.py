@@ -1,4 +1,5 @@
 import decimal
+from django.contrib.humanize.templatetags import humanize
 
 
 class FormattingHelpers(object):
@@ -7,7 +8,7 @@ class FormattingHelpers(object):
     def price(price):
         price = decimal.Decimal(price).quantize(
             decimal.Decimal('0.00'))
-        return "${0}".format(price)
+        return "${0}".format(humanize.intcomma(price))
 
     @staticmethod
     def hours(time):

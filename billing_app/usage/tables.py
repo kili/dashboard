@@ -1,4 +1,4 @@
-from billing_app import helpers
+from user_billing import helpers
 from horizon import tables
 
 

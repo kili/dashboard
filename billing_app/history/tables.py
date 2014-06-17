@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
+from user_billing import helpers
 from horizon import tables
 
 
@@ -10,6 +11,7 @@ class PaymentsHistoryTable(tables.DataTable):
                          )
     description = tables.Column("Description")
     amount = tables.Column("Amount",
+                           filters=[helpers.FormattingHelpers.price],
                            verbose_name=_("Amount (USD)"),
                            classes=('text-right',),
                            attrs={'width': "200", 'align': "right"},

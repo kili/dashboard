@@ -85,12 +85,18 @@ class StatsContainer(object):
             if resource.resource_id == res_id:
                 return resource
 
+    def count_datasets(self):
+        return len(self.stats)
+
     def get_merged_by(self, keygen):
         retval = {}
         for stat in self.stats:
             res = self._get_resource(stat.groupby['resource_id'])
             retval[keygen(res)] = {'stats': stat, 'resource': res}
         return retval
+
+    def get_stats(self):
+        return self.stats
 
 
 class CeilometerStats(object):

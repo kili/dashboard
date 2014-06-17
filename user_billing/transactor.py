@@ -3,6 +3,7 @@ from django.conf import settings
 import importlib
 import pickle
 from user_billing import models
+from user_billing import helpers
 
 
 class UserTransactor(object):
@@ -27,7 +28,9 @@ class UserTransactor(object):
             models.RawStatistics.objects.get(statistics_index=id).data)
 
     def _get_transaction_message(self, resource, hours):
-        return u'{0} hours of {1} usage'.format(resource, hours)
+        return u'{0} usage: {1} hours'.format(resource,
+                                              helpers.FormattingHelpers.hours(
+                                                  hours))
 
     def _get_unbilled_statistics(self):
         return models.RawStatisticsIndex.objects.filter(fetched=True,
@@ -44,7 +47,7 @@ class UserTransactor(object):
                                 .format(stat.meter))
             price_result = pc.price_from_raw_stats(stat.meter, data)
             self.ut.consume_user_money(
-                stat.user_id,
+                stat.project_id,
                 price_result['price'],
                 self._get_transaction_message(
                     stat.meter,
