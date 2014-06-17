@@ -4,7 +4,7 @@ from resource_pricing.calculators import base
 
 class PriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
     type_name = "volume"
-    required_params = ['hours', 'gb_size', 'type']
+    required_params = ['hours', 'gb_size', 'type', 'res_string']
     optional_params = []
     resource_type_relation = "resource__volumetype__os_type_id"
     type_key = "type"
@@ -22,10 +22,12 @@ class PriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
                 decimal.Decimal(params['gb_size']) *
                 decimal.Decimal(params['hours']))
 
-    def _get_params_from_raw_stats(self, meter, raw_data):
+    def _get_params_from_raw_stats(self, raw_data):
         return {
-            'hours': decimal.Decimal(raw_data['count'] *
+            'hours': decimal.Decimal(raw_data[0]['count'] *
                                      self.type_settings['period_length']
                                      ) / 60,
-            'gb_size': raw_data['gb_size'],
-            'type': meter}
+            'gb_size': raw_data[1]['metadata']['gb_size'],
+            'type': 'volume:' + raw_data[1]['metadata']['type'],
+            'res_string': 'volume:' + raw_data[1]['metadata']['type']
+            + ':' + raw_data[1]['metadata']['display_name']}

@@ -5,7 +5,7 @@ from resource_pricing.calculators import base
 class PriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
     type_name = "instance"
     resource_type_relation = "resource__flavor__os_flavor_id"
-    required_params = ['hours', 'flavor']
+    required_params = ['hours', 'flavor', 'res_string']
     optional_params = []
     type_key = "flavor"
 
@@ -16,7 +16,9 @@ class PriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
         return (self._get_unit_price(params['flavor']) *
                 decimal.Decimal(params['hours']))
 
-    def _get_params_from_raw_stats(self, meter, raw_data):
+    def _get_params_from_raw_stats(self, raw_data):
         return {
-            'hours': self.get_hours_from_periods(raw_data['count']),
-            'flavor': meter}
+            'hours': self.get_hours_from_periods(raw_data[0]['count']),
+            'flavor': 'instance:' + raw_data[1]['metadata']['flavor.name'],
+            'res_string': 'instance:' + raw_data[1]['metadata']['flavor.name']
+            + ':' + raw_data[1]['metadata']['display_name']}

@@ -559,6 +559,6 @@ CEILOMETER_AUTH_DATA = {
 
 BILLABLE_RESOURCE_TYPES = {
     'instance': {'id': 0,
-                 'calculator': 'resource_pricing.managers.PricedInstanceUsage',
+                 'price_calculator': 'resource_pricing.calculators.instance',
                  'period_length': 10}
 }

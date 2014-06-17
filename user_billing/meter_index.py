@@ -91,7 +91,8 @@ class UnfectedDataFetcher(object):
 
     def _store(self, index, datasets):
         for dataset in datasets.values():
-            self._store_with_data(index, dataset['stats'].to_dict())
+            self._store_with_data(index, (dataset['stats'].to_dict(),
+                                          dataset['resource'].to_dict()))
         index.fetched = True
         index.save()
 
