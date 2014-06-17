@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
-from user_billing import helpers
 from horizon import tables
+from user_billing import helpers
 
 
 class PaymentsHistoryTable(tables.DataTable):

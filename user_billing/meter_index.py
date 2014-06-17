@@ -1,8 +1,8 @@
 import datetime
 from django.conf import settings
 from django.db import utils
-import pickle
 from keystoneclient.v2_0 import client
+import pickle
 from user_billing.metering.ceilometer import data_fetcher
 from user_billing import models
 
@@ -39,7 +39,8 @@ class StatisticsIndexBuilder(object):
 
     def _list_ks_project_ids(self):
         if not self.project_ids:
-            self.project_ids = [x.id for x in self._get_ks_client().tenants.list()]
+            self.project_ids = [
+                x.id for x in self._get_ks_client().tenants.list()]
         return self.project_ids
 
     def _merge_indexing_data(self):
@@ -48,7 +49,7 @@ class StatisticsIndexBuilder(object):
               'project_ids': self._list_ks_project_ids,
               'month': self._get_last_month}
 
-        # create a list of every possible combination of projectid, meter and date
+        # create every possible combination of projectid, meter and date
         return [dict({'project_id': project_id, 'meter': meter}.items() +
                      dc['month']().items())
                 for project_id in dc['project_ids']()

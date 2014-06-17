@@ -2,8 +2,8 @@ from accounting import transactions
 from django.conf import settings
 import importlib
 import pickle
-from user_billing import models
 from user_billing import helpers
+from user_billing import models
 
 
 class UserTransactor(object):
