@@ -25,7 +25,7 @@ class RawStatistics(models.Model):
 
     insert_time = models.DateTimeField(auto_now_add=True)
     data = models.TextField()
-    statistics_index = models.OneToOneField(RawStatisticsIndex)
+    statistics_index = models.ForeignKey(RawStatisticsIndex)
 
     objects = managers.RawDataManager()
 
