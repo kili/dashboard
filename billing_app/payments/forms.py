@@ -112,7 +112,9 @@ class CardPayForm(forms.SelfHandlingForm):
 
             # credit user account
             ut = transactions.UserTransactions()
-            ut.receive_user_payment(request.user.tenant_id, "STRIPE", data['amount'],
+            ut.receive_user_payment(request.user.tenant_id,
+                                    "STRIPE",
+                                    data['amount'],
                                     "Received payment via Credit/Debit card")
 
             # profit!!!!
