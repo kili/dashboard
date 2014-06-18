@@ -560,18 +560,5 @@ CEILOMETER_AUTH_DATA = {
 BILLABLE_RESOURCE_TYPES = {
     'instance': {'id': 0,
                  'price_calculator': 'resource_pricing.calculators.instance',
-                 'period_length': 10,
-                 'meters': ['instance:MIcro',
-                            'instance:Small',
-                            'instance:Medium',
-                            'instance:High CPU',
-                            'instance:LArge',
-                            'instance:High RAM',
-                            'instance:Extra Large']},
-#    'volume': {'id': 1,
-#               'period_length': 10,
-#               'price_calculator': 'resource_pricing.calculators.volume'},
-#    'network': {'id': 2,
-#                'period_length': 10,
-#                'price_calculator': 'resource_pricing.calculators.network'},
+                 'period_length': 10}
 }

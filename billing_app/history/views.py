@@ -23,4 +23,4 @@ class IndexView(horizon_tables.DataTableView):
             x['description'],
             x['amount']) for x in transactions.TransactionHistory().
             get_user_account_transaction_history(
-                self.request.user.id, user_values=True)]
+                self.request.user.tenant_id, user_values=True)]

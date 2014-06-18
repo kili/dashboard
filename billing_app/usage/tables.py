@@ -1,5 +1,5 @@
-from billing_app import helpers
 from horizon import tables
+from user_billing import helpers
 
 
 class InstanceUsageTableEntry(object):

@@ -55,11 +55,12 @@ class CalculatorBase(object):
         return (decimal.Decimal(self.type_settings['period_length']) *
                 decimal.Decimal(periods) / decimal.Decimal(60))
 
-    def price_from_raw_stats(self, meter, raw_data):
-        params = self._get_params_from_raw_stats(meter, raw_data)
+    def price_from_raw_stats(self, raw_data):
+        params = self._get_params_from_raw_stats(raw_data)
         self._validate_params(params)
         return {'price': self._final_calculation(params),
-                'hours': params['hours']}
+                'hours': params['hours'],
+                'res_string': params['res_string']}
 
 
 class VolumeAndInstancePriceCalculatorBase(CalculatorBase):
