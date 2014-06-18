@@ -10,11 +10,24 @@
 {% block main %}
 <script type="text/javascript" src="https://js.stripe.com/v1/"></script>
 <script>Stripe.setPublishableKey('{{ stripe_obj.publishable_key }}');</script>
-<div style="text-align:right;"> 
-    <img src="/static/billing_app/img/credit-cards.gif" style="margin-right:10px"/>
-    <img src="/static/billing_app/img/powered_by_stripe.png" />
+{% comment %}
+<div id="mpesa-numbers">
+    <div class="page-header"> 
+        <h1>Mobile Money</h1>
+        <img src="/static/billing_app/img/lipa_na_mpesa.png" />
+    </div>
+{{ mobile_money_table.render }}
 </div>
-{{ table.render }}
+<hr/>
+{% endcomment %}
+<div id="credit-cards">
+    <div class="page-header">
+        <h1>Credit/Debit Cards</h1>
+        <img src="/static/billing_app/img/credit-cards.gif" style="margin-right:10px"/>
+        <img src="/static/billing_app/img/powered_by_stripe.png" />
+    </div>
+{{ cards_table.render }}
+</div>
 <hr/>
 {% endblock %}
 

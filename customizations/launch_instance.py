@@ -3,7 +3,7 @@ from customizations.dashboards.project.instances.workflows \
 from openstack_dashboard.dashboards.project.instances import views
 from openstack_dashboard.dashboards.project.instances.workflows \
     import create_instance
-
+import paywalls  # noqa
 
 class LaunchInstanceViewCustomizer:
 
@@ -13,6 +13,12 @@ class LaunchInstanceViewCustomizer:
         """
         views.LaunchInstanceView.workflow_class.default_steps = \
             self.get_default_steps()
+        
+        views.LaunchInstanceView.workflow_class.do_handle = \
+            views.LaunchInstanceView.workflow_class.handle
+
+        views.LaunchInstanceView.workflow_class.handle = \
+            paywalls.filter_action
 
     def get_default_steps(self):
         return (create_instance.SelectProjectUser,

@@ -1,6 +1,7 @@
 from accounting import transactions
 import billing
 from billing.forms import stripe_forms  # noqa
+from billing_app.models import MobileMoneyNumber
 from billing_app.models import StripeCustomer
 import decimal
 from django.forms import ValidationError  # noqa
@@ -148,4 +149,73 @@ class CardPayForm(forms.SelfHandlingForm):
         except Exception:
             exceptions.handle(request, ignore=True)
             self.api_error("Unknown error occured")
+            return False
+
+class AddMobileNumberForm(forms.SelfHandlingForm):
+
+    def __init__(self, *args, **kwargs):
+        super(AddMobileNumberForm, self).__init__(*args, **kwargs)
+
+    mobile_number = forms.CharField(label=_("Enter an M-Pesa enabled number"),
+                                required=True, 
+                                widget=forms.NumberInput(),
+                                min_length=10, 
+                                max_length=10)
+
+    def handle(self, request, data):
+        try:
+            result = MobileMoneyNumber.objects.add_number(
+                data['mobile_number'],
+                request.user.id
+            )
+            if not result[0]:
+                raise ValidationError(result[1])
+
+            messages.success(
+                request,
+                _('M-Pesa Number "%s" has been tied to your account.')
+                % data['mobile_number']
+            )
+            return True
+        except ValidationError as e:
+            self.api_error(e.messages[0])
+            return False
+        except Exception:
+            exceptions.handle(request, ignore=True)
+            self.api_error("An error occured while adding your number. "
+                           "Please try again later.")
+            return False
+
+class MobileTransactionCodeForm(forms.SelfHandlingForm):
+
+    def __init__(self, *args, **kwargs):
+        super(MobileTransactionCodeForm, self).__init__(*args, **kwargs)
+
+    transaction_code = forms.IntegerField(
+                           label=_("Enter mobile money transaction code"),
+                           required=True
+                       ) 
+
+    def handle(self, request, data):
+        try:
+            result = MobileMoneyNumber.objects.add_number(
+                data['mobile_number'],
+                request.user.id
+            )
+            if not result[0]:
+                raise ValidationError(result[1])
+
+            messages.success(
+                request,
+                _('M-Pesa Number "%s" has been tied to your account.')
+                % data['mobile_number']
+            )
+            return True
+        except ValidationError as e:
+            self.api_error(e.messages[0])
+            return False
+        except Exception:
+            exceptions.handle(request, ignore=True)
+            self.api_error("An error occured while adding your number. "
+                           "Please try again later.")
             return False

@@ -1,7 +1,12 @@
 from kili.settings import *  # noqa
 
 KEYSTONE_TOKEN = "5zoNv.aryGlnlXu7,oZM"
-KEYSTONE_URL = "http://10.0.1.222:35357/v2.0"
+
+#OPENSTACK_HOST = "10.0.1.222"
+OPENSTACK_HOST = "10.186.43.12"
+OPENSTACK_KEYSTONE_URL = "http://{}:5000/v2.0".format(OPENSTACK_HOST)
+
+KEYSTONE_URL = "http://{}:35357/v2.0".format(OPENSTACK_HOST)
 
 BROKER_URL = \
     'amqp://horizon_dashboard:iamapassword@127.0.0.1//horizon_dashboard'
@@ -12,7 +17,7 @@ DATABASES = {
         'NAME': 'horizon_dashboard',
         'USER': 'horizon',
         'PASSWORD': '9B_Gt-IvDEWC7HYBpAou',
-        'HOST': '10.0.1.222',
+        'HOST': OPENSTACK_HOST,
         'PORT': '3306',
     },
 }
@@ -27,8 +32,6 @@ MIDDLEWARE_CLASSES += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
-OPENSTACK_HOST = "10.0.1.222"
-OPENSTACK_KEYSTONE_URL = "http://{}:5000/v2.0".format(OPENSTACK_HOST)
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -56,4 +59,4 @@ CEILOMETER_AUTH_DATA = {
     'os_username': 'ceilometer',
     'os_password': 'imwUsoT8uNy2UgRwTD7k',
     'os_tenant_name': 'service',
-    'os_auth_url': 'http://10.0.1.223/keystone/v2.0'}
+    'os_auth_url': 'http://{}/keystone/v2.0'.format(OPENSTACK_HOST)}
