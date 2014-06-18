@@ -3,13 +3,13 @@ from billing_app.models import MobileMoneyNumber  # noqa
 from billing_app.models import StripeCustomer  # noqa
 from billing_app.payments import forms as payment_forms  # noqa
 from billing_app.payments import tables as payment_tables  # noqa
+# from django.views import generic
 # from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import forms
 from horizon import tables as horizon_tables  # noqa
 #from horizon.views import APIView
-from django.views import generic
 
 stripe_obj = billing.get_integration("stripe")
 
@@ -47,7 +47,7 @@ class IndexView(horizon_tables.MultiTableView):
                 x.id,
                 x.number)
                 for x in MobileMoneyNumber.objects.filter(
-                keystone_id__exact=self.request.user.id)]
+                    keystone_id__exact=self.request.user.id)]
         except Exception:
             mobile_numbers = []
             exceptions.handle(self.request,

@@ -153,15 +153,16 @@ class CardPayForm(forms.SelfHandlingForm):
             self.api_error("Unknown error occured")
             return False
 
+
 class AddMobileNumberForm(forms.SelfHandlingForm):
 
     def __init__(self, *args, **kwargs):
         super(AddMobileNumberForm, self).__init__(*args, **kwargs)
 
     mobile_number = forms.CharField(label=_("Enter an M-Pesa enabled number"),
-                                required=True, 
+                                required=True,
                                 widget=forms.NumberInput(),
-                                min_length=10, 
+                                min_length=10,
                                 max_length=10)
 
     def handle(self, request, data):
@@ -188,15 +189,16 @@ class AddMobileNumberForm(forms.SelfHandlingForm):
                            "Please try again later.")
             return False
 
+
 class MobileTransactionCodeForm(forms.SelfHandlingForm):
 
     def __init__(self, *args, **kwargs):
         super(MobileTransactionCodeForm, self).__init__(*args, **kwargs)
 
     transaction_code = forms.IntegerField(
-                           label=_("Enter mobile money transaction code"),
-                           required=True
-                       ) 
+        label=_("Enter mobile money transaction code"),
+        required=True
+    )
 
     def handle(self, request, data):
         try:

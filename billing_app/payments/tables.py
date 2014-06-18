@@ -28,7 +28,7 @@ class AddFunds(tables.LinkAction):
     name = "Add Funds"
     verbose_name = _("Add Funds to Your Account")
     url = "payments/cards/addfunds"
-    classes = ('btn-success', 'btn-large', 'ajax-modal' )
+    classes = ('btn-success', 'btn-large', 'ajax-modal')
     ajax = True
 
     def single(self, table, request, object_id=None):
@@ -94,6 +94,7 @@ class StripeCardCustomerTable(tables.DataTable):
         table_actions = (AddFunds, AddCard)
         row_actions = (DeleteCard, MakeDefault)
 
+
 # mobile money
 class AddMobileMoneyNumber(tables.LinkAction):
 
@@ -113,7 +114,7 @@ class EnterCode(tables.LinkAction):
     name = "Enter Transaction Code"
     verbose_name = _("Add funds via Transaction Code")
     url = "payments/mobilemoney/transactioncode"
-    classes = ('btn-success', 'ajax-modal' )
+    classes = ('btn-success', 'ajax-modal')
     ajax = True
 
     def single(self, table, request, object_id=None):
@@ -140,7 +141,9 @@ class DeleteMobileMoneyNumber(tables.DeleteAction):
             request.user.id
         )
         if not result[0]:
-            LOG.error('Could not delete mobile number: %s' % (number_id, result[1]))
+            LOG.error(
+                'Could not delete mobile number: %s' % (number_id, result[1])
+            )
             raise exceptions.Conflict(result[1])
 
 

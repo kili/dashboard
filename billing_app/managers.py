@@ -66,8 +66,9 @@ class StripeCustomerManager(models.Manager):
             return (False, _("Could not delete card. "
                              "Please try again later"))
 
+
 class MobileMoneyNumberManager(models.Manager):
-    
+
     def add_number(self, number, keystone_id):
         mobilenumber = self.model(number=number, keystone_id=keystone_id)
 
@@ -82,7 +83,6 @@ class MobileMoneyNumberManager(models.Manager):
         return (True,)
 
     def delete_number(self, id, keystone_id):
-        stripe = billing.get_gateway("stripe").stripe
         try:
             mobilenumber = self.get(
                 id__exact=id,

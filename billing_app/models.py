@@ -24,6 +24,7 @@ class StripeCustomer(models.Model):
     class Meta:
         unique_together = (("name", "keystone_id"))
 
+
 class MobileMoneyNumber(models.Model):
 
     number = models.CharField(max_length=64,
