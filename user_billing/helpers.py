@@ -13,8 +13,6 @@ class FormattingHelpers(object):
     @staticmethod
     def hours(time):
         hours = time.quantize(
-            decimal.Decimal('0'),
-            rounding=decimal.ROUND_DOWN)
-        mins = ((time - hours) * 60).quantize(
-            decimal.Decimal('0'))
-        return u'{0}:{1:02}'.format(hours, mins)
+            decimal.Decimal('0.00'),
+            rounding=decimal.ROUND_UP)
+        return u'{0}'.format(hours)
