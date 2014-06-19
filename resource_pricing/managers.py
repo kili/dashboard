@@ -30,8 +30,8 @@ class PricedInstanceUsage(PricedUsageBase):
                 lambda x: x.metadata['display_name']).items():
             flavor = stats['resource'].metadata['flavor.name']
             ic = instance_calculator.PriceCalculator()
-            usage = ic.price_from_raw_stats('instance:' +
-                                            flavor, stats['stats'].to_dict())
+            usage = ic.price_from_raw_stats((stats['stats'].to_dict(),
+                                             stats['resource'].to_dict()))
             usage['name'] = name
             usage['flavor'] = flavor
             usage['id'] = stats['resource'].resource_id
