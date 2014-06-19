@@ -7,15 +7,6 @@
 {% endblock page_header %}
 
 {% block main %}
-
-<form action="?" method="get" id="date_form" class="form-horizontal">
-<h3>{% trans "Select a period of time to query its usage" %}: </h3>
-<div class="datepicker">
-{% blocktrans with start=form.start end=form.end %}<span>From: {{ start }} </span><span>To: {{ end }} </span>{% endblocktrans %}
-<button class="btn btn-primary" type="submit">{% trans "Submit" %}</button>
-<small>{% trans "The date should be in YYYY-mm-dd format." %}</small>
-</div>
-</form>
-{{ instances_table.render }}
+{{ table.render }}
 {% endblock %}
 

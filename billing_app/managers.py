@@ -26,7 +26,7 @@ class StripeCustomerManager(models.Manager):
         if card.is_default:
             return self.ensure_default(card.id, keystone_id)
 
-        return True
+        return (True,)
 
     def ensure_default(self, id, keystone_id):
         try:
@@ -41,7 +41,7 @@ class StripeCustomerManager(models.Manager):
 
             new_default.is_default = True
             new_default.save()
-            return (True, )
+            return (True,)
         except Exception:
             return (False, _("Card added but not as default."))
 
@@ -56,5 +56,44 @@ class StripeCustomerManager(models.Manager):
             stripe_cust.delete()
             card.delete()
             return (True,)
+        except stripe.error.StripeError as e:
+            # Display a very generic error to the user
+            if e.http_status == 404:
+                card.delete()
+                return (True,)
+            return (False, e.message)
         except Exception:
-            return (False, _("Could not delete card. Try again later"))
+            return (False, _("Could not delete card. "
+                             "Please try again later"))
+
+
+class MobileMoneyNumberManager(models.Manager):
+
+    def add_number(self, number, keystone_id):
+        mobilenumber = self.model(number=number, keystone_id=keystone_id)
+
+        try:
+            mobilenumber.save()
+        except IntegrityError:
+            return (False, _("That number %s isn't available"
+                             "for use") % mobilenumber.number)
+        except Exception:
+            return (False, _("Could not add number. Try again later."))
+
+        return (True,)
+
+    def delete_number(self, id, keystone_id):
+        try:
+            mobilenumber = self.get(
+                id__exact=id,
+                keystone_id__exact=keystone_id
+            )
+            mobilenumber.delete()
+            return (True,)
+        except IntegrityError:
+            return (False, _("That number %s isn't available"
+                             "for use") % mobilenumber.number)
+        except Exception:
+            return (False, _("Could not delete Number. "
+                             "Please try again later"))
+        return (True,)

@@ -1,0 +1,28 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block form_id %}id_add_number_form{% endblock %}
+{% block form_action %}payments/mobilemoney/addnumber{% endblock %}
+
+{% block modal_id %}id_add_number_modal{% endblock %}
+{% block modal-header %}{% trans "Add Mobile Number" %}{% endblock %}
+
+{% block modal-body %}
+<div class="left">
+    <fieldset>
+        {% include "horizon/common/_form_fields.html" %}
+    </fieldset>
+</div>
+<div class="right">
+    Enter an M-Pesa enabled number that you would like 
+    to use to top up your account.<br>
+    Any mobile payment sent from this number will be automatically 
+    credited to your Kili account without any further action on your part.
+</div>
+{% endblock %}
+
+{% block modal-footer %}
+<input id="id_submit" class="btn btn-primary pull-right" type="submit" value="{% trans "Add Number" %}" />
+<a href="/" class="btn secondary cancel close">{% trans "Cancel" %}</a>
+{% endblock %}
