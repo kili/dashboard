@@ -8,7 +8,7 @@ class FormattingHelpers(object):
     def price(price):
         price = decimal.Decimal(price).quantize(
             decimal.Decimal('0.00'))
-        return "${0}".format(humanize.intcomma(price))
+        return u'${0}'.format(humanize.intcomma(price))
 
     @staticmethod
     def hours(time):
@@ -17,4 +17,4 @@ class FormattingHelpers(object):
             rounding=decimal.ROUND_DOWN)
         mins = ((time - hours) * 60).quantize(
             decimal.Decimal('0'))
-        return "{0}:{1:02}".format(hours, mins)
+        return u'{0}:{1:02}'.format(hours, mins)
