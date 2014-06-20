@@ -14,10 +14,11 @@ class IndexView(horizon_tables.MultiTableView):
 
     def get_instance_prices_data(self):
         return [tables.InstancePricesTableEntry(
-            id=x['resource_id'],
-            flavor=x['description'],
-            price=x['price'])
-            for x in calculator.PriceCalculator().get_all_prices()]
+            id=x.resource.id,
+            flavor=x.resource.flavor_set.first().os_flavor_id,
+            price=x.price)
+            for x in pricing_models.Price.objects.exclude(
+                resource__flavor__os_flavor_id=None)]
 
 
 class UpdateView(forms.ModalFormView):

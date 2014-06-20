@@ -46,15 +46,6 @@ class CalculatorBase(object):
         return (decimal.Decimal(self.type_settings['period_length']) *
                 decimal.Decimal(periods) / decimal.Decimal(60))
 
-    def get_typed_object_by_id(self, id):
-        return self._get_typed_object_by_id(id)
-
-    def get_typed_object_by_name(self, name):
-        return self._get_typed_object_by_name(name)
-
-    def get_all_prices(self):
-        return self._get_all_prices()
-
     def price_from_raw_stats(self, raw_data):
         params = self._get_params_from_raw_stats(raw_data)
         self._validate_params(params)
@@ -71,9 +62,6 @@ class VolumeAndInstancePriceCalculatorBase(CalculatorBase):
     def _get_unit_by_name(self, type_id, currency="USD"):
         return self._get_unit(type_id, self.resource_type_relation, currency)
 
-    def _get_unit_by_id(self, id, currency="USD"):
-        return self._get_unit(id, self.resource_id_relation, currency)
-
     def _get_unit(self, id, selector, currency="USD"):
         try:
             unit = models.Price.objects.get(
@@ -84,28 +72,8 @@ class VolumeAndInstancePriceCalculatorBase(CalculatorBase):
                             "{1}".format(id, currency))
         return unit
 
-    def _get_typed_object_by_id(self, id, currency='USD'):
-        return self._get_typed_object(id,
-                                      self.resource_id_relation,
-                                      currency)
-
-    def _get_typed_object_by_name(self, name, currency='USD'):
-        return self._get_typed_object(name,
-                                      self.resource_type_relation,
-                                      currency)
-
-    def _get_typed_object(self, key, selector, currency='USD'):
-        return self._get_model().objects.get(**{selector: key})
-
     def _get_unit_price(self, type_id, currency="USD"):
         return self._get_unit_by_name(type_id, currency).price
-
-    def _get_all_prices(self, currency="USD"):
-        return [{'resource_id': x.resource.id,
-                 'description': x.resource.description,
-                 'price': x.price} for x in
-                 models.Price.objects.exclude(
-                     resource__flavor__os_flavor_id=None)]
 
     def _specific_param_checks(self, params):
         if params['hours'] < 0:
