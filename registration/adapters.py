@@ -13,6 +13,7 @@ class CompanyAdapter(adapter.DefaultAccountAdapter):
             'company': data['company'],
             'user_name': data['email'],
             'password': data['password1'],
+            'email': data['email'],
         }, link=AsyncTasks.update_keystone_id.s(data['email']))
 
         return super(CompanyAdapter, self).save_user(request, user,
