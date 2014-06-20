@@ -1,10 +1,12 @@
 import decimal
 from resource_pricing.calculators import base
+from resource_pricing.calculators.instance import models
 
 
 class PriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
     type_name = "instance"
     resource_type_relation = "resource__flavor__os_flavor_id"
+    resource_id_relation = "resource__flavor__resource"
     required_params = ['hours', 'flavor', 'res_string']
     optional_params = []
     type_key = "flavor"
@@ -22,3 +24,6 @@ class PriceCalculator(base.VolumeAndInstancePriceCalculatorBase):
             'flavor': 'instance:' + raw_data[1]['metadata']['flavor.name'],
             'res_string': 'instance:' + raw_data[1]['metadata']['flavor.name']
             + ':' + raw_data[1]['metadata']['display_name']}
+
+    def _get_model(self):
+        return models.Flavor

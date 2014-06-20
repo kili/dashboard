@@ -52,15 +52,6 @@ class SimpleTest(test.TestCase):
             str(exception_context.exception),
             "the given parameter param5 is unknown")
 
-    def test_get_resource_price(self):
-        self.assertEqual(self.cb._get_resource_price(
-            self.resource1.id, "USD"), 90)
-        with self.assertRaises(Exception) as exception_context:
-            self.cb._get_resource_price(2)
-        self.assertEqual(
-            str(exception_context.exception),
-            "Could not find price for resource 2 with currency USD")
-
     def test_init(self):
         base.CalculatorBase.type_name = "idontexist"
         with self.assertRaises(Exception) as exception_context:
@@ -72,5 +63,5 @@ class SimpleTest(test.TestCase):
         with self.assertRaises(Exception) as exception_context:
             self.vaipcb._get_unit_price(self.resource1.id, "OTHERCURR")
         self.assertEqual(str(exception_context.exception),
-                         "Could not get price of type 1 in currency "
+                         "Could not get price of id 1 in currency "
                          "OTHERCURR")

@@ -36,15 +36,6 @@ class CalculatorBase(object):
                                 format(x))
         self._specific_param_checks(params)
 
-    def _get_resource_price(self, resource_id, currency="USD"):
-        try:
-            price = models.Price.objects.get(currency__iso=currency,
-                                             resource=resource_id)
-        except exceptions.ObjectDoesNotExist:
-            raise Exception("Could not find price for resource {0} with"
-                            " currency {1}".format(resource_id, currency))
-        return price.price
-
     def _specific_param_checks(self, params):
         pass
 
@@ -54,6 +45,15 @@ class CalculatorBase(object):
     def get_hours_from_periods(self, periods):
         return (decimal.Decimal(self.type_settings['period_length']) *
                 decimal.Decimal(periods) / decimal.Decimal(60))
+
+    def get_typed_object_by_id(self, id):
+        return self._get_typed_object_by_id(id)
+
+    def get_typed_object_by_name(self, name):
+        return self._get_typed_object_by_name(name)
+
+    def get_all_prices(self):
+        return self._get_all_prices()
 
     def price_from_raw_stats(self, raw_data):
         params = self._get_params_from_raw_stats(raw_data)
@@ -68,16 +68,48 @@ class VolumeAndInstancePriceCalculatorBase(CalculatorBase):
     def __init__(self):
         super(VolumeAndInstancePriceCalculatorBase, self).__init__()
 
-    def _get_unit_price(self, type_id, currency="USD"):
+    def _get_unit_by_name(self, type_id, currency="USD"):
+        return self._get_unit(type_id, self.resource_type_relation, currency)
+
+    def _get_unit_by_id(self, id, currency="USD"):
+        return self._get_unit(id, self.resource_id_relation, currency)
+
+    def _get_unit(self, id, selector, currency="USD"):
         try:
-            price = models.Price.objects.get(
+            unit = models.Price.objects.get(
                 **{"currency__iso": currency,
-                   self.resource_type_relation: type_id})
+                   selector: id})
         except exceptions.ObjectDoesNotExist:
-            raise Exception("Could not get price of type {0} in currency "
-                            "{1}".format(type_id, currency))
-        return price.price
+            raise Exception("Could not get price of id {0} in currency "
+                            "{1}".format(id, currency))
+        return unit
+
+    def _get_typed_object_by_id(self, id, currency='USD'):
+        return self._get_typed_object(id,
+                                      self.resource_id_relation,
+                                      currency)
+
+    def _get_typed_object_by_name(self, name, currency='USD'):
+        return self._get_typed_object(name,
+                                      self.resource_type_relation,
+                                      currency)
+
+    def _get_typed_object(self, key, selector, currency='USD'):
+        return self._get_model().objects.get(**{selector: key})
+
+    def _get_unit_price(self, type_id, currency="USD"):
+        return self._get_unit_by_name(type_id, currency).price
+
+    def _get_all_prices(self, currency="USD"):
+        return [{'resource_id': x.resource.id,
+                 'description': x.resource.description,
+                 'price': x.price} for x in
+                 models.Price.objects.exclude(
+                     resource__flavor__os_flavor_id=None)]
 
     def _specific_param_checks(self, params):
         if params['hours'] < 0:
             raise Exception('the consumed hours cannot be less than 0')
+
+    def _get_resource_price_info(self, resource_id):
+        pass

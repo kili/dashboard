@@ -157,6 +157,7 @@ KEYSTONE_DEFAULT_GROUP = "admin"
 ALLOWED_HOSTS = ['*', ]
 
 INSTALLED_APPS = [
+    'pricing_panel',
     'accounting',
     'kili',
     'openstack_dashboard',
