@@ -8,8 +8,7 @@ class SimpleTest(test.TestCase):
     def setUp(self):
         self.curr_usd = models.Currency.objects.create(iso="USD")
         self.other_curr = models.Currency.objects.create(iso="OTHERCURR")
-        self.resource1 = models.Resource.objects.create(
-            resource_type_id=0, description="resource1")
+        self.resource1 = models.Resource.objects.create(resource_type_id=0)
         self.price = models.Price.objects.create(currency=self.curr_usd,
                                                  resource=self.resource1,
                                                  price=90)
@@ -58,10 +57,3 @@ class SimpleTest(test.TestCase):
             base.CalculatorBase()
         self.assertEqual(str(exception_context.exception),
                          "the type idontexist is not configured")
-
-    def test_could_not_get_price_exception(self):
-        with self.assertRaises(Exception) as exception_context:
-            self.vaipcb._get_unit_price(self.resource1.id, "OTHERCURR")
-        self.assertEqual(str(exception_context.exception),
-                         "Could not get price of id 1 in currency "
-                         "OTHERCURR")

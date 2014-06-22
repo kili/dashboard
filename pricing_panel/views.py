@@ -3,8 +3,7 @@ from horizon import forms
 from horizon import tables as horizon_tables
 from pricing_panel import forms as pricing_forms
 from pricing_panel import tables
-from resource_pricing.calculators.instance import calculator
-from resource_pricing.calculators.instance import models as instance_models
+from resource_pricing.calculators import models as type_models
 from resource_pricing import models as pricing_models
 
 
@@ -27,7 +26,7 @@ class UpdateView(forms.ModalFormView):
     success_url = urlresolvers.reverse_lazy('horizon:admin:pricing:index')
 
     def get_object(self):
-        flavor = instance_models.Flavor.objects.get(
+        flavor = type_models.Flavor.objects.get(
             resource=self.kwargs['resource_price_id'])
         price = pricing_models.Price.objects.get(resource=flavor.resource)
         return {'resource_price_id': self.kwargs['resource_price_id'],

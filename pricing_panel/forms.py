@@ -1,6 +1,6 @@
 from horizon import exceptions
 from horizon import forms
-from resource_pricing.calculators.instance import models as instance_models
+from resource_pricing.calculators import models as calc_models
 from resource_pricing import models as pricing_models
 
 
@@ -15,7 +15,7 @@ class UpdatePriceForm(forms.SelfHandlingForm):
 
     def handle(self, request, data):
         try:
-            flavor = instance_models.Flavor.objects.get(
+            flavor = calc_models.Flavor.objects.get(
                 resource=data['resource_price_id'])
             flavor.os_flavor_id = data['flavor']
             flavor.save()

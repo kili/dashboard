@@ -25,9 +25,8 @@ class Price(models.Model):
     price = models.DecimalField(max_digits=19, decimal_places=10)
 
     def __unicode__(self):
-        return u'price {0} for {1} in {2}'.format(
+        return u'price {0} in {2}'.format(
             helpers.FormattingHelpers.price(self.price),
-            self.resource.description,
             self.currency.iso)
 
     class Meta:
