@@ -2,7 +2,7 @@ from horizon import tables
 from user_billing import helpers
 
 
-class UpdatePrice(tables.LinkAction):
+class UpdatePriceAction(tables.LinkAction):
     name = 'update'
     verbose_name = 'Edit Price'
     url = 'horizon:admin:pricing:update'
@@ -28,4 +28,4 @@ class InstancePricesTable(tables.DataTable):
         name = 'instance_prices'
         verbose_name = 'Instance Prices'
         table_actions = ()
-        row_actions = (UpdatePrice,)
+        row_actions = (UpdatePriceAction,)
