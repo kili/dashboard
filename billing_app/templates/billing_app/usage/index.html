@@ -11,8 +11,10 @@
   <div class="datepicker">
     {% blocktrans with start=form.start end=form.end %}<span>From: {{ start }} </span><span>To: {{ end }} </span>{% endblocktrans %}
     <button class="btn btn-primary" type="submit">{% trans "Submit" %}</button>
+    <span>* All prices are calculated based on the current rates</span>
   </div>
 </form>
+
 {{ instances_table.render }}
 {% endblock %}
 

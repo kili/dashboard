@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db import utils
 from keystoneclient.v2_0 import client
 import pickle
-from user_billing.metering.ceilometer import data_fetcher
+from resource_pricing import managers
 from user_billing import models
 
 
@@ -65,21 +65,16 @@ class StatisticsIndexBuilder(object):
 
 class UnfectedDataFetcher(object):
 
-    def __init__(self):
-        self.cm_stats = data_fetcher.CeilometerStats()
-
     def _fetch_store_dataset(self, dataset):
         self._store(dataset, self._fetch(dataset))
 
     def _fetch(self, dataset):
-        return data_fetcher.CeilometerStats().get_stats(
-            data_fetcher.StatsQuery(
-                dataset.project_id,
-                dataset.meter,
-                *self._get_from_until_of_month(
-                    {'month': dataset.month,
-                     'year': dataset.year}))).get_merged_by(
-                         lambda x: x.metadata['display_name'])
+        return managers.PricedInstanceUsage.get_stats(
+            dataset.project_id,
+            self._get_from_until_of_month(
+                {'month': dataset.month,
+                 'year': dataset.year})).get_merged_by(
+                     lambda x: x.metadata['display_name'])
 
     def _get_from_until_of_month(self, month):
         from_dt = datetime.datetime(month['year'], month['month'], 1)
