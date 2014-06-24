@@ -536,6 +536,7 @@ FLAVOR_EXTRA_KEYS = {
 # specified in HORIZON_CONFIG.customization_module
 CUSTOMIZATIONS = (
     'customizations.launch_instance.LaunchInstanceViewCustomizer',
+    'customizations.instances_table.InstancesTableCustomizer',
 )
 
 ACCOUNTING_BOOKS = {
@@ -563,3 +564,5 @@ BILLABLE_RESOURCE_TYPES = {
                  '.calculators.InstancePriceCalculator',
                  'period_length': 10}
 }
+
+MINIMUM_BALANCE = 15

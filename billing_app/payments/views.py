@@ -1,13 +1,16 @@
+from accounting import managers
 import billing
 from billing_app.models import MobileMoneyNumber  # noqa
 from billing_app.models import StripeCustomer  # noqa
 from billing_app.payments import forms as payment_forms  # noqa
 from billing_app.payments import tables as payment_tables  # noqa
+from django.conf import settings
 # from django.views import generic
 # from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import forms
+from horizon import messages
 from horizon import tables as horizon_tables  # noqa
 #from horizon.views import APIView
 
@@ -38,6 +41,11 @@ class IndexView(horizon_tables.MultiTableView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['stripe_obj'] = stripe_obj
+        if not managers.AccountManager().has_sufficient_balance(
+                self.request.user.tenant_id):
+            messages.warning(self.request,
+                          'You need at least {0} USD to launch an instances'.
+                          format(settings.MINIMUM_BALANCE))
         return context
 
     def get_mobile_money_data(self):
