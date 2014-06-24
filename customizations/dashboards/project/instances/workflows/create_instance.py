@@ -1,4 +1,5 @@
 from accounting import managers
+from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import forms
@@ -46,5 +47,6 @@ class CustomLaunchInstanceView(views.LaunchInstanceView):
     def dispatch(self, *args, **kwargs):
         if not self.account_manager.has_sufficient_balance(
                 self.request.user.tenant_id):
-            raise exceptions.Http302('/billing/')
+            raise exceptions.Http302(urlresolvers.reverse(
+                'horizon:billing:payments:index'))
         return super(CustomLaunchInstanceView, self).dispatch(*args, **kwargs)

@@ -1,8 +1,8 @@
-from customizations.dashboards.project.instances import views
+from customizations.dashboards.project.instances import tables
 from openstack_dashboard.dashboards.project import instances
 
 
 class InstancesTableCustomizer:
 
     def execute(self):
-        instances.views.IndexView.table_class = views.CustomInstancesTable
+        instances.views.IndexView.table_class = tables.CustomInstancesTable
