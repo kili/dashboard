@@ -6,21 +6,26 @@ from openstack_dashboard.dashboards.project.instances.tables import *  # noqa
 
 class CustomLaunchLink(LaunchLink):
     name = "launch"
+    sufficient_money = True
     verbose_name = _("Launch Instance")
     url = "horizon:project:instances:launch"
     classes = ("btn-launch", "ajax-modal")
     policy_rules = (("compute", "compute:create"),)
 
-    def __init__(self, *args, **kwargs):
-        self.classes = ('btn-launch')
+    def allowed(self, request, datum):
         self.account_manager = managers.AccountManager()
-        super(CustomLaunchLink, self).__init__(*args, **kwargs)
+        self.sufficient_money = self.account_manager.has_sufficient_balance(
+            self.table.request.user.tenant_id)
+        if self.sufficient_money:
+            self.classes = ('btn-launch', 'ajax-modal')
+        else:
+            self.classes = ('btn-launch')
+        return super(CustomLaunchLink, self).allowed(request, datum)
 
     def get_link_url(self, datum=None):
-        if not self.account_manager.has_sufficient_balance(
-                self.table.request.user.tenant_id):
+        if not self.sufficient_money:
             return urlresolvers.reverse('horizon:billing:payments:index')
-        return super(CustomLaunchLink, self).get_link_url(self, datum)
+        return super(CustomLaunchLink, self).get_link_url(datum)
 
 
 class CustomInstancesTable(InstancesTable):
