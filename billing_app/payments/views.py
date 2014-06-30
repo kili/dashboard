@@ -44,7 +44,7 @@ class IndexView(horizon_tables.MultiTableView):
         if not managers.AccountManager().has_sufficient_balance(
                 self.request.user.tenant_id):
             messages.warning(self.request,
-                          'You need at least {0} USD to launch an instances'.
+                          'You need at least {0} USD to launch an instance'.
                           format(settings.MINIMUM_BALANCE))
         return context
 
