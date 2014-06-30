@@ -541,6 +541,7 @@ FLAVOR_EXTRA_KEYS = {
 CUSTOMIZATIONS = (
     'customizations.launch_instance.LaunchInstanceViewCustomizer',
     'customizations.instances_table.InstancesTableCustomizer',
+    'customizations.user_balance.UserTableCustomizer',
 )
 
 ACCOUNTING_BOOKS = {
