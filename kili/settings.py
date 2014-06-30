@@ -106,6 +106,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'billing_app.payments.kopokopo.K2UserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'horizon.middleware.HorizonMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -189,7 +190,10 @@ INSTALLED_APPS = [
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend',)
+AUTHENTICATION_BACKENDS = (
+    'billing_app.payments.kopokopo.K2AuthBackend',
+    'openstack_auth.backend.KeystoneBackend',
+)
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'

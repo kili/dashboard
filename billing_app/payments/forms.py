@@ -1,31 +1,34 @@
 from accounting import transactions
 import billing
 from billing.forms import stripe_forms  # noqa
+from billing_app.models import k2_raw_data
 from billing_app.models import MobileMoneyNumber
 from billing_app.models import StripeCustomer
 import decimal
+from django import forms as django_forms
 from django.forms import ValidationError  # noqa
 from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
-from horizon import forms
+from horizon import forms as horizon_forms
 from horizon import messages
 
 
 stripe = billing.get_gateway("stripe").stripe
 
 
-class AddCardForm(stripe_forms.StripeForm, forms.SelfHandlingForm):
+class AddCardForm(stripe_forms.StripeForm, horizon_forms.SelfHandlingForm):
 
     def __init__(self, *args, **kwargs):
         super(AddCardForm, self).__init__(*args, **kwargs)
         self.fields.pop('amount')
 
-    card_name = forms.CharField(widget=forms.HiddenInput())
-    make_default = forms.BooleanField(
+    card_name = horizon_forms.CharField(widget=horizon_forms.HiddenInput())
+    make_default = horizon_forms.BooleanField(
         label=_("Make this my Default Card"),
         required=False
     )
-    stripe_card_token = forms.CharField(widget=forms.HiddenInput())
+    stripe_card_token = horizon_forms.CharField(
+        widget=horizon_forms.HiddenInput())
 
     def handle(self, request, data):
         try:
@@ -81,14 +84,14 @@ class AddCardForm(stripe_forms.StripeForm, forms.SelfHandlingForm):
             return False
 
 
-class CardPayForm(forms.SelfHandlingForm):
+class CardPayForm(horizon_forms.SelfHandlingForm):
 
     def __init__(self, *args, **kwargs):
         super(CardPayForm, self).__init__(*args, **kwargs)
 
-    amount = forms.DecimalField(label=_("Amount (In US Dollars)"),
-                                required=True,
-                                min_value=decimal.Decimal('15'))
+    amount = horizon_forms.DecimalField(label=_("Amount (In US Dollars)"),
+                                        required=True,
+                                        min_value=decimal.Decimal('15'))
 
     def handle(self, request, data):
         try:
@@ -154,16 +157,17 @@ class CardPayForm(forms.SelfHandlingForm):
             return False
 
 
-class AddMobileNumberForm(forms.SelfHandlingForm):
+class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
 
     def __init__(self, *args, **kwargs):
         super(AddMobileNumberForm, self).__init__(*args, **kwargs)
 
-    mobile_number = forms.CharField(label=_("Enter an M-Pesa enabled number"),
-                                required=True,
-                                widget=forms.NumberInput(),
-                                min_length=10,
-                                max_length=10)
+    mobile_number = horizon_forms.CharField(
+        label=_("Enter an M-Pesa enabled number"),
+        required=True,
+        widget=horizon_forms.NumberInput(),
+        min_length=10,
+        max_length=10)
 
     def handle(self, request, data):
         try:
@@ -190,12 +194,12 @@ class AddMobileNumberForm(forms.SelfHandlingForm):
             return False
 
 
-class MobileTransactionCodeForm(forms.SelfHandlingForm):
+class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
 
     def __init__(self, *args, **kwargs):
         super(MobileTransactionCodeForm, self).__init__(*args, **kwargs)
 
-    transaction_code = forms.IntegerField(
+    transaction_code = horizon_forms.IntegerField(
         label=_("Enter mobile money transaction code"),
         required=True
     )
@@ -223,3 +227,15 @@ class MobileTransactionCodeForm(forms.SelfHandlingForm):
             self.api_error("An error occured while adding your number. "
                            "Please try again later.")
             return False
+
+
+class K2Form(django_forms.ModelForm):
+    service_name = django_forms.CharField(max_length=64, required=False)
+    transaction_type = django_forms.CharField(max_length=64, required=False)
+    account_number = django_forms.CharField(max_length=64, required=False)
+    middle_name = django_forms.CharField(max_length=64, required=False)
+    last_name = django_forms.CharField(max_length=64, required=False)
+
+    class Meta:
+        model = k2_raw_data
+        fields = '__all__'

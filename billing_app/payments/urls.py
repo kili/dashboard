@@ -13,7 +13,7 @@ urlpatterns = patterns(
     url(r'mobilemoney/transactioncode$',
         views.EnterTransactionCodeView.as_view(),
         name='enter_transaction_code'),
-    url(r'mobilemoney/K2srv/V1$',
-        views.K2srv_v1.as_view(),
-        name='k2_service_v1'),
+    url(r'mobilemoney/K2/v2$',
+        views.K2_v2.as_view(),
+        name='k2_ver2_endpoint'),
 )

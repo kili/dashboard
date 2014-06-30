@@ -28,6 +28,7 @@
   {% if HORIZON_CONFIG.help_url %}
   <a href="{{ HORIZON_CONFIG.help_url }}" target="_new">{% trans "Help" %}</a>
   {% endif %}
+  <a href="http://status.kili.io" target="_blank">Systems Status</a>
   <a href="{% url 'logout' %}">{% trans "Sign Out" %}</a>
   {% include "horizon/common/_region_selector.html" %}
 </div>
