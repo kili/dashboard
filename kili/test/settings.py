@@ -14,8 +14,7 @@ INSTALLED_APPS += (
     'accounting',
     'swingtix.bookkeeper',
     'resource_pricing',
-    'resource_pricing.calculators.instance',
-    'resource_pricing.calculators.volume',
+    'resource_pricing.calculators',
     'user_billing',
     'user_billing.metering',
     'user_billing.metering.ceilometer',
@@ -36,7 +35,7 @@ ACCOUNTING_ASSET_SOURCES = [
 ]
 ACCOUNTING_PROMOTIONS_ACCOUNT = "PROMOTIONS"
 ACCOUNTING_REVENUE_ACCOUNT = "REVENUE"
-ACCOUNTING_USER_ACCOUNT_FORMAT = {"regex": "USER_[a-f0-9]{32}",
+ACCOUNTING_USER_ACCOUNT_FORMAT = {"regex": "^USER_[a-f0-9]+$",
                                   "format": "USER_{0}"}
 
 BILLABLE_RESOURCE_TYPES = {
@@ -68,5 +67,7 @@ MERCHANT_SETTINGS = {
         "PUBLISHABLE_KEY": "pk_test_GV1PYwn9wFTVQ0yHyVEWT6Ib",
     }
 }
+
+MINIMUM_BALANCE = 0
 
 K2_AUTHORIZATION_HEADER = 'HTTP_AUTHORIZATION'

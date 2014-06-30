@@ -31,5 +31,5 @@ class DateRangeForm(object):
     def init_form(self):
         today = datetime.date.today()
         self.start = datetime.date(day=1, month=today.month, year=today.year)
-        self.end = datetime.date.today()
+        self.end = (self.start + datetime.timedelta(days=31)).replace(day=1)
         return {'start': self.start, 'end': self.end}

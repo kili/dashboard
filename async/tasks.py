@@ -23,12 +23,13 @@ class AsyncTasks():
         user.save()
 
     @celery_app.task
-    def save_user(company, user_name, password):
+    def save_user(company, user_name, password, email):
         (tenant_id, user_id) = CreateUserTransaction().create_user(
             user_name=user_name,
             password=password,
             group_name=settings.KEYSTONE_DEFAULT_GROUP,
             tenant_name=company,
+            email=email,
         )
 
         if not user_id:

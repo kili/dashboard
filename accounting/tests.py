@@ -173,7 +173,7 @@ class SimpleTest(test.TestCase):
                 self.user_id)), True)
         self.assertEqual(self.account_manager.name_is_valid(
             settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(
-                self.user_id)[:-1]), False)
+                self.user_id + '#@')), False)
 
     def test_format_user_account(self):
         self.assertEqual(

@@ -3,6 +3,16 @@ from django.db import models
 from resource_pricing import models as resource_pricing_models
 
 
+class Flavor(models.Model):
+    os_flavor_id = models.CharField(max_length=36, unique=True, db_index=True)
+    resource = models.ForeignKey(resource_pricing_models.Resource,
+                                 unique=True,
+                                 db_index=True)
+
+    class Meta:
+        db_table = "pricing_instance_flavor_resource"
+
+
 class VolumeType(models.Model):
     os_type_id = models.CharField(primary_key=True, max_length=36)
     resource = models.ForeignKey(resource_pricing_models.Resource)

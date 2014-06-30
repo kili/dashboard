@@ -158,6 +158,7 @@ KEYSTONE_DEFAULT_GROUP = "admin"
 ALLOWED_HOSTS = ['*', ]
 
 INSTALLED_APPS = [
+    'pricing_panel',
     'accounting',
     'kili',
     'openstack_dashboard',
@@ -182,8 +183,7 @@ INSTALLED_APPS = [
     'async',
     'crispy_forms',
     'resource_pricing',
-    'resource_pricing.calculators.instance',
-    'resource_pricing.calculators.volume',
+    'resource_pricing.calculators',
     'user_billing',
     'user_billing.metering',
     'user_billing.metering.ceilometer',
@@ -540,6 +540,7 @@ FLAVOR_EXTRA_KEYS = {
 # specified in HORIZON_CONFIG.customization_module
 CUSTOMIZATIONS = (
     'customizations.launch_instance.LaunchInstanceViewCustomizer',
+    'customizations.instances_table.InstancesTableCustomizer',
 )
 
 ACCOUNTING_BOOKS = {
@@ -563,6 +564,9 @@ CEILOMETER_AUTH_DATA = {
 
 BILLABLE_RESOURCE_TYPES = {
     'instance': {'id': 0,
-                 'price_calculator': 'resource_pricing.calculators.instance',
+                 'price_calculator': 'resource_pricing.calculators'
+                 '.calculators.InstancePriceCalculator',
                  'period_length': 10}
 }
+
+MINIMUM_BALANCE = 15

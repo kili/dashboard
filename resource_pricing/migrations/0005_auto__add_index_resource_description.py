@@ -8,23 +8,13 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'Currency.currency_iso'
-        db.delete_column('pricing_currency', 'currency_iso')
-
-        # Adding field 'Currency.iso'
-        db.add_column('pricing_currency', 'iso',
-                      self.gf('django.db.models.fields.CharField')(default='USD', max_length=3, db_index=True),
-                      keep_default=False)
+        # Adding index on 'Resource', fields ['description']
+        db.create_index('pricing_resource', ['description'])
 
 
     def backwards(self, orm):
-        # Adding field 'Currency.currency_iso'
-        db.add_column('pricing_currency', 'currency_iso',
-                      self.gf('django.db.models.fields.CharField')(default='USD', max_length=3),
-                      keep_default=False)
-
-        # Deleting field 'Currency.iso'
-        db.delete_column('pricing_currency', 'iso')
+        # Removing index on 'Resource', fields ['description']
+        db.delete_index('pricing_resource', ['description'])
 
 
     models = {
@@ -42,8 +32,8 @@ class Migration(SchemaMigration):
         },
         u'resource_pricing.resource': {
             'Meta': {'object_name': 'Resource', 'db_table': "'pricing_resource'"},
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'resource_id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'db_index': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'resource_type_id': ('django.db.models.fields.IntegerField', [], {})
         }
     }

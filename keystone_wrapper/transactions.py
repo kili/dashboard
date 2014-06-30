@@ -15,13 +15,14 @@ class CreateUserTransaction():
     def create_user(self, **kwargs):
         tenant_name = kwargs['tenant_name']
         user_name = kwargs['user_name']
+        email = kwargs['email']
         password = kwargs['password']
 
         with TransactionTenantCreator(
                 client=self.client, tenant_name=tenant_name) as tenant,\
                 TransactionUserCreator(
                     client=self.client, user_name=user_name, password=password,
-                    tenant_id=tenant.id) as user,\
+                    email=email, tenant_id=tenant.id) as user,\
                 TransactionDefaultRoles(
                     client=self.client, user_id=user.id, tenant_id=tenant.id):
             if user.id is None:

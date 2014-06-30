@@ -1,5 +1,9 @@
+from accounting import managers
+from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
+from horizon import exceptions
 from horizon import forms
+from openstack_dashboard.dashboards.project.instances import views
 from openstack_dashboard.dashboards.project.instances.workflows \
     import create_instance
 
@@ -18,12 +22,31 @@ class CustomSetAccessControlsAction(create_instance.SetAccessControlsAction):
         help_text = _("Control access to your instance via key pairs, "
                       "security groups, and other mechanisms.")
 
-    def __init__(self, *args, **kwargs):
-        super(CustomSetAccessControlsAction, self).__init__(*args, **kwargs)
-
 
 class CustomSetAccessControls(create_instance.SetAccessControls):
     action_class = CustomSetAccessControlsAction
 
+
+class CustomLaunchInstance(create_instance.LaunchInstance):
+    default_steps = (create_instance.SelectProjectUser,
+                     create_instance.SetInstanceDetails,
+                     # customized access control tab
+                     CustomSetAccessControls,
+                     create_instance.SetNetwork,
+                     create_instance.PostCreationStep,
+                     create_instance.SetAdvanced)
+
+
+class CustomLaunchInstanceView(views.LaunchInstanceView):
+    workflow_class = CustomLaunchInstance
+
     def __init__(self, *args, **kwargs):
-        super(CustomSetAccessControls, self).__init__(*args, **kwargs)
+        super(CustomLaunchInstanceView, self).__init__(*args, **kwargs)
+        self.account_manager = managers.AccountManager()
+
+    def dispatch(self, *args, **kwargs):
+        if not self.account_manager.has_sufficient_balance(
+                self.request.user.tenant_id):
+            raise exceptions.Http302(urlresolvers.reverse(
+                'horizon:billing:payments:index'))
+        return super(CustomLaunchInstanceView, self).dispatch(*args, **kwargs)

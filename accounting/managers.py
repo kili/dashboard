@@ -58,6 +58,12 @@ class AccountManager():
         account.save()
         return account
 
+    def has_sufficient_balance(self, account):
+        if self.get_user_account(
+                account).balance() < settings.MINIMUM_BALANCE:
+            return False
+        return True
+
     def is_asset_source(self, account):
         if account in settings.ACCOUNTING_ASSET_SOURCES:
             return True
