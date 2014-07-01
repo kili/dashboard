@@ -15,9 +15,9 @@ class UserTransactor(object):
                 models.RawStatistics.objects.filter(statistics_index=id)]
 
     def _get_transaction_message(self, resource, hours):
-        return u'{0} usage: {1} hours'.format(resource,
-                                              helpers.FormattingHelpers.hours(
-                                                  hours))
+        return u'"{0}" for {1} hours'.format(resource,
+                                             helpers.FormattingHelpers.hours(
+                                                 hours))
 
     def _get_unbilled_statistics(self):
         return models.RawStatisticsIndex.objects.filter(fetched=True,
@@ -32,7 +32,7 @@ class UserTransactor(object):
                     stat.meter)
                 price_result = pc.price_from_raw_stats(data)
                 if dry_run:
-                    print('{0}, {1}, {2}'.format(
+                    print(u'{0}, {1}, {2}'.format(
                         stat.project_id,
                         price_result['price'],
                         self._get_transaction_message(
