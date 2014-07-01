@@ -1,11 +1,13 @@
 from accounting import transactions
 import billing
 from billing.forms import stripe_forms  # noqa
-from billing_app.models import k2_raw_data
+from billing_app.models import K2RawData
 from billing_app.models import MobileMoneyNumber
 from billing_app.models import StripeCustomer
 import decimal
 from django import forms as django_forms
+from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings  # noqa
 from django.forms import ValidationError  # noqa
 from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
@@ -42,7 +44,7 @@ class AddCardForm(stripe_forms.StripeForm, horizon_forms.SelfHandlingForm):
             result = StripeCustomer.objects.create_stripe_customer(
                 data['card_name'],
                 data['make_default'],
-                request.user.id,
+                request.user.tenant_id,
                 stripe_customer.id
             )
             if not result[0]:
@@ -97,7 +99,7 @@ class CardPayForm(horizon_forms.SelfHandlingForm):
         try:
             # Charge our Stripe Customer
             customerQS = StripeCustomer.objects.filter(
-                keystone_id__exact=request.user.id,
+                keystone_id__exact=request.user.tenant_id,
                 is_default=True
             )
             if not customerQS:
@@ -173,7 +175,7 @@ class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
         try:
             result = MobileMoneyNumber.objects.add_number(
                 data['mobile_number'],
-                request.user.id
+                request.user.tenant_id
             )
             if not result[0]:
                 raise ValidationError(result[1])
@@ -183,14 +185,13 @@ class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
                 _('M-Pesa Number "%s" has been tied to your account.')
                 % data['mobile_number']
             )
+
             return True
         except ValidationError as e:
             self.api_error(e.messages[0])
             return False
         except Exception:
             exceptions.handle(request, ignore=True)
-            self.api_error("An error occured while adding your number. "
-                           "Please try again later.")
             return False
 
 
@@ -199,33 +200,42 @@ class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
     def __init__(self, *args, **kwargs):
         super(MobileTransactionCodeForm, self).__init__(*args, **kwargs)
 
-    transaction_code = horizon_forms.IntegerField(
+    transaction_ref = horizon_forms.CharField(
         label=_("Enter mobile money transaction code"),
         required=True
     )
 
     def handle(self, request, data):
         try:
-            result = MobileMoneyNumber.objects.add_number(
-                data['mobile_number'],
-                request.user.id
-            )
-            if not result[0]:
-                raise ValidationError(result[1])
+            transaction = K2RawData.objects.get(
+                transaction_reference=data['transaction_ref'],
+                claimed=False)
+            
+            usd_amount = transaction.amount/settings.K2_USD_XRATE
+            user_transactions = transactions.UserTransactions()
+
+            user_transactions.receive_user_payment(
+                request.user.tenant_id,
+                "KOPOKOPO", usd_amount,
+                ("Claimed mobile money payment."
+                " Transaction ref %s" % data['transaction_ref']))
+
+            transaction.claimed = True
+            transaction.save()
 
             messages.success(
                 request,
-                _('M-Pesa Number "%s" has been tied to your account.')
-                % data['mobile_number']
-            )
+                ("You successfully claimed mobile money payment with "
+                "transaction ref %s" % data['transaction_ref']))
             return True
+        except ObjectDoesNotExist:
+            self.api_error("The transaction code you entered is invalid.")
+            return False
         except ValidationError as e:
             self.api_error(e.messages[0])
             return False
         except Exception:
             exceptions.handle(request, ignore=True)
-            self.api_error("An error occured while adding your number. "
-                           "Please try again later.")
             return False
 
 
@@ -235,7 +245,11 @@ class K2Form(django_forms.ModelForm):
     account_number = django_forms.CharField(max_length=64, required=False)
     middle_name = django_forms.CharField(max_length=64, required=False)
     last_name = django_forms.CharField(max_length=64, required=False)
+    transaction_timestamp = django_forms.DateTimeField(required=True, 
+        input_formats=['%Y-%m-%dT%H:%M:%SZ'])
+    amount = django_forms.DecimalField(required=True)
+    claimed = django_forms.BooleanField(required=False)
 
     class Meta:
-        model = k2_raw_data
+        model = K2RawData
         fields = '__all__'

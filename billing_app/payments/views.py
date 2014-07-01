@@ -9,6 +9,7 @@ from billing_app.payments import tables as payment_tables  # noqa
 from django.conf import settings
 # from django.views import generic
 # from django.core.urlresolvers import reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse  # noqa
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page  # noqa
@@ -65,7 +66,7 @@ class IndexView(horizon_tables.MultiTableView):
                 x.id,
                 x.number)
                 for x in MobileMoneyNumber.objects.filter(
-                    keystone_id__exact=self.request.user.id)]
+                    tenant_id__exact=self.request.user.tenant_id)]
         except Exception:
             mobile_numbers = []
             exceptions.handle(self.request,
@@ -80,7 +81,7 @@ class IndexView(horizon_tables.MultiTableView):
                      x.name,
                      x.is_default)
                      for x in StripeCustomer.objects.filter(
-                     keystone_id__exact=self.request.user.id).order_by(
+                     tenant_id__exact=self.request.user.id).order_by(
                          'is_default', 'id').reverse()]
         except Exception:
             cards = []
@@ -139,59 +140,68 @@ class K2_v2(FormView):
     template_name = "billing_app/payments/k2v2.html"
 
     def post(self, request, *args, **kwargs):
-        import pdb
-        pdb.set_trace()
-        k2response = {'status': "01",
+        k2_response = {'status': "01",
                       'description': "Accepted"}
         http_response = HttpResponse(
-            json.dumps(k2response),
+            json.dumps(k2_response),
             content_type='application/json')
 
         k2_data = self.get_form(self.form_class)
 
         # validate notification data
         if not k2_data.is_valid():
-            k2response['status'] = "03"
-            k2response['description'] = (
-                "Invalid payment data %s" % json.dumps(self.form_class.errors))
-            http_response.content = json.dumps(k2response)
+            k2_response['status'] = "03"
+            k2_response['description'] = (
+                "Invalid payment data %s" % json.dumps(k2_data.errors))
+            http_response.content = json.dumps(k2_response)
             return http_response
 
-        # save raw data for future reference
-        k2_data.save()
-
         # generate base string for hash creation
-        #post_dict = self.request.POST.dict()
-        #post_dict.pop('signature')
+        '''
+        post_dict = self.request.POST.dict()
+        post_dict.pop('signature')
+        '''
 
         # validate authenticity of request
-        #HMAC = hmac.new(settings.K2_API_KEY,
-        #                post_queryset.urlencode(),
-        #                hashlib.sha1)
-
+        '''
+        HMAC = hmac.new(settings.K2_API_KEY,
+                        post_queryset.urlencode(),
+                        hashlib.sha1)
+        '''
         #signature = base64.b64encode(HMAC.digest())
-        # if signature != request.POST['signature']:
-        #    http_reponse.status_code = 400
-        #    http_response.content = 'Unauthorized!'
-        #    return http_response
-
-        # k2data is good, now for some debits and credits
+        '''
+        if signature != request.POST['signature']:
+           http_reponse.status_code = 400
+           http_response.content = 'Unauthorized!'
+           return http_response
+        '''
+        # k2_data is good, now for some debits and credits
 
         # check if sender number is known
         sender_phone = self.request.POST['sender_phone']
         sender_phone = sender_phone.replace('+254', '0')
-        tenant_number = MobileMoneyNumber.objects.get(
-            number=sender_phone)
 
-        ut = transactions.UserTransactions()
-        if tenant_number:
-            ut.receive_user_payment(
-                request.user.tenant_id,
-                "KOPOKOPO", self.request.POST['amount'],
-                ("Received mobile money payment."
-                "Transaction id %s" % self.request.POST['amount']))
-        else:
-            pass
+        user_transactions = transactions.UserTransactions()
+        try:
+            tenant_number = MobileMoneyNumber.objects.get(
+                number=sender_phone)
+            usd_amount = float(k2_data['amount'].value())/settings.K2_USD_XRATE
+            if tenant_number:
+                user_transactions.receive_user_payment(
+                    tenant_number.tenant_id,
+                    "KOPOKOPO", usd_amount,
+                    ("Received mobile money payment."
+                    " Transaction ref %s" % k2_data['transaction_reference'].value()
+                    ))
+                k2_data.claimed = True
+        except ObjectDoesNotExist:
+            k2_data.claimed = False 
+        except Exception:
+            http_response.status_code = 500
+            http_response.content = 'Undefined Error!'
+            return http_response
+
+        k2_data.save()
 
         return http_response
 
