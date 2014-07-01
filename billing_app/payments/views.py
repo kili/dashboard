@@ -9,7 +9,7 @@ from billing_app.payments import tables as payment_tables  # noqa
 from django.conf import settings
 # from django.views import generic
 # from django.core.urlresolvers import reverse_lazy
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist  # noqa
 from django.http import HttpResponse  # noqa
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page  # noqa
@@ -185,17 +185,18 @@ class K2_v2(FormView):
         try:
             tenant_number = MobileMoneyNumber.objects.get(
                 number=sender_phone)
-            usd_amount = float(k2_data['amount'].value())/settings.K2_USD_XRATE
+            usd_amount = float(
+                k2_data['amount'].value()) / settings.K2_USD_XRATE
             if tenant_number:
                 user_transactions.receive_user_payment(
                     tenant_number.tenant_id,
                     "KOPOKOPO", usd_amount,
                     ("Received mobile money payment."
-                    " Transaction ref %s" % k2_data['transaction_reference'].value()
-                    ))
+                    " Transaction ref %s"
+                    % k2_data['transaction_reference'].value()))
                 k2_data.claimed = True
         except ObjectDoesNotExist:
-            k2_data.claimed = False 
+            k2_data.claimed = False
         except Exception:
             http_response.status_code = 500
             http_response.content = 'Undefined Error!'

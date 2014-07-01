@@ -5,10 +5,9 @@ from billing_app.models import K2RawData
 from billing_app.models import MobileMoneyNumber
 from billing_app.models import StripeCustomer
 import decimal
-from django import forms as django_forms
-from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings  # noqa
-from django.forms import ValidationError  # noqa
+from django.core.exceptions import ObjectDoesNotExist  # noqa
+from django import forms as django_forms
 from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import forms as horizon_forms
@@ -49,7 +48,7 @@ class AddCardForm(stripe_forms.StripeForm, horizon_forms.SelfHandlingForm):
             )
             if not result[0]:
                 stripe_customer.delete()
-                raise ValidationError(result[1])
+                raise django_forms.ValidationError(result[1])
 
             messages.success(
                 request,
@@ -77,7 +76,7 @@ class AddCardForm(stripe_forms.StripeForm, horizon_forms.SelfHandlingForm):
             # Display a very generic error to the user
             self.api_error(e.message)
             return False
-        except ValidationError as e:
+        except django_forms.ValidationError as e:
             self.api_error(e.messages[0])
             return False
         except Exception:
@@ -103,11 +102,13 @@ class CardPayForm(horizon_forms.SelfHandlingForm):
                 is_default=True
             )
             if not customerQS:
-                raise ValidationError(_("Could not find default billing card. "
-                                        "Please select one of your cards as "
-                                        "the default for billing."))
+                raise django_forms.ValidationError(
+                    _("Could not find default billing card. "
+                    "Please select one of your cards as "
+                    "the default for billing."))
             if data['amount'] < 15:
-                raise ValidationError(_("Minimum payable amount is 15 USD. "))
+                raise django_forms.ValidationError(
+                    _("Minimum payable amount is 15 USD. "))
 
             # register charge on stripe
             stripe.Charge.create(
@@ -150,7 +151,7 @@ class CardPayForm(horizon_forms.SelfHandlingForm):
             # Display a very generic error to the user
             self.api_error(e.message)
             return False
-        except ValidationError as e:
+        except django_forms.ValidationError as e:
             self.api_error(e.messages[0])
             return False
         except Exception:
@@ -178,7 +179,7 @@ class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
                 request.user.tenant_id
             )
             if not result[0]:
-                raise ValidationError(result[1])
+                raise django_forms.ValidationError(result[1])
 
             messages.success(
                 request,
@@ -187,7 +188,7 @@ class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
             )
 
             return True
-        except ValidationError as e:
+        except django_forms.ValidationError as e:
             self.api_error(e.messages[0])
             return False
         except Exception:
@@ -210,8 +211,8 @@ class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
             transaction = K2RawData.objects.get(
                 transaction_reference=data['transaction_ref'],
                 claimed=False)
-            
-            usd_amount = transaction.amount/settings.K2_USD_XRATE
+
+            usd_amount = transaction.amount / settings.K2_USD_XRATE
             user_transactions = transactions.UserTransactions()
 
             user_transactions.receive_user_payment(
@@ -231,7 +232,7 @@ class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
         except ObjectDoesNotExist:
             self.api_error("The transaction code you entered is invalid.")
             return False
-        except ValidationError as e:
+        except django_forms.ValidationError as e:
             self.api_error(e.messages[0])
             return False
         except Exception:
@@ -245,7 +246,7 @@ class K2Form(django_forms.ModelForm):
     account_number = django_forms.CharField(max_length=64, required=False)
     middle_name = django_forms.CharField(max_length=64, required=False)
     last_name = django_forms.CharField(max_length=64, required=False)
-    transaction_timestamp = django_forms.DateTimeField(required=True, 
+    transaction_timestamp = django_forms.DateTimeField(required=True,
         input_formats=['%Y-%m-%dT%H:%M:%SZ'])
     amount = django_forms.DecimalField(required=True)
     claimed = django_forms.BooleanField(required=False)
