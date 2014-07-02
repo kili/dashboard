@@ -22,3 +22,4 @@ class PaymentsHistoryTable(tables.DataTable):
         verbose_name = _("Payment History")
         table_actions = ()
         row_actions = ()
+        template = "billing_app/usage/_totalled_table.html"

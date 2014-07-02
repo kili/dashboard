@@ -6,7 +6,7 @@ from billing_app import dashboard
 
 
 class Payments(horizon.Panel):
-    name = _("Payment History")
+    name = _("Transaction History")
     slug = "history"
 
 
