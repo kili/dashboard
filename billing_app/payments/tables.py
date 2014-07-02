@@ -54,7 +54,7 @@ class DeleteCard(tables.DeleteAction):
     def delete(self, request, card_id):
         result = StripeCustomer.objects.delete_card(
             int(card_id),
-            request.user.id
+            request.user.tenant_id
         )
         if not result[0]:
             LOG.error('Could not delete card: %s, %s' % (card_id, result[1]))
@@ -77,7 +77,7 @@ class MakeDefault(tables.BatchAction):
     def action(self, request, obj_id):
         StripeCustomer.objects.ensure_default(
             int(obj_id),
-            request.user.id
+            request.user.tenant_id
         )
 
 
@@ -138,7 +138,7 @@ class DeleteMobileMoneyNumber(tables.DeleteAction):
     def delete(self, request, number_id):
         result = MobileMoneyNumber.objects.delete_number(
             int(number_id),
-            request.user.id
+            request.user.tenant_id
         )
         if not result[0]:
             LOG.error(

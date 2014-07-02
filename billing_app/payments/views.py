@@ -81,7 +81,7 @@ class IndexView(horizon_tables.MultiTableView):
                      x.name,
                      x.is_default)
                      for x in StripeCustomer.objects.filter(
-                     tenant_id__exact=self.request.user.id).order_by(
+                     tenant_id__exact=self.request.user.tenant_id).order_by(
                          'is_default', 'id').reverse()]
         except Exception:
             cards = []

@@ -13,6 +13,9 @@ class StripeCustomer(models.Model):
     tenant_id = models.CharField(max_length=64,
                                  unique=False,
                                  blank=False)
+    keystone_id = models.CharField(max_length=64,
+                                 unique=False,
+                                 blank=False)
     stripe_customer_id = models.CharField(max_length=64,
                                           unique=True,
                                           blank=False)

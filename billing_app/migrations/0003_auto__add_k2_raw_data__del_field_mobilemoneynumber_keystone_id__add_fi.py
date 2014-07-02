@@ -50,10 +50,6 @@ class Migration(SchemaMigration):
         # Deleting model 'k2_raw_data'
         db.delete_table(u'billing_app_k2_raw_data')
 
-
-        # User chose to not deal with backwards NULL issues for 'MobileMoneyNumber.keystone_id'
-        raise RuntimeError("Cannot reverse this migration. 'MobileMoneyNumber.keystone_id' and its values cannot be restored.")
-        
         # The following code is provided here to aid in writing a correct migration        # Adding field 'MobileMoneyNumber.keystone_id'
         db.add_column(u'billing_app_mobilemoneynumber', 'keystone_id',
                       self.gf('django.db.models.fields.CharField')(max_length=64),

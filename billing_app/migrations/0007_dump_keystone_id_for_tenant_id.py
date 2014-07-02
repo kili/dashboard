@@ -1,42 +1,31 @@
 # -*- coding: utf-8 -*-
 from south.utils import datetime_utils as datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
 
-
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        # Removing unique constraint on 'StripeCustomer', fields ['name', 'keystone_id']
-        db.delete_unique(u'billing_app_stripecustomer', ['name', 'keystone_id'])
-
-        # Adding field 'StripeCustomer.tenant_id'
-        db.add_column(u'billing_app_stripecustomer', 'tenant_id',
-                      self.gf('django.db.models.fields.CharField')(default='', max_length=64),
-                      keep_default=False)
-
-        # Adding unique constraint on 'StripeCustomer', fields ['name', 'tenant_id']
-        db.create_unique(u'billing_app_stripecustomer', ['name', 'tenant_id'])
+        "Write your forwards methods here."
+        # Note: Don't use "from appname.models import ModelName". 
+        # Use orm.ModelName to refer to models in this application,
+        # and orm['appname.ModelName'] for models in other applications.
+        for stripecustomer in orm.StripeCustomer.objects.all():
+            srtipecustomer.tenant_id = ":)"
+            stripecustomer.save()
 
 
     def backwards(self, orm):
-        # Removing unique constraint on 'StripeCustomer', fields ['name', 'tenant_id']
-        db.delete_unique(u'billing_app_stripecustomer', ['name', 'tenant_id'])
-
-        # Deleting field 'StripeCustomer.tenant_id'
-        db.delete_column(u'billing_app_stripecustomer', 'tenant_id')
-
-        # Adding unique constraint on 'StripeCustomer', fields ['name', 'keystone_id']
-        db.create_unique(u'billing_app_stripecustomer', ['name', 'keystone_id'])
-
+        "Write your backwards methods here."
 
     models = {
-        u'billing_app.k2_raw_data': {
-            'Meta': {'object_name': 'k2_raw_data'},
+        u'billing_app.k2rawdata': {
+            'Meta': {'object_name': 'K2RawData'},
             'account_number': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'amount': ('django.db.models.fields.DecimalField', [], {'max_digits': '10', 'decimal_places': '2'}),
             'business_number': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'claimed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'currency': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -60,6 +49,7 @@ class Migration(SchemaMigration):
             'Meta': {'unique_together': "(('name', 'tenant_id'),)", 'object_name': 'StripeCustomer'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_default': ('django.db.models.fields.BooleanField', [], {}),
+            'keystone_id': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'stripe_customer_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '64'}),
             'tenant_id': ('django.db.models.fields.CharField', [], {'max_length': '64'})
@@ -67,3 +57,4 @@ class Migration(SchemaMigration):
     }
 
     complete_apps = ['billing_app']
+    symmetrical = True

@@ -2,8 +2,8 @@ from kili.settings import *  # noqa
 
 KEYSTONE_TOKEN = "5zoNv.aryGlnlXu7,oZM"
 
-OPENSTACK_HOST = "10.0.1.222"
-#OPENSTACK_HOST = "10.186.43.12"
+#OPENSTACK_HOST = "10.0.1.222"
+OPENSTACK_HOST = "10.186.43.12"
 OPENSTACK_KEYSTONE_URL = "http://{}:5000/v2.0".format(OPENSTACK_HOST)
 
 KEYSTONE_URL = "http://{}:35357/v2.0".format(OPENSTACK_HOST)

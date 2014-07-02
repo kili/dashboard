@@ -1,4 +1,5 @@
 import billing
+from django.core.exceptions import ObjectDoesNotExist  # noqa
 from django.db import (models, IntegrityError)  # noqa
 from django.utils.translation import ugettext_lazy as _
 
@@ -13,7 +14,7 @@ class StripeCustomerManager(models.Manager):
                           stripe_customer_id=stripe_customer_id)
 
         # make the card default there's no other
-        if not self.all():
+        if not self.filter(tenant_id__exact=tenant_id):
             card.is_default = True
         try:
             card.save()
@@ -62,6 +63,8 @@ class StripeCustomerManager(models.Manager):
                 card.delete()
                 return (True,)
             return (False, e.message)
+        except ObjectDoesNotExist as e:
+            return (False, u'Card does not exist')
         except Exception:
             return (False, _("Could not delete card. "
                              "Please try again later"))
