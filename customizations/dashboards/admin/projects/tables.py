@@ -15,6 +15,18 @@ class ProjectPromotionLink(tables.LinkAction):
         return request.user.is_superuser
 
 
+class TransactionHistoryLink(tables.LinkAction):
+    name = "transaction history"
+    verbose_name = _("Transaction History")
+    url = "horizon:admin:projects:transaction_history"
+    classes = ("btn-transhist")
+    policy_rules = (("identity", "identity:update_project"),
+                    ("identity", "identity:list_projects"),)
+
+    def allowed(self, request, user):
+        return request.user.is_superuser
+
+
 class CustomTenantsTable(TenantsTable):
     balance = tables.Column('balance',
                             filters=[helpers.FormattingHelpers.price],
@@ -26,7 +38,7 @@ class CustomTenantsTable(TenantsTable):
         row_class = UpdateRow
         row_actions = (ViewMembersLink, ViewGroupsLink, UpdateProject,
                        UsageLink, ModifyQuotas, DeleteTenantsAction,
-                       ProjectPromotionLink)
+                       ProjectPromotionLink, TransactionHistoryLink)
         table_actions = (TenantFilterAction, CreateProject,
                          DeleteTenantsAction)
         pagination_param = "tenant_marker"
