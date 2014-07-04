@@ -8,9 +8,6 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Removing unique constraint on 'StripeCustomer', fields ['name', 'keystone_id']
-        db.delete_unique(u'billing_app_stripecustomer', ['name', 'keystone_id'])
-
         # Adding field 'StripeCustomer.tenant_id'
         db.add_column(u'billing_app_stripecustomer', 'tenant_id',
                       self.gf('django.db.models.fields.CharField')(default='', max_length=64),
@@ -26,9 +23,6 @@ class Migration(SchemaMigration):
 
         # Deleting field 'StripeCustomer.tenant_id'
         db.delete_column(u'billing_app_stripecustomer', 'tenant_id')
-
-        # Adding unique constraint on 'StripeCustomer', fields ['name', 'keystone_id']
-        db.create_unique(u'billing_app_stripecustomer', ['name', 'keystone_id'])
 
 
     models = {
@@ -62,6 +56,7 @@ class Migration(SchemaMigration):
             'is_default': ('django.db.models.fields.BooleanField', [], {}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'stripe_customer_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '64'}),
+            'keystone_id': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'tenant_id': ('django.db.models.fields.CharField', [], {'max_length': '64'})
         }
     }

@@ -212,7 +212,7 @@ class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
                 transaction_reference=data['transaction_ref'],
                 claimed=False)
 
-            usd_amount = transaction.amount / settings.K2_USD_XRATE
+            usd_amount = transaction.amount / settings.K2_KES_USD_RATE
             user_transactions = transactions.UserTransactions()
 
             user_transactions.receive_user_payment(

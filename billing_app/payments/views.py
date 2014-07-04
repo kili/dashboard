@@ -8,7 +8,7 @@ from billing_app.payments import forms as payment_forms  # noqa
 from billing_app.payments import tables as payment_tables  # noqa
 from django.conf import settings
 # from django.views import generic
-# from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist  # noqa
 from django.http import HttpResponse  # noqa
 from django.utils.translation import ugettext_lazy as _
@@ -115,7 +115,7 @@ class CardPayView(horizon_forms.ModalFormView):
 class AddMobileNumberView(horizon_forms.ModalFormView):
     form_class = payment_forms.AddMobileNumberForm
     template_name = "billing_app/payments/add_number.html"
-    success_url = "/billing/"
+    success_url = reverse_lazy('billing')
 
     def get_context_data(self, **kwargs):
         context = super(AddMobileNumberView, self).get_context_data(**kwargs)
@@ -186,7 +186,7 @@ class K2_v2(FormView):
             tenant_number = MobileMoneyNumber.objects.get(
                 number=sender_phone)
             usd_amount = float(
-                k2_data['amount'].value()) / settings.K2_USD_XRATE
+                k2_data['amount'].value()) / settings.K2_KES_USD_RATE
             if tenant_number:
                 user_transactions.receive_user_payment(
                     tenant_number.tenant_id,
