@@ -1,6 +1,4 @@
-from customizations.dashboards.admin.projects import views
 from customizations.dashboards.admin.projects import urls as custom_urls
-from django.conf import urls
 from openstack_dashboard.dashboards.admin.projects import urls as project_urls
 
 

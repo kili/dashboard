@@ -1,6 +1,6 @@
+from accounting import transactions
 from horizon import exceptions
 from horizon import forms
-from accounting import transactions
 
 
 class GrantPromotionForm(forms.SelfHandlingForm):

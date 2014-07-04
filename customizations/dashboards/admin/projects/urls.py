@@ -1,5 +1,5 @@
-from django.conf import urls
 from customizations.dashboards.admin.projects import views
+from django.conf import urls
 
 urlpatterns = [
     urls.url(r'^$', views.CustomIndexView.as_view(), name='index'),

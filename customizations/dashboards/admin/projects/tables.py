@@ -42,4 +42,3 @@ class CustomTenantsTable(TenantsTable):
         table_actions = (TenantFilterAction, CreateProject,
                          DeleteTenantsAction)
         pagination_param = "tenant_marker"
-
