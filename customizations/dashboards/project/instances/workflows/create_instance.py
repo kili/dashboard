@@ -42,8 +42,10 @@ class CustomSetInstanceDetailsAction(create_instance.SetInstanceDetailsAction):
             exceptions.handle(request,
                               'Unable to retrieve availability zones.')
         self.fields['availability_zone'].initial = [
-            zone.zoneName
-            for zone in zones if zone.zoneState['available']][0]
+            zone.zoneName for zone in zones if zone.zoneState['available']][0]
+
+    def populate_availability_zone_choices(self, *args, **kwargs):
+        pass
 
 
 class CustomSetAccessControls(create_instance.SetAccessControls):
