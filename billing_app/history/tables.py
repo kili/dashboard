@@ -19,6 +19,6 @@ class PaymentsHistoryTable(tables.DataTable):
 
     class Meta:
         name = "PayHist"
-        verbose_name = _("Payment History")
+        verbose_name = _("Transaction History")
         table_actions = ()
         row_actions = ()
