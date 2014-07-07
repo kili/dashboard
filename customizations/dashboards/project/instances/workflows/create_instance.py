@@ -41,8 +41,14 @@ class CustomSetInstanceDetailsAction(create_instance.SetInstanceDetailsAction):
             zones = []
             exceptions.handle(request,
                               'Unable to retrieve availability zones.')
-        self.fields['availability_zone'].initial = [
-            zone.zoneName for zone in zones if zone.zoneState['available']][0]
+        try:
+            self.fields['availability_zone'].initial = [
+                zone.zoneName for zone in zones
+                if zone.zoneState['available']][0]
+        except KeyError:
+            zones = []
+            exceptions.handle(request,
+                              'No availability zones available.')
         self.fields['source_type'].initial = 'image_id'
 
     def populate_availability_zone_choices(self, *args, **kwargs):
