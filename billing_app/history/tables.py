@@ -30,4 +30,3 @@ class TransactionHistoryTable(tables.DataTable):
         verbose_name = _("Transactions")
         table_actions = ()
         row_actions = ()
-        template = "billing_app/usage/_totalled_table.html"
