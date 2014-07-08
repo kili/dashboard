@@ -12,7 +12,6 @@ from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist  # noqa
 from django.http import HttpResponse  # noqa
 from django.utils.translation import ugettext_lazy as _
-from django.views.decorators.cache import cache_page  # noqa
 from django.views.decorators.csrf import csrf_exempt  # noqa
 from django.views.generic.edit import FormView  # noqa
 #import hashlib
@@ -89,11 +88,12 @@ class IndexView(horizon_tables.MultiTableView):
                               _('Unable to retrieve cards.'))
         return cards
 
+class PaymentsBaseFormView(horizon_forms.ModalFormView):
+    success_url = reverse_lazy('horizon:billing:payments:index')
 
-class AddCardView(horizon_forms.ModalFormView):
+class AddCardView(PaymentsBaseFormView):
     form_class = payment_forms.AddCardForm
     template_name = "billing_app/payments/add_card.html"
-    success_url = "/billing/"
 
     def get_context_data(self, **kwargs):
         context = super(AddCardView, self).get_context_data(**kwargs)
@@ -101,10 +101,9 @@ class AddCardView(horizon_forms.ModalFormView):
         return context
 
 
-class CardPayView(horizon_forms.ModalFormView):
+class CardPayView(PaymentsBaseFormView):
     form_class = payment_forms.CardPayForm
     template_name = "billing_app/payments/card_pay.html"
-    success_url = "/billing/"
 
     def get_context_data(self, **kwargs):
         context = super(CardPayView, self).get_context_data(**kwargs)
@@ -112,10 +111,9 @@ class CardPayView(horizon_forms.ModalFormView):
         return context
 
 
-class AddMobileNumberView(horizon_forms.ModalFormView):
+class AddMobileNumberView(PaymentsBaseFormView):
     form_class = payment_forms.AddMobileNumberForm
     template_name = "billing_app/payments/add_number.html"
-    success_url = reverse_lazy('billing')
 
     def get_context_data(self, **kwargs):
         context = super(AddMobileNumberView, self).get_context_data(**kwargs)
@@ -123,10 +121,9 @@ class AddMobileNumberView(horizon_forms.ModalFormView):
         return context
 
 
-class EnterTransactionCodeView(horizon_forms.ModalFormView):
+class EnterTransactionCodeView(PaymentsBaseFormView):
     form_class = payment_forms.MobileTransactionCodeForm
     template_name = "billing_app/payments/mobile_transaction_code_entry.html"
-    success_url = "/billing/"
 
     def get_context_data(self, **kwargs):
         context = super(
@@ -160,16 +157,15 @@ class K2_v2(FormView):
         '''
         post_dict = self.request.POST.dict()
         post_dict.pop('signature')
-        '''
 
         # validate authenticity of request
-        '''
+
         HMAC = hmac.new(settings.K2_API_KEY,
                         post_queryset.urlencode(),
                         hashlib.sha1)
-        '''
-        #signature = base64.b64encode(HMAC.digest())
-        '''
+
+        signature = base64.b64encode(HMAC.digest())
+
         if signature != request.POST['signature']:
            http_reponse.status_code = 400
            http_response.content = 'Unauthorized!'
@@ -206,7 +202,6 @@ class K2_v2(FormView):
 
         return http_response
 
-   # @cache_page(0)
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
         return super(K2_v2, self).dispatch(*args, **kwargs)

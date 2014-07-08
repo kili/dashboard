@@ -1,6 +1,7 @@
 from billing_app.payments import views
 from django.conf.urls import patterns  # noqa
 from django.conf.urls import url  # noqa
+from django.views.decorators.cache import cache_page
 
 urlpatterns = patterns(
     '',
@@ -14,6 +15,6 @@ urlpatterns = patterns(
         views.EnterTransactionCodeView.as_view(),
         name='enter_transaction_code'),
     url(r'mobilemoney/K2/v2$',
-        views.K2_v2.as_view(),
-        name='k2_ver2_endpoint'),
+        cache_page(0)(views.K2_v2.as_view()),
+        name='k2_version2_endpoint'),
 )
