@@ -1,8 +1,6 @@
 {% load branding i18n %}
 {% load url from future %}
-<style>.topbar{height:25px;}</style>
 <h1 class="brand"><a href="{% site_branding_link %}">{% site_branding %}</a></h1>
-
 <div class="context-box">
   {% with num_of_regions=request.user.available_services_regions|length %}
   {% if num_of_regions > 1 %}

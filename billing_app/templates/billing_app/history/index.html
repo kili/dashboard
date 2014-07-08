@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% block title %}{% trans "Payments History" %}{% endblock %}
+{% block title %}{% trans "Transaction History" %}{% endblock %}
 
 {% block page_header %}
-{% include "horizon/common/_page_header.html" with title=_("Payment History and Usage") %}
+{% include "horizon/common/_page_header.html" with title="Transaction History and Usage ("|add:project|add:")" %}
 {% endblock page_header %}
 
 {% block main %}

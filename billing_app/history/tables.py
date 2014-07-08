@@ -3,23 +3,31 @@ from horizon import tables
 from user_billing import helpers
 
 
-class PaymentsHistoryTable(tables.DataTable):
+class TransactionHistoryTableEntry():
+
+    def __init__(self, id, Date, Description, Amount):
+        self.id = id
+        self.Date = Date
+        self.Description = Description
+        self.Amount = Amount
+
+
+class TransactionHistoryTable(tables.DataTable):
     name = tables.Column("Date",
                          verbose_name=_("Date"),
                          attrs={'data-type': "date", 'width': "200"},
-                         sortable=True,
-                         )
+                         sortable=True)
     description = tables.Column("Description")
     amount = tables.Column("Amount",
                            filters=[helpers.FormattingHelpers.price],
                            verbose_name=_("Amount (USD)"),
                            classes=('text-right',),
                            attrs={'width': "200", 'align': "right"},
-                           )
+                           summation='sum')
 
     class Meta:
-        name = "PayHist"
-        verbose_name = _("Payment History")
+        name = "TransHist"
+        verbose_name = _("Transactions")
         table_actions = ()
         row_actions = ()
         template = "billing_app/usage/_totalled_table.html"

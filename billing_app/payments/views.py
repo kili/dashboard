@@ -8,8 +8,8 @@ from billing_app.payments import forms as payment_forms  # noqa
 from billing_app.payments import tables as payment_tables  # noqa
 from django.conf import settings
 # from django.views import generic
-from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist  # noqa
+from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse  # noqa
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt  # noqa
@@ -54,8 +54,8 @@ class IndexView(horizon_tables.MultiTableView):
         if not managers.AccountManager().has_sufficient_balance(
                 self.request.user.tenant_id):
             messages.warning(self.request,
-                          'You need at least {0} USD to launch an instance'.
-                          format(settings.MINIMUM_BALANCE))
+                             'You need at least {0} USD to launch an instance'.
+                             format(settings.MINIMUM_BALANCE))
         return context
 
     def get_mobile_money_data(self):
@@ -88,8 +88,10 @@ class IndexView(horizon_tables.MultiTableView):
                               _('Unable to retrieve cards.'))
         return cards
 
+
 class PaymentsBaseFormView(horizon_forms.ModalFormView):
     success_url = reverse_lazy('horizon:billing:payments:index')
+
 
 class AddCardView(PaymentsBaseFormView):
     form_class = payment_forms.AddCardForm
@@ -138,7 +140,7 @@ class K2_v2(FormView):
 
     def post(self, request, *args, **kwargs):
         k2_response = {'status': "01",
-                      'description': "Accepted"}
+                       'description': "Accepted"}
         http_response = HttpResponse(
             json.dumps(k2_response),
             content_type='application/json')
@@ -188,8 +190,8 @@ class K2_v2(FormView):
                     tenant_number.tenant_id,
                     "KOPOKOPO", usd_amount,
                     ("Received mobile money payment."
-                    " Transaction ref %s"
-                    % k2_data['transaction_reference'].value()))
+                     " Transaction ref %s"
+                     % k2_data['transaction_reference'].value()))
                 k2_data.claimed = True
         except ObjectDoesNotExist:
             k2_data.claimed = False
