@@ -76,10 +76,10 @@ class Card(models.Model):
                    stripe_customer_id=stripe_customer.id)
         try:
             card.save()
-        except (IntegrityError, DatabaseError) as e:
+        except (IntegrityError, DatabaseError):
             stripe_customer.delete()
-            raise IntegrityError('Error creating card in db: {0}'.format(
-                                 str(e)))
+            logger.exception('error, couldnt insert into db')
+            raise IntegrityError('Error creating card in db')
         return card
 
     def delete(self, *args, **kwargs):
