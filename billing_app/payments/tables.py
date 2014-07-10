@@ -1,5 +1,4 @@
-from billing_app.models import MobileMoneyNumber
-from billing_app.models import StripeCustomer
+from billing_app import models
 from django.http import HttpResponse  # noqa
 from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
@@ -14,12 +13,11 @@ class AddCard(tables.LinkAction):
 
     name = "Add Card"
     verbose_name = _("Add Credit / Debit Card")
-    url = "payments/cards/add"
+    url = "horizon:billing:payments:add_card"
     classes = ('btn-create', 'ajax-modal')
     ajax = True
 
     def single(self, table, request, object_id=None):
-        self.allowed(request, None)
         return HttpResponse(self.render())
 
 
@@ -27,18 +25,15 @@ class AddFunds(tables.LinkAction):
 
     name = "Add Funds"
     verbose_name = _("Add Funds to Your Account")
-    url = "payments/cards/addfunds"
+    url = "horizon:billing:payments:add_funds"
     classes = ('btn-success', 'btn-large', 'ajax-modal')
     ajax = True
 
     def single(self, table, request, object_id=None):
-        self.allowed(request, None)
         return HttpResponse(self.render())
 
-    def allowed(self, request, datum=None):
-        if not self.table.data and not datum:
-            return False
-        return True
+    def allowed(self, request, datum):
+        return bool(self.table.data)
 
 
 class DeleteCard(tables.DeleteAction):
@@ -52,13 +47,7 @@ class DeleteCard(tables.DeleteAction):
     classes = ('btn-danger', 'btn-terminate')
 
     def delete(self, request, card_id):
-        result = StripeCustomer.objects.delete_card(
-            int(card_id),
-            request.user.id
-        )
-        if not result[0]:
-            LOG.error('Could not delete card: %s, %s' % (card_id, result[1]))
-            raise exceptions.Conflict(result[1])
+        models.Card.objects.filter(pk=card_id).delete()
 
 
 class MakeDefault(tables.BatchAction):
@@ -71,14 +60,8 @@ class MakeDefault(tables.BatchAction):
     data_type_plural = _("Cards")
     classes = ("btn-enable",)
 
-    def allowed(self, request, instance=None):
-        return True
-
     def action(self, request, obj_id):
-        StripeCustomer.objects.ensure_default(
-            int(obj_id),
-            request.user.id
-        )
+        models.Card.objects.get(pk=obj_id).make_default()
 
 
 class StripeCardCustomerTable(tables.DataTable):
@@ -86,7 +69,7 @@ class StripeCardCustomerTable(tables.DataTable):
     name = tables.Column("name",
                          verbose_name=_("Card"))
     default = tables.Column("default",
-                            verbose_name=_("Default?"))
+                            verbose_name=_("Default"))
 
     class Meta:
         name = "cards"
@@ -100,12 +83,11 @@ class AddMobileMoneyNumber(tables.LinkAction):
 
     name = "Add Number"
     verbose_name = _("Add M-Pesa Enabled Number")
-    url = "payments/mobilemoney/addnumber"
+    url = "horizon:billing:payments:add_number"
     classes = ('btn-create', 'ajax-modal')
     ajax = True
 
     def single(self, table, request, object_id=None):
-        self.allowed(request, None)
         return HttpResponse(self.render())
 
 
@@ -113,16 +95,12 @@ class EnterCode(tables.LinkAction):
 
     name = "Enter Transaction Code"
     verbose_name = _("Add funds via Transaction Code")
-    url = "payments/mobilemoney/transactioncode"
+    url = "horizon:billing:payments:enter_transaction_code"
     classes = ('btn-success', 'ajax-modal')
     ajax = True
 
     def single(self, table, request, object_id=None):
-        self.allowed(request, None)
         return HttpResponse(self.render())
-
-    def allowed(self, request, datum=None):
-        return True
 
 
 class DeleteMobileMoneyNumber(tables.DeleteAction):
@@ -136,7 +114,7 @@ class DeleteMobileMoneyNumber(tables.DeleteAction):
     classes = ('btn-danger', 'btn-terminate')
 
     def delete(self, request, number_id):
-        result = MobileMoneyNumber.objects.delete_number(
+        result = models.MobileMoneyNumber.objects.delete_number(
             int(number_id),
             request.user.id
         )

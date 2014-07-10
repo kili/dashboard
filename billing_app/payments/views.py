@@ -1,20 +1,16 @@
 from accounting import managers
 import billing
+from billing_app.models import Card  # noqa
 from billing_app.models import MobileMoneyNumber  # noqa
-from billing_app.models import StripeCustomer  # noqa
 from billing_app.payments import forms as payment_forms  # noqa
 from billing_app.payments import tables as payment_tables  # noqa
 from django.conf import settings
-# from django.views import generic
-# from django.core.urlresolvers import reverse_lazy
+from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import forms
 from horizon import messages
 from horizon import tables as horizon_tables  # noqa
-#from horizon.views import APIView
-
-stripe_obj = billing.get_integration("stripe")
 
 
 class MobileNumberTableEntry():
@@ -27,10 +23,14 @@ class MobileNumberTableEntry():
 
 class CardTableEntry():
 
-    def __init__(self, id, name, is_default):
+    def __init__(self, id, name, default):
         self.id = id
         self.name = name
-        self.default = is_default
+        self.default = default
+
+
+class PaymentViewBase(forms.ModalFormView):
+    success_url = urlresolvers.reverse_lazy('horizon:billing:payments:index')
 
 
 class IndexView(horizon_tables.MultiTableView):
@@ -40,16 +40,15 @@ class IndexView(horizon_tables.MultiTableView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['stripe_obj'] = stripe_obj
+        context['stripe_obj'] = billing.get_integration('stripe')
         if not managers.AccountManager().has_sufficient_balance(
                 self.request.user.tenant_id):
             messages.warning(self.request,
-                          'You need at least {0} USD to launch an instance'.
+                          u'You need at least {0} USD to launch an instance'.
                           format(settings.MINIMUM_BALANCE))
         return context
 
     def get_mobile_money_data(self):
-        self._more = False
         try:
             mobile_numbers = [MobileNumberTableEntry(
                 x.id,
@@ -63,15 +62,14 @@ class IndexView(horizon_tables.MultiTableView):
         return mobile_numbers
 
     def get_cards_data(self):
-        self._more = False
         try:
             cards = [CardTableEntry(
                      x.id,
                      x.name,
-                     x.is_default)
-                     for x in StripeCustomer.objects.filter(
-                     keystone_id__exact=self.request.user.id).order_by(
-                         'is_default', 'id').reverse()]
+                     x.default)
+                     for x in Card.objects.filter(
+                     tenant_id__exact=self.request.user.tenant_id).order_by(
+                         'default', 'id').reverse()]
         except Exception:
             cards = []
             exceptions.handle(self.request,
@@ -79,55 +77,36 @@ class IndexView(horizon_tables.MultiTableView):
         return cards
 
 
-class AddCardView(forms.ModalFormView):
+class AddCardView(PaymentViewBase):
     form_class = payment_forms.AddCardForm
     template_name = "billing_app/payments/add_card.html"
-    success_url = "/billing/"
 
     def get_context_data(self, **kwargs):
         context = super(AddCardView, self).get_context_data(**kwargs)
-        context['stripe_obj'] = stripe_obj
+        context['stripe_obj'] = billing.get_integration('stripe')
         return context
 
 
-class CardPayView(forms.ModalFormView):
+class CardPayView(PaymentViewBase):
     form_class = payment_forms.CardPayForm
     template_name = "billing_app/payments/card_pay.html"
-    success_url = "/billing/"
 
     def get_context_data(self, **kwargs):
         context = super(CardPayView, self).get_context_data(**kwargs)
-        context['stripe_obj'] = stripe_obj
+        context['stripe_obj'] = billing.get_integration('stripe')
         return context
 
 
-class AddMobileNumberView(forms.ModalFormView):
+class AddMobileNumberView(PaymentViewBase):
     form_class = payment_forms.AddMobileNumberForm
     template_name = "billing_app/payments/add_number.html"
-    success_url = "/billing/"
-
-    def get_context_data(self, **kwargs):
-        context = super(AddMobileNumberView, self).get_context_data(**kwargs)
-        context['stripe_obj'] = stripe_obj
-        return context
 
 
-class EnterTransactionCodeView(forms.ModalFormView):
+class EnterTransactionCodeView(PaymentViewBase):
     form_class = payment_forms.MobileTransactionCodeForm
     template_name = "billing_app/payments/mobile_transaction_code_entry.html"
-    success_url = "/billing/"
-
-    def get_context_data(self, **kwargs):
-        context = super(
-            EnterTransactionCodeView, self).get_context_data(**kwargs)
-        context['stripe_obj'] = stripe_obj
-        return context
 
 
 class K2srv_v1(forms.ModalFormView):
     form_class = payment_forms.AddCardForm
     template_name = "billing_app/payments/k2v1.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(K2srv_v1, self).get_context_data(**kwargs)
-        return context
