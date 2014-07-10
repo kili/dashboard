@@ -13,9 +13,11 @@ class Migration(SchemaMigration):
         db.rename_column('billing_app_card', 'name', 'last4')
         db.rename_column('billing_app_card', 'is_default', 'default')
         db.add_column('billing_app_card', 'tenant_id', models.fields.CharField(max_length=64, db_index=True))
+        db.create_unique('billing_app_card', ['last4', 'tenant_id'])
 
     def backwards(self, orm):
         db.rename_table('billing_app_card', 'billing_app_stripecustomer')
+        db.delete_unique('billing_app_stripecustomer', ['last4', 'tenant_id'])
         db.rename_column('billing_app_stripecustomer', 'last4', 'name')
         db.rename_column('billing_app_stripecustomer', 'default', 'is_default')
         db.create_unique('billing_app_stripecustomer', ['is_default', 'keystone_id'])
