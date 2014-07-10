@@ -61,7 +61,6 @@ $("#id_add_card_form").submit(function(event) {
                     $("#id_submit_card").removeClass("disabled");
                     return;
                 }
-                console.log(response);
                 var token = response['id'];
                 $("#id_add_card_form input[name=stripeToken]").val(token);
                 var CCNum = $("#id_add_card_form input[name=credit_card_number]").val();
