@@ -1,8 +1,9 @@
 import billing
 from billing_app import managers
-from django.core.exceptions import FieldError
 from django.forms import ValidationError
 from django.db import models
+from django.db import IntegrityError
+from django.db import DatabaseError
 import logging
 
 logger = logging.getLogger('horizon')
@@ -67,12 +68,19 @@ class Card(models.Model):
                 stripe.error.APIConnectionError,
                 stripe.error.StripeError) as e:
             logger.error('Could not create stripe customer: %s', e.message)
-            raise FieldError('Error creating customer on Stripe backend,'
-                             'please contact support')
-        return cls(last4=kwargs['last4'],
+            raise IntegrityError('Error creating customer on Stripe backend, '
+                                 'please contact support')
+        card = cls(last4=kwargs['last4'],
                    default=kwargs['default'],
                    tenant_id=kwargs['tenant_id'],
                    stripe_customer_id=stripe_customer.id)
+        try:
+            card.save()
+        except (IntegrityError, DatabaseError) as e:
+            stripe_customer.delete()
+            raise IntegrityError('Error creating card in db: {0}'.format(
+                                 str(e)))
+        return card
 
     def delete(self, *args, **kwargs):
         try:

@@ -6,6 +6,7 @@ from billing_app.models import MobileMoneyNumber
 import decimal
 from django.utils.translation import ugettext_lazy as _
 from django.forms import ValidationError
+from django.db import IntegrityError
 from django.core.exceptions import FieldError
 from horizon import exceptions
 from horizon import forms
@@ -35,13 +36,12 @@ class AddCardForm(forms.SelfHandlingForm, stripe_forms.StripeForm):
                                tenant_id=request.user.tenant_id,
                                stripe_card_token=data['stripe_card_token'],
                                email=request.user.username)
-            card.save()
             messages.success(
                 request,
                 _('Credit card "%s" has been tied to your account.') %
                 card.name)
             return True
-        except (FieldError, ValidationError) as e:
+        except (FieldError, ValidationError, IntegrityError) as e:
             self.api_error(e.message)
         except Exception:
             exceptions.handle(request, ignore=True)
