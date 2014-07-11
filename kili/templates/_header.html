@@ -4,31 +4,38 @@
 <h1 class="brand"><a href="{% site_branding_link %}">{% site_branding %}</a></h1>
 
 <div class="context-box">
-  {% with num_of_regions=request.user.available_services_regions|length %}
-  {% if num_of_regions > 1 %}
+    {% with num_of_regions=request.user.available_services_regions|length %}
+    {% if num_of_regions > 1 %}
     <div id="services_region_switcher" class="dropdown switcher_bar" tabindex="1">
-      <a class="dropdown-toggle" data-toggle="dropdown" href="#services_region_switcher">
-        <h3>{{ request.user.services_region }}</h3>
-      </a>
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#services_region_switcher">
+            <h3>{{ request.user.services_region }}</h3>
+        </a>
 
-      <ul id="services_regions_list" class="dropdown-menu">
-        <li class='divider'></li>
-        {% for region in request.user.available_services_regions %}
-          <li><a href="{% url 'switch_services_region' region %}?next={{ request.horizon.panel.get_absolute_url }}">{{ region }}</a></li>
-        {% endfor %}
-      </ul>
+        <ul id="services_regions_list" class="dropdown-menu">
+            <li class='divider'></li>
+            {% for region in request.user.available_services_regions %}
+            <li><a href="{% url 'switch_services_region' region %}?next={{ request.horizon.panel.get_absolute_url }}">{{ region }}</a></li>
+            {% endfor %}
+        </ul>
     </div>
-  {% endif %}
-  {% endwith %}
+    {% endif %}
+    {% endwith %}
 </div>
 
 <div id="user_info" class="pull-right" >
-  <span style="font-weight:bold;height:25px;">{{ request.user.username }}</span>
-  <a href="{% url 'horizon:settings:user:index' %}">{% trans "Settings" %}</a>
-  {% if HORIZON_CONFIG.help_url %}
-  <a href="{{ HORIZON_CONFIG.help_url }}" target="_new">{% trans "Help" %}</a>
-  {% endif %}
-  <a href="{% url 'logout' %}">{% trans "Sign Out" %}</a>
-  {% include "horizon/common/_region_selector.html" %}
+    <a id="balance"
+    {% if balance < 15 %}
+       class="low" href="{% url 'horizon:billing:payments:index' %}">
+       Your account balance is low!
+    {% else %}
+       href="{% url 'horizon:billing:history:index' %}"> ${{ balance }}
+    {% endif %}
+    </a>
+    <span id="user_name">{{ request.user.username }}</span>
+    <a href="{% url 'horizon:settings:user:index' %}">{% trans "Settings" %}</a>
+    {% if HORIZON_CONFIG.help_url %}
+    <a href="{{ HORIZON_CONFIG.help_url }}" target="_new">{% trans "Help" %}</a>
+    {% endif %}
+    <a href="{% url 'logout' %}">{% trans "Sign Out" %}</a>
+    {% include "horizon/common/_region_selector.html" %}
 </div>
-

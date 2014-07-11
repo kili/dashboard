@@ -122,6 +122,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'horizon.context_processors.horizon',
     'openstack_dashboard.context_processors.openstack',
+    'billing_app.context_processors.balance',
 )
 
 TEMPLATE_LOADERS = (
