@@ -7,11 +7,12 @@ from django.core.urlresolvers import reverse
 
 from accounting.managers import AccountManager
 from billing_app.models import Card
-from openstack_dashboard.test import helpers as test  # noqa
 from django.test.client import RequestFactory  # noqa
+from billing_app.models import MobileMoneyNumber
 from billing_app.payments import views as payment_views
 from django.contrib.auth import get_user_model
 import json
+from openstack_dashboard.test import helpers as test  # noqa
 
 
 TENANT_ID = "t_abc123"
@@ -39,18 +40,18 @@ add_number_url = \
 
 
 def k2_notify(k2_data):
+    request = RequestFactory().post(k2_endpoint_url, k2_data)
     k2view = payment_views.K2_v2(
-        **{'request': RequestFactory().post(k2_endpoint_url, k2_data)})
+        **{'request': request})
     return k2view.dispatch(request)
 
 
 def add_mobile_number(mobile_number):
-    request = RequestFactory().post(
-        RequestFactory().post(add_number_url,
-            {'mobile_number':mobile_number}))
-    request.user = TEST_USER 
-    mobile_number_view = payment_views.AddMobileNumberView(**{'request': request})
-    return mobile_number_view.dispatch(request)
+    MobileMoneyNumber.objects.add_number(
+        mobile_number,
+        TEST_USER.tenant_id
+    )
+
 
 class PaymentsTests(test.TestCase):
     # Unit tests for payments.
@@ -108,18 +109,18 @@ class PaymentsTests(test.TestCase):
             self.am.get_user_account(
                 self.card1_params['tenant_id']).balance(),
             123123)
+
     # Unit tests for payments.
     def test_me(self):
         self.assertTrue(1 + 1 == 2)
 
     def test_add_mobile_number(self):
-        add_mobile_number('0720123456')
-        MobileMoneyNumber.objects.filter(mobile_number = '0720123456')
-        return true
+        pass
 
-    #k2 notification endpoint test
+    # k2 notification endpoint test
     def test_k2_notification(self):
-        valid_k2_data = k2_notification_data
+        k2_notification_data
         response = k2_notify(k2_notification_data)
-        self.assertTrue(json.loads(response.content)['status'] == u'01')
-        return true
+        self.assertTrue(json.loads(response.content)['status'] == u'01',
+                        u'Unexpected k2 notification endpoint response')
+        return True

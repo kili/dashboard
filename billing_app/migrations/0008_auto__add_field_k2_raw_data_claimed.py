@@ -39,20 +39,20 @@ class Migration(SchemaMigration):
             'transaction_timestamp': ('django.db.models.fields.DateTimeField', [], {}),
             'transaction_type': ('django.db.models.fields.CharField', [], {'max_length': '64'})
         },
-        u'billing_app.mobilemoneynumber': {
-            'Meta': {'unique_together': "(('number', 'tenant_id'),)", 'object_name': 'MobileMoneyNumber'},
+        u'billing_app.card': {
+            'Meta': {'unique_together': "(('last4', 'tenant_id'),)", 'object_name': 'Card'},
+            'default': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'number': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'last4': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
+            'stripe_customer_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '64'}),
+            'tenant_id': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_index': 'True'})
+        },
+        u'billing_app.mobilemoneynumber': {
+            'Meta': {'object_name': 'MobileMoneyNumber'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'number': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '64'}),
             'tenant_id': ('django.db.models.fields.CharField', [], {'max_length': '64'})
         },
-        u'billing_app.stripecustomer': {
-            'Meta': {'unique_together': "(('name', 'tenant_id'),)", 'object_name': 'StripeCustomer'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_default': ('django.db.models.fields.BooleanField', [], {}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
-            'stripe_customer_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '64'}),
-            'tenant_id': ('django.db.models.fields.CharField', [], {'max_length': '64'})
-        }
     }
 
     complete_apps = ['billing_app']

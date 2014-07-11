@@ -11,8 +11,7 @@
 <script type="text/javascript" src="https://js.stripe.com/v1/"></script>
 <script>Stripe.setPublishableKey('{{ stripe_obj.publishable_key }}');</script>
 <div id="mpesa-numbers" class="paygate-section">
-    <h1 class="paygate-section-header"> 
-        M-Pesa
+    <h1 class="paygate-section-header">M-Pesa
         <img src="/static/img/lipa_na_mpesa1.png" />
     </h1>
 {{ mobile_money_table.render }}

@@ -23,6 +23,9 @@ from horizon import tables as horizon_tables  # noqa
 import json
 
 
+stripe_obj = billing.get_integration("stripe")
+
+
 class MobileNumberTableEntry():
 
     def __init__(self, id, number):
@@ -83,6 +86,7 @@ class IndexView(horizon_tables.MultiTableView):
                               _('Unable to retrieve cards.'))
         return cards
 
+
 class AddCardView(PaymentViewBase):
     form_class = payment_forms.AddCardForm
     template_name = "billing_app/payments/add_card.html"
@@ -130,7 +134,7 @@ class K2_v2(FormView):
 
     def post(self, request, *args, **kwargs):
         k2_response = {'status': "01",
-                      'description': "Accepted"}
+                       'description': "Accepted"}
         http_response = HttpResponse(
             json.dumps(k2_response),
             content_type='application/json')
@@ -180,8 +184,8 @@ class K2_v2(FormView):
                     tenant_number.tenant_id,
                     "KOPOKOPO", usd_amount,
                     ("Received mobile money payment."
-                    " Transaction ref %s"
-                    % k2_data['transaction_reference'].value()))
+                     " Transaction ref %s"
+                     % k2_data['transaction_reference'].value()))
                 k2_data.claimed = True
         except ObjectDoesNotExist:
             k2_data.claimed = False

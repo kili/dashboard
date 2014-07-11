@@ -31,7 +31,7 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'number': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '64'}),
             'tenant_id': ('django.db.models.fields.CharField', [], {'max_length': '64'})
-        }
+        },
     }
 
     complete_apps = ['billing_app']

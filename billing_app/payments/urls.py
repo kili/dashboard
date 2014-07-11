@@ -1,7 +1,7 @@
 from billing_app.payments import views
 from django.conf.urls import patterns  # noqa
 from django.conf.urls import url  # noqa
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page  # noqa
 
 urlpatterns = patterns(
     '',
