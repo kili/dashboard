@@ -9,21 +9,22 @@ from django.forms import ValidationError
 from django.db import IntegrityError
 from django.core.exceptions import FieldError
 from horizon import exceptions
-from horizon import forms
+from horizon import forms as horizon_forms
 from horizon import messages
 
 
 stripe = billing.get_gateway("stripe").stripe
 
 
-class AddCardForm(forms.SelfHandlingForm, stripe_forms.StripeForm):
+class AddCardForm(horizon_forms.SelfHandlingForm, stripe_forms.StripeForm):
 
-    last4 = forms.CharField(widget=forms.HiddenInput())
-    default = forms.BooleanField(
+    last4 = horizon_forms.CharField(widget=horizon_forms.HiddenInput())
+    default = horizon_forms.BooleanField(
         label=_("Make this my Default Card"),
         required=False
     )
-    stripe_card_token = forms.CharField(widget=forms.HiddenInput())
+    stripe_card_token = horizon_forms.CharField(
+        widget=horizon_forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         super(AddCardForm, self).__init__(*args, **kwargs)
@@ -47,9 +48,9 @@ class AddCardForm(forms.SelfHandlingForm, stripe_forms.StripeForm):
             exceptions.handle(request, ignore=True)
 
 
-class CardPayForm(forms.SelfHandlingForm):
+class CardPayForm(horizon_forms.SelfHandlingForm):
 
-    amount = forms.DecimalField(label=_("Amount (In US Dollars)"),
+    amount = horizon_forms.DecimalField(label=_("Amount (In US Dollars)"),
                                 required=True,
                                 min_value=decimal.Decimal('15'))
 
@@ -106,26 +107,19 @@ class CardPayForm(forms.SelfHandlingForm):
             return False
 
 
-class AddMobileNumberForm(forms.SelfHandlingForm):
+class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
 
-    def __init__(self, *args, **kwargs):
-        super(AddMobileNumberForm, self).__init__(*args, **kwargs)
-
-    mobile_number = forms.CharField(label=_("Enter an M-Pesa enabled number"),
-                                    required=True,
-                                    widget=forms.NumberInput(),
-                                    min_length=10,
-                                    max_length=10)
+    mobile_number = horizon_forms.CharField(
+        label=_("Enter an M-Pesa enabled number"),
+        required=True,
+        widget=horizon_forms.NumberInput(),
+        min_length=10,
+        max_length=10)
 
     def handle(self, request, data):
         try:
-            result = MobileMoneyNumber.objects.add_number(
-                data['mobile_number'],
-                request.user.id
-            )
-            if not result[0]:
-                raise ValidationError(result[1])
-
+            MobileMoneyNumber.create(number=data['mobile_number'],
+                                     tenant_id=request.user.tenant_id)
             messages.success(
                 request,
                 _('M-Pesa Number "%s" has been tied to your account.')
@@ -134,20 +128,19 @@ class AddMobileNumberForm(forms.SelfHandlingForm):
             return True
         except ValidationError as e:
             self.api_error(e.messages[0])
-            return False
         except Exception:
             exceptions.handle(request, ignore=True)
             self.api_error("An error occured while adding your number. "
                            "Please try again later.")
-            return False
+        return False
 
 
-class MobileTransactionCodeForm(forms.SelfHandlingForm):
+class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
 
     def __init__(self, *args, **kwargs):
         super(MobileTransactionCodeForm, self).__init__(*args, **kwargs)
 
-    transaction_code = forms.IntegerField(
+    transaction_code = horizon_forms.IntegerField(
         label=_("Enter mobile money transaction code"),
         required=True
     )

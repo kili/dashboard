@@ -43,23 +43,20 @@ class IndexView(horizon_tables.MultiTableView):
         context['stripe_obj'] = billing.get_integration('stripe')
         if not managers.AccountManager().has_sufficient_balance(
                 self.request.user.tenant_id):
-            messages.warning(self.request,
-                          u'You need at least {0} USD to launch an instance'.
-                          format(settings.MINIMUM_BALANCE))
+            messages.warning(
+                self.request,
+                u'You need at least {0} USD to launch an instance'.
+                format(settings.MINIMUM_BALANCE))
         return context
 
     def get_mobile_money_data(self):
         try:
-            mobile_numbers = [MobileNumberTableEntry(
-                x.id,
-                x.number)
-                for x in MobileMoneyNumber.objects.filter(
-                    keystone_id__exact=self.request.user.id)]
+            return [MobileNumberTableEntry(x.id, x.number)
+                    for x in MobileMoneyNumber.objects.filter(
+                    tenant_id__exact=self.request.user.tenant_id)]
         except Exception:
-            mobile_numbers = []
-            exceptions.handle(self.request,
-                              _('Unable to retrieve numbers.'))
-        return mobile_numbers
+            exceptions.handle(self.request, _('Unable to retrieve numbers.'))
+            return []
 
     def get_cards_data(self):
         try:

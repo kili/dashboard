@@ -95,16 +95,19 @@ class Card(models.Model):
 class MobileMoneyNumber(models.Model):
 
     number = models.CharField(max_length=64,
-                              unique=False,
+                              unique=True,
                               blank=False)
-    keystone_id = models.CharField(max_length=64,
-                                   unique=False,
-                                   blank=False)
+    tenant_id = models.CharField(max_length=64,
+                                 unique=False,
+                                 blank=False)
 
     objects = managers.MobileMoneyNumberManager()
 
     def __unicode__(self):
         return unicode(self.name)
 
-    class Meta:
-        unique_together = (("number", "keystone_id"))
+    @classmethod
+    def create(cls, **kwargs):
+        number = cls(**kwargs)
+        number.save()
+        return number
