@@ -3,6 +3,7 @@ from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import forms
+from openstack_dashboard import api
 from openstack_dashboard.dashboards.project.instances import views
 from openstack_dashboard.dashboards.project.instances.workflows \
     import create_instance
@@ -23,13 +24,49 @@ class CustomSetAccessControlsAction(create_instance.SetAccessControlsAction):
                       "security groups, and other mechanisms.")
 
 
+class CustomSetInstanceDetailsAction(create_instance.SetInstanceDetailsAction):
+    availability_zone = forms.CharField(widget=forms.HiddenInput)
+
+    class Meta:
+        name = _("Details")
+        help_text_template = ("project/instances/"
+                              "_launch_details_help.html")
+
+    def __init__(self, request, *args, **kwargs):
+        super(CustomSetInstanceDetailsAction, self).__init__(
+            request, *args, **kwargs)
+        try:
+            zones = api.nova.availability_zone_list(request)
+        except Exception:
+            zones = []
+            exceptions.handle(request,
+                              'Unable to retrieve availability zones.')
+        try:
+            self.fields['availability_zone'].initial = [
+                zone.zoneName for zone in zones
+                if zone.zoneState['available']][0]
+        except KeyError:
+            zones = []
+            exceptions.handle(request,
+                              'No availability zones available.')
+        self.fields['source_type'].initial = 'image_id'
+
+    def populate_availability_zone_choices(self, *args, **kwargs):
+        pass
+
+
 class CustomSetAccessControls(create_instance.SetAccessControls):
     action_class = CustomSetAccessControlsAction
 
 
+class CustomSetInstanceDetails(create_instance.SetInstanceDetails):
+    action_class = CustomSetInstanceDetailsAction
+
+
 class CustomLaunchInstance(create_instance.LaunchInstance):
     default_steps = (create_instance.SelectProjectUser,
-                     create_instance.SetInstanceDetails,
+                     # customized instance details tab
+                     CustomSetInstanceDetails,
                      # customized access control tab
                      CustomSetAccessControls,
                      create_instance.SetNetwork,

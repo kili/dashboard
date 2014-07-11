@@ -103,6 +103,7 @@ OPENSTACK_IMAGE_BACKEND = {
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -541,7 +542,7 @@ FLAVOR_EXTRA_KEYS = {
 CUSTOMIZATIONS = (
     'customizations.launch_instance.LaunchInstanceViewCustomizer',
     'customizations.instances_table.InstancesTableCustomizer',
-    'customizations.user_balance.UserTableCustomizer',
+    'customizations.project_balance.ProjectTableCustomizer',
 )
 
 ACCOUNTING_BOOKS = {
@@ -555,6 +556,14 @@ ACCOUNTING_PROMOTIONS_ACCOUNT = "PROMOTIONS"
 ACCOUNTING_REVENUE_ACCOUNT = "REVENUE"
 ACCOUNTING_USER_ACCOUNT_FORMAT = {"regex": "USER_[a-f0-9]{32}",
                                   "format": "USER_{0}"}
+
+ACCOUNTING_VALID_ACCOUNTS = ACCOUNTING_ASSET_SOURCES[:]
+ACCOUNTING_VALID_ACCOUNTS.append(ACCOUNTING_PROMOTIONS_ACCOUNT)
+ACCOUNTING_VALID_ACCOUNTS.append(ACCOUNTING_REVENUE_ACCOUNT)
+ACCOUNTING_VALID_ACCOUNTS.append(ACCOUNTING_USER_ACCOUNT_FORMAT["regex"])
+
+ACCOUNTING_CREDIT_NEGATIVE_ACCOUNTS = ACCOUNTING_ASSET_SOURCES[:]
+ACCOUNTING_CREDIT_NEGATIVE_ACCOUNTS.append(ACCOUNTING_PROMOTIONS_ACCOUNT)
 
 CEILOMETER_API_VERSION = 2
 CEILOMETER_AUTH_DATA = {
