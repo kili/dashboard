@@ -73,7 +73,8 @@ class StripeCardCustomerTable(tables.DataTable):
 
     class Meta:
         name = "cards"
-        verbose_name = _("Your Credit/Debit Cards")
+        #verbose_name = _("Your Credit/Debit Cards")
+        verbose_name = " "
         table_actions = (AddFunds, AddCard)
         row_actions = (DeleteCard, MakeDefault)
 
@@ -132,6 +133,7 @@ class MobileMoneyTable(tables.DataTable):
 
     class Meta:
         name = "mobile_money"
-        verbose_name = _("Your Mobile Money Numbers")
+        #verbose_name = _("Your Mobile Money Numbers")
+        verbose_name = " "
         table_actions = (AddMobileMoneyNumber, EnterCode)
         row_actions = (DeleteMobileMoneyNumber, )

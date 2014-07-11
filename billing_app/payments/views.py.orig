@@ -7,10 +7,21 @@ from billing_app.models import MobileMoneyNumber  # noqa
 from billing_app.payments import forms as payment_forms  # noqa
 from billing_app.payments import tables as payment_tables  # noqa
 from django.conf import settings
+<<<<<<< HEAD
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import urlresolvers
 from django.http import HttpResponse
+||||||| merged common ancestors
 # from django.views import generic
+# from django.core.urlresolvers import reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist  # noqa
+from django.http import HttpResponse  # noqa
+=======
+# from django.views import generic
+from django.core.urlresolvers import reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist  # noqa
+from django.http import HttpResponse  # noqa
+>>>>>>> 538f594915867f1bd4cd0eba56a460dbf1a229ae
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt  # noqa
 from django.views.generic.edit import FormView  # noqa
@@ -83,7 +94,16 @@ class IndexView(horizon_tables.MultiTableView):
                               _('Unable to retrieve cards.'))
         return cards
 
+class PaymentsBaseFormView(horizon_forms.ModalFormView):
+    success_url = reverse_lazy('horizon:billing:payments:index')
+
+<<<<<<< HEAD
 class AddCardView(PaymentViewBase):
+||||||| merged common ancestors
+class AddCardView(horizon_forms.ModalFormView):
+=======
+class AddCardView(PaymentsBaseFormView):
+>>>>>>> 538f594915867f1bd4cd0eba56a460dbf1a229ae
     form_class = payment_forms.AddCardForm
     template_name = "billing_app/payments/add_card.html"
 
@@ -93,7 +113,13 @@ class AddCardView(PaymentViewBase):
         return context
 
 
+<<<<<<< HEAD
 class CardPayView(PaymentViewBase):
+||||||| merged common ancestors
+class CardPayView(horizon_forms.ModalFormView):
+=======
+class CardPayView(PaymentsBaseFormView):
+>>>>>>> 538f594915867f1bd4cd0eba56a460dbf1a229ae
     form_class = payment_forms.CardPayForm
     template_name = "billing_app/payments/card_pay.html"
 
@@ -103,25 +129,58 @@ class CardPayView(PaymentViewBase):
         return context
 
 
+<<<<<<< HEAD
 class AddMobileNumberView(PaymentViewBase):
+||||||| merged common ancestors
+class AddMobileNumberView(horizon_forms.ModalFormView):
+=======
+class AddMobileNumberView(PaymentsBaseFormView):
+>>>>>>> 538f594915867f1bd4cd0eba56a460dbf1a229ae
     form_class = payment_forms.AddMobileNumberForm
     template_name = "billing_app/payments/add_number.html"
+<<<<<<< HEAD
+||||||| merged common ancestors
+    success_url = "/billing/"
 
     def get_context_data(self, **kwargs):
         context = super(AddMobileNumberView, self).get_context_data(**kwargs)
         context['stripe_obj'] = stripe_obj
         return context
+=======
+
+    def get_context_data(self, **kwargs):
+        context = super(AddMobileNumberView, self).get_context_data(**kwargs)
+        context['stripe_obj'] = stripe_obj
+        return context
+>>>>>>> 538f594915867f1bd4cd0eba56a460dbf1a229ae
 
 
+<<<<<<< HEAD
 class EnterTransactionCodeView(PaymentViewBase):
+||||||| merged common ancestors
+class EnterTransactionCodeView(horizon_forms.ModalFormView):
+=======
+class EnterTransactionCodeView(PaymentsBaseFormView):
+>>>>>>> 538f594915867f1bd4cd0eba56a460dbf1a229ae
     form_class = payment_forms.MobileTransactionCodeForm
     template_name = "billing_app/payments/mobile_transaction_code_entry.html"
+<<<<<<< HEAD
+||||||| merged common ancestors
+    success_url = "/billing/"
 
     def get_context_data(self, **kwargs):
         context = super(
             EnterTransactionCodeView, self).get_context_data(**kwargs)
         context['stripe_obj'] = stripe_obj
         return context
+=======
+
+    def get_context_data(self, **kwargs):
+        context = super(
+            EnterTransactionCodeView, self).get_context_data(**kwargs)
+        context['stripe_obj'] = stripe_obj
+        return context
+>>>>>>> 538f594915867f1bd4cd0eba56a460dbf1a229ae
 
 
 class K2_v2(FormView):
