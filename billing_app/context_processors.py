@@ -2,6 +2,8 @@ from accounting.managers import AccountManager
 
 
 def balance(request):
-    return {'balance':
-        AccountManager().get_user_account(
-            request.user.tenant_id).balance()}
+    if request.user.is_authenticated():
+        return {'balance':
+            AccountManager().get_user_account(
+                request.user.tenant_id).balance()}
+    return {}
