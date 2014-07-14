@@ -10,12 +10,12 @@ class PricedUsageBase(object):
                                                    timerange))
 
     @classmethod
-    def get_stats(cls, project_id, timerange):
+    def get_stats(cls, project_id, from_ts, until_ts):
         return data_fetcher.CeilometerStats().get_stats(
             data_fetcher.StatsQuery(project_id,
                                     cls.meter_name,
-                                    timerange[0],
-                                    timerange[1]))
+                                    from_ts,
+                                    until_ts))
 
 
 class PricedInstanceUsage(PricedUsageBase):

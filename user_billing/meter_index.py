@@ -1,6 +1,7 @@
 import datetime
 from django.conf import settings
 from django.db import utils
+from django.utils import timezone
 from keystoneclient.v2_0 import client
 import pickle
 from resource_pricing import managers
@@ -13,7 +14,7 @@ class StatisticsIndexBuilder(object):
         self.ks_client = False
         self.project_ids = False
         self.meters = False
-        self.month = False
+        self.timerange = False
 
     def _get_ks_client(self):
         if not self.ks_client:
@@ -21,13 +22,23 @@ class StatisticsIndexBuilder(object):
                                            endpoint=settings.KEYSTONE_URL)
         return self.ks_client
 
-    def _get_last_month(self):
-        if not self.month:
-            last_month = (datetime.datetime.utcnow().replace(day=1)
-                          - datetime.timedelta(days=1))
-            self.month = {'year': last_month.year,
-                          'month': last_month.month}
-        return self.month
+    def _get_time_range(self):
+        if not self.timerange:
+            self.timerange = {
+                'from_ts': (datetime.datetime.utcnow() -
+                datetime.timedelta(days=1)).replace(
+                    hour=0,
+                    minute=0,
+                    second=0,
+                    microsecond=0,
+                    tzinfo=timezone.get_default_timezone()),
+                'until_ts': datetime.datetime.utcnow().replace(
+                    hour=0,
+                    minute=0,
+                    second=0,
+                    microsecond=0,
+                    tzinfo=timezone.get_default_timezone())}
+        return self.timerange
 
     def _list_billable_resource_type_meters(self):
         if not self.meters:
@@ -44,11 +55,11 @@ class StatisticsIndexBuilder(object):
         # define data collectors in dc
         dc = {'meters': self._list_billable_resource_type_meters,
               'project_ids': self._list_ks_project_ids,
-              'month': self._get_last_month}
+              'time_range': self._get_time_range()}
 
         # create every possible combination of projectid, meter and date
         return [dict({'project_id': project_id, 'meter': meter}.items() +
-                     dc['month']().items())
+                     dc['time_range'].items())
                 for project_id in dc['project_ids']()
                 for meter in dc['meters']()]
 
@@ -71,10 +82,9 @@ class UnfectedDataFetcher(object):
     def _fetch(self, dataset):
         return managers.PricedInstanceUsage.get_stats(
             dataset.project_id,
-            self._get_from_until_of_month(
-                {'month': dataset.month,
-                 'year': dataset.year})).get_merged_by(
-                     lambda x: x.metadata['display_name'])
+            dataset.from_ts,
+            dataset.until_ts).get_merged_by(
+                lambda x: x.metadata['display_name'])
 
     def _get_from_until_of_month(self, month):
         from_dt = datetime.datetime(month['year'], month['month'], 1)

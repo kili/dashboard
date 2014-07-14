@@ -4,8 +4,8 @@ from user_billing import managers
 
 class RawStatisticsIndex(models.Model):
 
-    year = models.IntegerField()
-    month = models.IntegerField()
+    from_ts = models.DateTimeField()
+    until_ts = models.DateTimeField()
     meter = models.CharField(max_length=64)
     project_id = models.CharField(max_length=64)
     fetched = models.BooleanField(default=False, db_index=True)
@@ -14,11 +14,10 @@ class RawStatisticsIndex(models.Model):
 
     class Meta:
         db_table = 'project_billing_raw_statistics_index'
-        index_together = [['project_id',
-                           'month',
-                           'meter',
-                           'year']]
-        unique_together = index_together
+        unique_together = [['from_ts',
+                           'until_ts',
+                           'project_id',
+                           'meter']]
 
 
 class RawStatistics(models.Model):
