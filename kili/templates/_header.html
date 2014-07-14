@@ -1,8 +1,6 @@
 {% load branding i18n %}
 {% load url from future %}
-<style>.topbar{height:25px;}</style>
 <h1 class="brand"><a href="{% site_branding_link %}">{% site_branding %}</a></h1>
-
 <div class="context-box">
   {% with num_of_regions=request.user.available_services_regions|length %}
   {% if num_of_regions > 1 %}
@@ -28,6 +26,7 @@
   {% if HORIZON_CONFIG.help_url %}
   <a href="{{ HORIZON_CONFIG.help_url }}" target="_new">{% trans "Help" %}</a>
   {% endif %}
+  <a href="http://status.kili.io" target="_blank">Systems Status</a>
   <a href="{% url 'logout' %}">{% trans "Sign Out" %}</a>
   {% include "horizon/common/_region_selector.html" %}
 </div>

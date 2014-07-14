@@ -15,6 +15,13 @@
     <fieldset>
         {% include "horizon/common/_form_fields.html" %}
     </fieldset>
+    <h5>
+        Be advised that we get transaction notifications from our
+        <a href="http://www.kopokopo.co.ke/" target="_blank">mobile pament processor </a>
+        at least 1 hour after payments have been made. I ncase you need 
+        to expedite a mobile payment, feel free to
+        <a href="mailto:help@kili.io">reach out</a>
+    </h5>
 </div>
 <div class="right">
     <p>Enter the mobile money transaction code you received via sms.</p> 
@@ -25,5 +32,5 @@
 
 {% block modal-footer %}
 <input id="id_submit" class="btn btn-primary pull-right" type="submit" value="{% trans "Submit Transaction Code" %}" />
-<a href="/" class="btn secondary cancel close">{% trans "Cancel" %}</a>
+<a href="{% url 'horizon:billing:payments:index' %}" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 {% endblock %}

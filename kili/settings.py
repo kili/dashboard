@@ -103,9 +103,11 @@ OPENSTACK_IMAGE_BACKEND = {
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'billing_app.payments.kopokopo.K2UserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'horizon.middleware.HorizonMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -189,7 +191,10 @@ INSTALLED_APPS = [
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend',)
+AUTHENTICATION_BACKENDS = (
+    'billing_app.payments.kopokopo.K2AuthBackend',
+    'openstack_auth.backend.KeystoneBackend',
+)
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
@@ -551,6 +556,14 @@ ACCOUNTING_PROMOTIONS_ACCOUNT = "PROMOTIONS"
 ACCOUNTING_REVENUE_ACCOUNT = "REVENUE"
 ACCOUNTING_USER_ACCOUNT_FORMAT = {"regex": "USER_[a-f0-9]{32}",
                                   "format": "USER_{0}"}
+
+ACCOUNTING_VALID_ACCOUNTS = ACCOUNTING_ASSET_SOURCES[:]
+ACCOUNTING_VALID_ACCOUNTS.append(ACCOUNTING_PROMOTIONS_ACCOUNT)
+ACCOUNTING_VALID_ACCOUNTS.append(ACCOUNTING_REVENUE_ACCOUNT)
+ACCOUNTING_VALID_ACCOUNTS.append(ACCOUNTING_USER_ACCOUNT_FORMAT["regex"])
+
+ACCOUNTING_CREDIT_NEGATIVE_ACCOUNTS = ACCOUNTING_ASSET_SOURCES[:]
+ACCOUNTING_CREDIT_NEGATIVE_ACCOUNTS.append(ACCOUNTING_PROMOTIONS_ACCOUNT)
 
 CEILOMETER_API_VERSION = 2
 CEILOMETER_AUTH_DATA = {

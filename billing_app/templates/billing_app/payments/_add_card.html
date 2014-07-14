@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block form_id %}id_add_card_form{% endblock %}
-{% block form_action %}/billing/payments/cards/add{% endblock %}
+{% block form_action %}{% url 'horizon:billing:payments:add_card' %}{% endblock %}
 
 {% block modal_id %}add_card_modal{% endblock %}
 {% block modal-header %}{% trans "Add Credit/Debit Card" %}{% endblock %}
@@ -18,13 +18,13 @@
 </div>
 <div class="right">
     <p>
-        <img src="/static/billing_app/img/credit-cards.gif" class="pull-right">
+        <img src="/static/img/credit-cards.gif" class="pull-right">
         <div class="clearfix"></div>
         Your credit card number is the sequence of digits located 
         near the vertical center on the front of your card.
     </p>
     <p>
-        <img src="/static/billing_app/img/card_cvc.png" /><br>
+        <img src="/static/img/card_cvc.png" /><br>
         On <b>VISA, MasterCard (&amp; others)</b>, you can find the security code
         (CVC, CCV, CVD, CVN or CVVC) on the back of your credit or debit card. 
         It is typically a separate group of 3 digits to the right of the 
@@ -39,7 +39,7 @@
 
 {% block modal-footer %}
 <input id="id_submit_card" class="btn btn-primary pull-right" type="submit" value="{% trans "Add Card" %}" />
-<a href="/billing/payments/" class="btn secondary cancel close">{% trans "Cancel" %}</a>
+<a href="{% url 'horizon:billing:payments:index' %}" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 <h2 id="stripe_progress_indicator" data-hide="true" style="margin:0 3px"><i class="fa fa-refresh fa-spin pull-right"></i></h2>
 <script>
 $("#id_add_card_form").submit(function(event) {
@@ -61,13 +61,11 @@ $("#id_add_card_form").submit(function(event) {
                     $("#id_submit_card").removeClass("disabled");
                     return;
                 }
-                console.log(response);
                 var token = response['id'];
                 $("#id_add_card_form input[name=stripeToken]").val(token);
-                var redactedCCNum = "x";
                 var CCNum = $("#id_add_card_form input[name=credit_card_number]").val();
-                redactedCCNum += CCNum.substring(CCNum.length-4, CCNum.length);
-                $("#id_add_card_form input[name=card_name]").val(redactedCCNum);
+                var redactedCCNum = CCNum.substring(CCNum.length-4, CCNum.length);
+                $("#id_add_card_form input[name=last4]").val(redactedCCNum);
                 $("#id_add_card_form input[name=credit_card_number]").val(redactedCCNum);
                 $("#id_add_card_form input[name=credit_card_cvc]").val("xxx");
                 $("#id_add_card_form input[name=stripe_card_token]").val(token);

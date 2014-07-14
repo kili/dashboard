@@ -23,21 +23,9 @@ class BookManager():
 
 class AccountManager():
 
-    def __init__(self):
-        self.valid_accounts = settings.ACCOUNTING_ASSET_SOURCES[:]
-        self.valid_accounts.append(settings.ACCOUNTING_PROMOTIONS_ACCOUNT)
-        self.valid_accounts.append(settings.ACCOUNTING_REVENUE_ACCOUNT)
-        self.valid_accounts.append(
-            settings.ACCOUNTING_USER_ACCOUNT_FORMAT["regex"])
-
-        # accounts where credit and debit are negated
-        self.credit_negative_accounts = settings.ACCOUNTING_ASSET_SOURCES
-        self.credit_negative_accounts.append(
-            settings.ACCOUNTING_PROMOTIONS_ACCOUNT)
-
     def name_is_valid(self, account_name):
         if re.match(
-                "(" + ")|(".join(self.valid_accounts) + ")",
+                "(" + ")|(".join(settings.ACCOUNTING_VALID_ACCOUNTS) + ")",
                 account_name):
             return True
         return False
@@ -46,7 +34,7 @@ class AccountManager():
         return settings.ACCOUNTING_USER_ACCOUNT_FORMAT["format"].format(user)
 
     def is_credit_positive(self, account_name):
-        if account_name in self.credit_negative_accounts:
+        if account_name in settings.ACCOUNTING_CREDIT_NEGATIVE_ACCOUNTS:
             return False
         return True
 
