@@ -192,7 +192,7 @@ INSTALLED_APPS = [
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 AUTHENTICATION_BACKENDS = (
-    'billing_app.payments.kopokopo.K2AuthBackend',
+    #'billing_app.payments.kopokopo.K2AuthBackend',
     'openstack_auth.backend.KeystoneBackend',
 )
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
