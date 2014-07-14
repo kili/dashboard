@@ -3,11 +3,10 @@
 {% block title %}{% trans "Transaction History" %}{% endblock %}
 
 {% block page_header %}
-{% include "horizon/common/_page_header.html" with title="Transaction History and Usage ("|add:project|add:")" %}
+{% include "horizon/common/_page_header.html" with title="Transaction History ("|add:project|add:")" %}
 {% endblock page_header %}
 
 {% block main %}
 {{ table.render }}
-<style>#PayHist tr > td:last-child,#PayHist tr > th:last-child{text-align:right;}</style>
 {% endblock %}
 

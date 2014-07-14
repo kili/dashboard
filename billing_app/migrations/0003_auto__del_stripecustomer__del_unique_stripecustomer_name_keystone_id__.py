@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         db.rename_table('billing_app_stripecustomer', 'billing_app_card')
-        db.delete_unique('billing_app_card', ['is_default', 'keystone_id'])
+        db.delete_unique('billing_app_card', ['name', 'keystone_id'])
         db.rename_column('billing_app_card', 'name', 'last4')
         db.rename_column('billing_app_card', 'is_default', 'default')
         db.add_column('billing_app_card', 'tenant_id', models.fields.CharField(max_length=64, db_index=True))

@@ -116,7 +116,8 @@ class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
     mobile_number = horizon_forms.CharField(
         label=_("Enter an M-Pesa enabled number"),
         required=True,
-        widget=horizon_forms.NumberInput(),
+        widget=horizon_forms.NumberInput(
+            attrs={'placeholder': 'e.g. 0720123456'}),
         min_length=10,
         max_length=10)
 
