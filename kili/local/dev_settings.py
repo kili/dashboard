@@ -3,6 +3,7 @@ from kili.settings import *  # noqa
 KEYSTONE_TOKEN = "5zoNv.aryGlnlXu7,oZM"
 
 OPENSTACK_HOST = "10.0.1.222"
+#OPENSTACK_HOST = "10.186.43.12"
 OPENSTACK_KEYSTONE_URL = "http://{}:5000/v2.0".format(OPENSTACK_HOST)
 
 KEYSTONE_URL = "http://{}:35357/v2.0".format(OPENSTACK_HOST)
@@ -58,5 +59,8 @@ CEILOMETER_AUTH_DATA = {
     'os_username': 'ceilometer',
     'os_password': 'imwUsoT8uNy2UgRwTD7k',
     'os_tenant_name': 'service',
-    #'os_auth_url': 'http://{}/keystone/v2.0'.format(OPENSTACK_HOST)}
-    'os_auth_url': 'http://10.0.1.223/keystone/v2.0'}
+    'os_auth_url': 'http://{}/keystone/v2.0'.format(OPENSTACK_HOST)}
+
+K2_API_KEY = '1234567890'
+K2_AUTHORIZATION_HEADER = 'HTTP_AUTHORIZATION'
+K2_KES_USD_RATE = 88
