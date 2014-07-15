@@ -1,7 +1,7 @@
 from accounting import transactions
 import billing
 from billing.forms import stripe_forms  # noqa
-from billing_app.models import K2RawData
+from billing_app.models import KopoKopoTransaction
 from billing_app.models import Card
 from billing_app.models import MobileMoneyNumber
 import decimal
@@ -58,9 +58,6 @@ class CardPayForm(horizon_forms.SelfHandlingForm):
                                 required=True,
                                 min_value=decimal.Decimal('15'))
 
-    def __init__(self, *args, **kwargs):
-        super(CardPayForm, self).__init__(*args, **kwargs)
-
     def clean(self):
         if not Card.objects.filter(
                 tenant_id__exact=self.request.user.tenant_id,
@@ -107,19 +104,21 @@ class CardPayForm(horizon_forms.SelfHandlingForm):
             return False
         except Exception:
             exceptions.handle(request, ignore=True)
-            self.api_error("Unknown error occured")
             return False
 
 
 class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
 
-    mobile_number = horizon_forms.CharField(
-        label=_("Enter an M-Pesa enabled number"),
+    mobile_number = horizon_forms.RegexField(
+        label=_('Enter an M-Pesa enabled number'),
         required=True,
-        widget=horizon_forms.NumberInput(
+        widget=horizon_forms.TextInput(
             attrs={'placeholder': 'e.g. 0720123456'}),
         min_length=10,
-        max_length=10)
+        max_length=10,
+        regex='^[0-9]+$',
+        error_messages={'invalid':
+            'Please enter a valid phone number (e.g. 0720123456)'})
 
     def handle(self, request, data):
         try:
@@ -134,17 +133,13 @@ class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
             return True
         except django_forms.ValidationError as e:
             self.api_error(e.messages[0])
+        except IntegrityError:
+            self.api_error('The number you entered is already in use.')
         except Exception:
             exceptions.handle(request, ignore=True)
-            self.api_error("An error occured while adding your number. "
-                           "Please try again later.")
-        return False
 
 
 class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
-
-    def __init__(self, *args, **kwargs):
-        super(MobileTransactionCodeForm, self).__init__(*args, **kwargs)
 
     transaction_ref = horizon_forms.CharField(
         label=_("Enter mobile money transaction code"),
@@ -153,7 +148,7 @@ class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
 
     def handle(self, request, data):
         try:
-            transaction = K2RawData.objects.get(
+            transaction = KopoKopoTransaction.objects.get(
                 transaction_reference=data['transaction_ref'],
                 claimed=False)
 
@@ -176,26 +171,7 @@ class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
             return True
         except ObjectDoesNotExist:
             self.api_error("The transaction code you entered is invalid.")
-            return False
         except django_forms.ValidationError as e:
             self.api_error(e.messages[0])
-            return False
         except Exception:
             exceptions.handle(request, ignore=True)
-            return False
-
-
-class K2Form(django_forms.ModelForm):
-    service_name = django_forms.CharField(max_length=64, required=False)
-    transaction_type = django_forms.CharField(max_length=64, required=False)
-    account_number = django_forms.CharField(max_length=64, required=False)
-    middle_name = django_forms.CharField(max_length=64, required=False)
-    last_name = django_forms.CharField(max_length=64, required=False)
-    transaction_timestamp = django_forms.DateTimeField(required=True,
-        input_formats=['%Y-%m-%dT%H:%M:%SZ'])
-    amount = django_forms.DecimalField(required=True)
-    claimed = django_forms.BooleanField(required=False)
-
-    class Meta:
-        model = K2RawData
-        fields = '__all__'
