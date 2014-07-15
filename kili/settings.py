@@ -141,7 +141,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-COMPRESS_PRECOMPILERS = (AU
+COMPRESS_PRECOMPILERS = (
     ('text/less', ('lesscpy {infile}')),
 )
 

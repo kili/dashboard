@@ -58,9 +58,6 @@ class CardPayForm(horizon_forms.SelfHandlingForm):
                                 required=True,
                                 min_value=decimal.Decimal('15'))
 
-    def __init__(self, *args, **kwargs):
-        super(CardPayForm, self).__init__(*args, **kwargs)
-
     def clean(self):
         if not Card.objects.filter(
                 tenant_id__exact=self.request.user.tenant_id,
@@ -107,19 +104,21 @@ class CardPayForm(horizon_forms.SelfHandlingForm):
             return False
         except Exception:
             exceptions.handle(request, ignore=True)
-            self.api_error("Unknown error occured")
             return False
 
 
 class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
 
-    mobile_number = horizon_forms.CharField(
-        label=_("Enter an M-Pesa enabled number"),
+    mobile_number = horizon_forms.RegexField(
+        label=_('Enter an M-Pesa enabled number'),
         required=True,
-        widget=horizon_forms.NumberInput(
+        widget=horizon_forms.TextInput(
             attrs={'placeholder': 'e.g. 0720123456'}),
         min_length=10,
-        max_length=10)
+        max_length=10,
+        regex='^[0-9]+$',
+        error_messages={'invalid':
+            'Please enter a valid phone number (e.g. 0720123456)'})
 
     def handle(self, request, data):
         try:
@@ -134,17 +133,13 @@ class AddMobileNumberForm(horizon_forms.SelfHandlingForm):
             return True
         except django_forms.ValidationError as e:
             self.api_error(e.messages[0])
+        except IntegrityError:
+            self.api_error('The number you entered is already in use.')
         except Exception:
             exceptions.handle(request, ignore=True)
-            self.api_error("An error occured while adding your number. "
-                           "Please try again later.")
-        return False
 
 
 class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
-
-    def __init__(self, *args, **kwargs):
-        super(MobileTransactionCodeForm, self).__init__(*args, **kwargs)
 
     transaction_ref = horizon_forms.CharField(
         label=_("Enter mobile money transaction code"),
@@ -176,10 +171,7 @@ class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
             return True
         except ObjectDoesNotExist:
             self.api_error("The transaction code you entered is invalid.")
-            return False
         except django_forms.ValidationError as e:
             self.api_error(e.messages[0])
-            return False
         except Exception:
             exceptions.handle(request, ignore=True)
-            return False
