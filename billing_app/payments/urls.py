@@ -14,7 +14,4 @@ urlpatterns = patterns(
     url(r'mobilemoney/transactioncode$',
         views.EnterTransactionCodeView.as_view(),
         name='enter_transaction_code'),
-    url(r'mobilemoney/K2/v2$',
-        cache_page(0)(views.K2_v2.as_view()),
-        name='k2_version2_endpoint'),
 )

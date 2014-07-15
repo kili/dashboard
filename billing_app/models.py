@@ -113,11 +113,13 @@ class MobileMoneyNumber(models.Model):
         return number
 
 
-class K2RawData(models.Model):
+class KopoKopoTransaction(models.Model):
     service_name = models.CharField(max_length=64, blank=True)
     business_number = models.CharField(max_length=64, blank=True)
-    transaction_reference = models.CharField(max_length=64, blank=True)
-    internal_transaction_id = models.CharField(max_length=64, blank=True)
+    transaction_reference = models.CharField(
+        max_length=64, blank=True, unique=True)
+    internal_transaction_id = models.CharField(
+        max_length=64, blank=True, unique=True)
     transaction_timestamp = models.DateTimeField(blank=True)
     transaction_type = models.CharField(max_length=64, blank=True)
     account_number = models.CharField(max_length=64, blank=True)
@@ -129,5 +131,3 @@ class K2RawData(models.Model):
     currency = models.CharField(max_length=64)
     signature = models.CharField(max_length=64)
     claimed = models.BooleanField(default=False)
-
-    objects = managers.K2RawDataManager()

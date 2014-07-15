@@ -1,12 +1,16 @@
-from django import forms as django_forms
-from billing_app.models import K2RawData
+from django import forms as forms
+from billing_app.models import KopoKopoTransaction
 
-class KopoKopoForm(django_forms.ModelForm):
-    transaction_timestamp = django_forms.DateTimeField(required=True,
+
+class KopoKopoForm(forms.ModelForm):
+    transaction_timestamp = forms.DateTimeField(required=True,
         input_formats=['%Y-%m-%dT%H:%M:%SZ'])
+    username = forms.CharField(max_length=64)
+    password = forms.CharField(max_length=64)
 
     class Meta:
-        model = K2RawData
+        model = KopoKopoTransaction
         fields = '__all__'
 
-    def clean_sender_phone(self, 
+    def clean_sender_phone(self):
+        return self.cleaned_data['sender_phone'].replace('+254', '0')

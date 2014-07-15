@@ -1,7 +1,7 @@
 from accounting import transactions
 import billing
 from billing.forms import stripe_forms  # noqa
-from billing_app.models import K2RawData
+from billing_app.models import KopoKopoTransaction
 from billing_app.models import Card
 from billing_app.models import MobileMoneyNumber
 import decimal
@@ -153,7 +153,7 @@ class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
 
     def handle(self, request, data):
         try:
-            transaction = K2RawData.objects.get(
+            transaction = KopoKopoTransaction.objects.get(
                 transaction_reference=data['transaction_ref'],
                 claimed=False)
 
@@ -183,19 +183,3 @@ class MobileTransactionCodeForm(horizon_forms.SelfHandlingForm):
         except Exception:
             exceptions.handle(request, ignore=True)
             return False
-
-
-class K2Form(django_forms.ModelForm):
-    service_name = django_forms.CharField(max_length=64, required=False)
-    transaction_type = django_forms.CharField(max_length=64, required=False)
-    account_number = django_forms.CharField(max_length=64, required=False)
-    middle_name = django_forms.CharField(max_length=64, required=False)
-    last_name = django_forms.CharField(max_length=64, required=False)
-    transaction_timestamp = django_forms.DateTimeField(required=True,
-        input_formats=['%Y-%m-%dT%H:%M:%SZ'])
-    amount = django_forms.DecimalField(required=True)
-    claimed = django_forms.BooleanField(required=False)
-
-    class Meta:
-        model = K2RawData
-        fields = '__all__'

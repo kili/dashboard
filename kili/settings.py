@@ -107,7 +107,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'billing_app.payments.kopokopo.K2UserMiddleware',
+    #'billing_app.payments.kopokopo.K2UserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'horizon.middleware.HorizonMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -163,6 +163,7 @@ INSTALLED_APPS = [
     'pricing_panel',
     'accounting',
     'kili',
+    'kopokopo',
     'openstack_dashboard',
     'django.contrib.contenttypes',
     'django.contrib.auth',
@@ -193,7 +194,6 @@ INSTALLED_APPS = [
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 AUTHENTICATION_BACKENDS = (
-    #'billing_app.payments.kopokopo.K2AuthBackend',
     'openstack_auth.backend.KeystoneBackend',
 )
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
@@ -581,3 +581,6 @@ BILLABLE_RESOURCE_TYPES = {
 }
 
 MINIMUM_BALANCE = 15
+
+KOPOKOPO_USERNAME = ''
+KOPOKOPO_PASSWORD = ''

@@ -9,7 +9,7 @@ from accounting.managers import AccountManager
 from billing_app.models import Card
 from django.test.client import RequestFactory  # noqa
 from billing_app.models import MobileMoneyNumber
-from billing_app.payments import views as payment_views
+from kopokopo import views
 from django.contrib.auth import get_user_model
 import json
 from openstack_dashboard.test import helpers as test  # noqa
@@ -34,14 +34,14 @@ k2_notification_data = {
     'business_number': '333997'}
 
 k2_endpoint_url = \
-    reverse('horizon:billing:payments:k2_version2_endpoint')
+    reverse('kopokopo_api')
 add_number_url = \
     reverse('horizon:billing:payments:add_number')
 
 
 def k2_notify(k2_data):
     request = RequestFactory().post(k2_endpoint_url, k2_data)
-    k2view = payment_views.K2_v2(
+    k2view = views.KopoKopoView(
         **{'request': request})
     return k2view.dispatch(request)
 

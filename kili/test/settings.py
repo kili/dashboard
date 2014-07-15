@@ -1,9 +1,12 @@
 from openstack_dashboard.test.settings import *  # noqa
 
+ROOT_URLCONF = 'kili.urls'
+
 HORIZON_CONFIG['customization_module'] = 'customizations.loader'
 
 INSTALLED_APPS += (
     'kili',
+    'kopokopo',
     'billing_app',
     'billing',
     'stripe',
@@ -81,3 +84,6 @@ MINIMUM_BALANCE = 0
 K2_API_KEY = '1234567890'
 K2_AUTHORIZATION_HEADER = 'HTTP_AUTHORIZATION'
 K2_KES_USD_RATE = 88
+
+KOPOKOPO_USERNAME = 'K2USER'
+KOPOKOPO_PASSWORD = 'K2PASS'

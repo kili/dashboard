@@ -60,24 +60,3 @@ class MobileMoneyNumberManager(models.Manager):
             return (False, _("Could not delete Number. "
                              "Please try again later"))
         return (True,)
-
-
-class K2RawDataManager(models.Manager):
-
-    def create(self, k2data):
-        k2_entry = self.model(
-            service_name=k2data['service_name'],
-            business_number=k2data['business_number'],
-            transaction_reference=k2data['transaction_reference'],
-            internal_transaction_id=k2data['internal_transaction_id'],
-            transaction_timestamp=k2data['transaction_timestamp'],
-            transaction_type=k2data['transaction_type'],
-            account_number=k2data['account_number'],
-            sender_phone=k2data['sender_phone'],
-            first_name=k2data['first_name'],
-            middle_name=k2data['middle_name'],
-            last_name=k2data['last_name'],
-            amount=k2data['amount'],
-            currency=k2data['currency'],
-            signature=k2data['signature'])
-        k2_entry.save()
