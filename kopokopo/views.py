@@ -29,7 +29,7 @@ class KopoKopoView(FormView):
         if not form.is_valid():
             response['status'] = "03"
             response['description'] = (
-                "Invalid payment data %s" % json.dumps(form.errors))
+                "Invalid payment data {}".format(json.dumps(form.errors)))
             http_response.content = json.dumps(response)
             return http_response
 
@@ -50,8 +50,7 @@ class KopoKopoView(FormView):
                 tenant_number.tenant_id,
                 "KOPOKOPO", usd_amount,
                 ("Received mobile money payment."
-                 " Transaction ref %s"
-                 % data.transaction_reference))
+                 " Transaction ref {}".format(data.transaction_reference)))
             data.claimed = True
         except (ObjectDoesNotExist, MultipleObjectsReturned):
             data.claimed = False
