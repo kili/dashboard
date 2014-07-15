@@ -26,9 +26,6 @@ class Migration(DataMigration):
 
     def backwards(self, orm):
         for index_entry in orm.RawStatisticsIndex.objects.all():
-            if not (index_entry.from_ts.year == index_entry.until_ts.year and
-                    index_entry.from_ts.month == index_entry.until_ts.month - 1):
-                raise Exception('found unexpected data in db, abort migration')
             index_entry.year = index_entry.from_ts.year
             index_entry.month = index_entry.from_ts.month
             index_entry.save()

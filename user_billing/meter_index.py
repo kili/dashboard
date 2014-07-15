@@ -86,11 +86,6 @@ class UnfectedDataFetcher(object):
             dataset.until_ts).get_merged_by(
                 lambda x: x.metadata['display_name'])
 
-    def _get_from_until_of_month(self, month):
-        from_dt = datetime.datetime(month['year'], month['month'], 1)
-        until_dt = (from_dt + datetime.timedelta(days=31)).replace(day=1)
-        return (from_dt, until_dt)
-
     def _get_unfetched_index(self):
         return models.RawStatisticsIndex.objects.filter(fetched=False)
 

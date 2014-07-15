@@ -54,7 +54,7 @@ class CalculatorBase(object):
                    self.resource_type_relation: type_id}).price
         except exceptions.ObjectDoesNotExist:
             raise Exception("Could not get price of id {0} in currency "
-                            "{1}".format(id, currency))
+                            "{1}".format(type_id, currency))
 
     def _validate_params(self, params):
         for x in self.required_params:
