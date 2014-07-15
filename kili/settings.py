@@ -107,7 +107,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #'billing_app.payments.kopokopo.K2UserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'horizon.middleware.HorizonMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -142,7 +141,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-COMPRESS_PRECOMPILERS = (
+COMPRESS_PRECOMPILERS = (AU
     ('text/less', ('lesscpy {infile}')),
 )
 
