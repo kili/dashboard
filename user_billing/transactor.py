@@ -1,7 +1,7 @@
 from accounting import transactions
-import pickle
-from resource_pricing.calculators import calculators
+from resource_pricing import priced_usage
 from user_billing import helpers
+from user_billing.metering.ceilometer import data_fetcher
 from user_billing import models
 
 
@@ -11,7 +11,7 @@ class UserTransactor(object):
         self.ut = transactions.UserTransactions()
 
     def _get_raw_data(self, id):
-        return [pickle.loads(x.data) for x in
+        return [data_fetcher.StatsContainer.from_pickle_string(x.data) for x in
                 models.RawStatistics.objects.filter(statistics_index=id)]
 
     def _get_transaction_message(self, resource, hours):
@@ -28,22 +28,22 @@ class UserTransactor(object):
         for stat in self._get_unbilled_statistics():
             datasets = self._get_raw_data(stat.id)
             for data in datasets:
-                pc = calculators.CalculatorBase.get_price_calculator_of_meter(
-                    stat.meter)
-                price_result = pc.price_from_raw_stats(data)
-                if dry_run:
-                    print(u'{0}, {1}, {2}'.format(
+                priced_flavors = priced_usage.PricedUsageBase.get_meter_class(
+                    stat.meter).get_priced_stats(data)
+                for priced_flavor in priced_flavors:
+                    if dry_run:
+                        print(u'dry run: {0}, {1}, {2}'.format(
+                            stat.project_id,
+                            priced_flavor['price'],
+                            self._get_transaction_message(
+                                priced_flavor['res_string'],
+                                priced_flavor['hours'])))
+                        continue
+                    self.ut.consume_user_money(
                         stat.project_id,
-                        price_result['price'],
+                        priced_flavor['price'],
                         self._get_transaction_message(
-                            price_result['res_string'],
-                            price_result['hours'])))
-                    continue
-                self.ut.consume_user_money(
-                    stat.project_id,
-                    price_result['price'],
-                    self._get_transaction_message(
-                        price_result['res_string'],
-                        price_result['hours']))
-                stat.billed = True
-                stat.save()
+                            priced_flavor['res_string'],
+                            priced_flavor['hours']))
+                    stat.billed = True
+                    stat.save()

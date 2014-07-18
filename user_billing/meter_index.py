@@ -1,11 +1,9 @@
-import datetime
 from django.conf import settings
 from django.db import utils
 from django.utils import timezone
 from keystoneclient.v2_0 import client
-import pickle
-from resource_pricing import managers
 from user_billing import models
+from user_billing.metering.ceilometer import data_fetcher
 
 
 class StatisticsIndexBuilder(object):
@@ -25,19 +23,18 @@ class StatisticsIndexBuilder(object):
     def _get_time_range(self):
         if not self.timerange:
             self.timerange = {
-                'from_ts': (datetime.datetime.utcnow() -
-                datetime.timedelta(days=1)).replace(
+                'from_ts': (timezone.now() -
+                timezone.timedelta(days=1)).replace(
                     hour=0,
                     minute=0,
                     second=0,
-                    microsecond=0,
-                    tzinfo=timezone.get_default_timezone()),
-                'until_ts': datetime.datetime.utcnow().replace(
-                    hour=0,
+                    microsecond=0),
+                'until_ts': timezone.now().replace(
+                    # hour should be 0, 23 is only for testing
+                    hour=23,
                     minute=0,
                     second=0,
-                    microsecond=0,
-                    tzinfo=timezone.get_default_timezone())}
+                    microsecond=0)}
         return self.timerange
 
     def _list_billable_resource_type_meters(self):
@@ -68,49 +65,41 @@ class StatisticsIndexBuilder(object):
             try:
                 models.RawStatisticsIndex.objects.create(**index_element)
             except utils.IntegrityError:
+                # in case the previous run of this job has been aborted,
+                # just continue where we stopped
                 pass
 
     def build(self):
         self._save_index(self._merge_indexing_data())
 
 
-class UnfectedDataFetcher(object):
+class UnfetchedDataFetcher(object):
 
     def _fetch_store_dataset(self, dataset):
         self._store(dataset, self._fetch(dataset))
 
     def _fetch(self, dataset):
-        return managers.PricedInstanceUsage.get_stats(
-            dataset.project_id,
-            dataset.from_ts,
-            dataset.until_ts).get_merged_by(
-                lambda x: x.metadata['display_name'])
+        return data_fetcher.CeilometerStats().get_stats(
+            data_fetcher.StatsQuery(
+                meter=dataset.meter,
+                project_id=dataset.project_id,
+                from_ts=dataset.from_ts,
+                until_ts=dataset.until_ts))
 
-    def _get_unfetched_index(self):
-        return models.RawStatisticsIndex.objects.filter(fetched=False)
-
-    def _store(self, index, datasets):
-        for dataset in datasets.values():
-            self._store_with_data(index, (dataset['stats'].to_dict(),
-                                          dataset['resource'].to_dict()))
+    def _store(self, index, data):
+        if data.has_data:
+            self._store_with_data(
+                index,
+                data)
         index.fetched = True
         index.save()
 
-    def _store_with_data(self, index, dataset):
-        data_string = pickle.dumps(dataset)
-        try:
-            models.RawStatistics.objects.create(statistics_index=index,
-                                                data=data_string)
-        except utils.IntegrityError:
-            # in case the previous run has been aborted between inserting the
-            # data and updating the index just update the datatable with the
-            # current data
-            statistic = models.RawStatistics.objects.get(
-                statistics_index=index)
-            statistic.data = data_string
-            statistic.save()
+    def _store_with_data(self, index, data):
+        models.RawStatistics.objects.create(statistics_index=index,
+                                            data=data.pickle())
         index.has_data = True
 
-    def fetch(self, timespan=3600):
-        for unfetched_dataset in self._get_unfetched_index():
+    def fetch(self):
+        for unfetched_dataset in models.RawStatisticsIndex.objects.filter(
+                fetched=False):
             self._fetch_store_dataset(unfetched_dataset)

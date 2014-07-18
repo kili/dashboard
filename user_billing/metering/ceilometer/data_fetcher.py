@@ -1,77 +1,62 @@
+import pickle
 from ceilometerclient import client
 from django.conf import settings
 from keystoneclient import exceptions as ks_exceptions
 
 
-class CeilometerDataFetcher(object):
+class CeilometerClient(object):
+    _cm_client = None
 
-    def __init__(self):
-        try:
-            self.cm_client = client.get_client(
-                settings.CEILOMETER_API_VERSION,
-                **settings.CEILOMETER_AUTH_DATA)
-        except ks_exceptions.AuthorizationFailure:
-            raise Exception("failed to connect/authenticate to ceilometer")
-
-    def _datetime_to_mongo(self, datetime):
-        return datetime.strftime("%Y-%m-%dT%H:%M:%S")
-
-    def _get_query(self, *args, **kwargs):
-        return {'meter_name': kwargs['meter'],
-                'q': [{'field': 'project_id', 'op': 'eq',
-                       'value': kwargs['project_id']},
-                      {'field': 'timestamp', 'op': 'ge',
-                       'value': self._datetime_to_mongo(kwargs['from_dt'])},
-                      {'field': 'timestamp', 'op': 'lt',
-                       'value': self._datetime_to_mongo(kwargs['until_dt'])}]}
-
-    def get(self, **kwargs):
-        return self.cm_client.statistics.list(**self._get_query(**kwargs))
+    @classmethod
+    def __new__(cls, *args, **kwargs):
+        if not cls._cm_client:
+            cls._cm_client = object.__new__(cls)
+            try:
+                cls._cm_client = client.get_client(
+                    settings.CEILOMETER_API_VERSION,
+                    **settings.CEILOMETER_AUTH_DATA)
+            except ks_exceptions.AuthorizationFailure:
+                raise Exception('failed to connect/authenticate to ceilometer')
+        return cls._cm_client
 
 
 class QueryTimeRange(object):
 
-    def __init__(self, from_dt, until_dt):
-        self.from_dt = self._convert_to_mongo(from_dt)
-        self.until_dt = self._convert_to_mongo(until_dt)
+    def __init__(self, from_ts, until_ts):
+        self._from_ts = self._convert_to_mongo(from_ts)
+        self._until_ts = self._convert_to_mongo(until_ts)
 
-    def _convert_to_mongo(self, dt):
-        return dt.strftime("%Y-%m-%dT%H:%M:%S")
+    def _convert_to_mongo(self, ts):
+        return ts.strftime('%Y-%m-%dT%H:%M:%S')
 
-    def get_from(self):
-        return self.from_dt
+    @property
+    def from_ts(self):
+        return self._from_ts
 
-    def get_until(self):
-        return self.until_dt
+    @property
+    def until_ts(self):
+        return self._until_ts
 
 
 class StatsQuery(object):
 
-    def __init__(self, project, meter, from_dt, until_dt):
-        self.meter = meter
-        self.timerange = QueryTimeRange(from_dt, until_dt)
-        self.project = project
+    def __init__(self, **kwargs):
+        self.meter = kwargs['meter']
+        self.project_id = kwargs['project_id']
+        self.timerange = QueryTimeRange(kwargs['from_ts'],
+                                        kwargs['until_ts'])
 
     def get_stats_query(self):
         return {'q': [{'field': 'project_id',
                        'op': 'eq',
-                       'value': self.get_project()},
+                       'value': self.project_id},
                       {'field': 'timestamp',
                        'op': 'ge',
-                       'value': self.get_timerange().get_from()},
+                       'value': self.timerange.from_ts},
                       {'field': 'timestamp',
                        'op': 'lt',
-                       'value': self.get_timerange().get_until()}],
+                       'value': self.timerange.until_ts}],
                 'groupby': ['resource_id']}
-
-    def get_meter(self):
-        return self.meter
-
-    def get_timerange(self):
-        return self.timerange
-
-    def get_project(self):
-        return self.project
 
 
 class StatsContainer(object):
@@ -82,8 +67,24 @@ class StatsContainer(object):
 
     def _get_resource(self, res_id):
         for resource in self.resources:
-            if resource.resource_id == res_id:
+            if resource['resource_id'] == res_id:
                 return resource
+
+    @property
+    def has_data(self):
+        if len(self.stats) > 0:
+            return True
+        return False
+
+    def pickle(self):
+        return pickle.dumps({
+            'stats': self.stats,
+            'resources': self.resources})
+
+    @classmethod
+    def from_pickle_string(cls, string):
+        unpickled = pickle.loads(string)
+        return cls(unpickled['stats'], unpickled['resources'])
 
     def count_datasets(self):
         return len(self.stats)
@@ -91,8 +92,10 @@ class StatsContainer(object):
     def get_merged_by(self, keygen):
         retval = {}
         for stat in self.stats:
-            res = self._get_resource(stat.groupby['resource_id'])
-            retval[keygen(res)] = {'stats': stat, 'resource': res}
+            res = self._get_resource(stat['groupby']['resource_id'])
+            if keygen(res) not in retval:
+                retval[keygen(res)] = []
+            retval[keygen(res)].append({'stats': stat, 'resource': res})
         return retval
 
     def get_stats(self):
@@ -101,25 +104,19 @@ class StatsContainer(object):
 
 class CeilometerStats(object):
 
-    def __init__(self):
-        try:
-            self.cm_client = client.get_client(
-                settings.CEILOMETER_API_VERSION,
-                **settings.CEILOMETER_AUTH_DATA)
-        except ks_exceptions.AuthorizationFailure:
-            raise Exception("failed to connect/authenticate to ceilometer")
-
     def _extract_resource_ids(self, stats):
         return [stat.groupby['resource_id'] for stat in stats]
 
     def _get_stats(self, cm_query):
-        return self.cm_client.statistics.list(cm_query.get_meter(),
-                                              **cm_query.get_stats_query())
+        return CeilometerClient().statistics.list(cm_query.meter,
+                                                  **cm_query.get_stats_query())
 
     def _get_resources(self, res_ids):
-        return map(self.cm_client.resources.get, res_ids)
+        return map(CeilometerClient().resources.get, res_ids)
 
     def get_stats(self, cm_query):
         stats = self._get_stats(cm_query)
         return StatsContainer(
-            stats, self._get_resources(self._extract_resource_ids(stats)))
+            [x.to_dict() for x in stats],
+            [x.to_dict() for x in self._get_resources(
+                self._extract_resource_ids(stats))])

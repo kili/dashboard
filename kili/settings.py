@@ -574,8 +574,7 @@ CEILOMETER_AUTH_DATA = {
     'os_auth_url': ''}
 
 BILLABLE_RESOURCE_TYPES = {
-    'instance': {'id': 0,
-                 'price_calculator': 'resource_pricing.calculators'
+    'instance': {'price_calculator': 'resource_pricing.calculators'
                  '.calculators.InstancePriceCalculator',
                  'period_length': 10}
 }

@@ -1,5 +1,4 @@
 from django.db import models
-from user_billing import managers
 
 
 class RawStatisticsIndex(models.Model):
@@ -25,8 +24,6 @@ class RawStatistics(models.Model):
     insert_time = models.DateTimeField(auto_now_add=True)
     data = models.TextField()
     statistics_index = models.ForeignKey(RawStatisticsIndex)
-
-    objects = managers.RawDataManager()
 
     class Meta:
         db_table = 'project_billing_raw_statistics'
