@@ -49,7 +49,7 @@ class PricedInstanceUsage(PricedUsageBase):
 
     @classmethod
     def _merge_stats(cls, stats):
-        return stats.get_merged_by(lambda x: x['metadata']['flavor.id'])
+        return stats.merged_by(lambda x: x['metadata']['flavor.id'])
 
     @classmethod
     def get_priced_stats(cls, stats):

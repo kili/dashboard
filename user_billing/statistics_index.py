@@ -3,7 +3,7 @@ from django.db import utils
 from django.utils import timezone
 from keystoneclient.v2_0 import client
 from user_billing import models
-from user_billing.metering.ceilometer import data_fetcher
+from user_billing.ceilometer_fetcher import CeilometerStats
 
 
 class StatisticsIndexBuilder(object):
@@ -79,12 +79,11 @@ class UnfetchedStatisticsFetcher(object):
         self._store(dataset, self._fetch(dataset))
 
     def _fetch(self, dataset):
-        return data_fetcher.CeilometerStats().get_stats(
-            data_fetcher.StatsQuery(
-                meter=dataset.meter,
-                project_id=dataset.project_id,
-                from_ts=dataset.from_ts,
-                until_ts=dataset.until_ts))
+        return CeilometerStats.get_stats(
+            meter=dataset.meter,
+            project_id=dataset.project_id,
+            from_ts=dataset.from_ts,
+            until_ts=dataset.until_ts)
 
     def _store(self, index, data):
         if data.has_data:

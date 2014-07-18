@@ -1,7 +1,7 @@
 from accounting.transactions import UserTransactions
 from resource_pricing.priced_usage import PricedUsageBase
 from user_billing.helpers import FormattingHelpers
-from user_billing.metering.ceilometer.data_fetcher import StatsContainer
+from user_billing.ceilometer_fetcher import StatsContainer
 from user_billing import models
 
 
@@ -32,7 +32,8 @@ class UserTransactor(object):
                     if dry_run:
                         print(u'dry run: proj {0}, price {1}, desc {2}'.format(
                             stat.project_id,
-                            priced_flavor_usage['price'],
+                            FormattingHelpers.price(
+                                priced_flavor_usage['price']),
                             self._get_transaction_message(
                                 priced_flavor_usage)))
                         continue

@@ -2,9 +2,6 @@ import abc
 import decimal
 from django.conf import settings
 from django.core import exceptions
-import importlib
-from resource_pricing.calculators.models import InstanceType
-from resource_pricing.calculators.models import VolumeType
 from resource_pricing import models as pricing_models
 
 

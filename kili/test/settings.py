@@ -16,8 +16,6 @@ INSTALLED_APPS += (
     'resource_pricing',
     'resource_pricing.calculators',
     'user_billing',
-    'user_billing.metering',
-    'user_billing.metering.ceilometer',
 )
 
 CUSTOMIZATIONS = (
