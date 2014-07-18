@@ -14,10 +14,10 @@ class UserTransactor(object):
         return [data_fetcher.StatsContainer.from_pickle_string(x.data) for x in
                 models.RawStatistics.objects.filter(statistics_index=id)]
 
-    def _get_transaction_message(self, resource, hours):
-        return u'"{0}" for {1} hours'.format(resource,
-                                             helpers.FormattingHelpers.hours(
-                                                 hours))
+    def _get_transaction_message(self, resource):
+        return u'{0} for {1} hours'.format(resource['res_string'],
+                                           helpers.FormattingHelpers.hours(
+                                               resource['hours']))
 
     def _get_unbilled_statistics(self):
         return models.RawStatisticsIndex.objects.filter(fetched=True,
@@ -32,12 +32,10 @@ class UserTransactor(object):
                     stat.meter).get_priced_stats(data)
                 for priced_flavor in priced_flavors:
                     if dry_run:
-                        print(u'dry run: {0}, {1}, {2}'.format(
+                        print(u'dry run: project {0}, price {1}, desc {2}'.format(
                             stat.project_id,
                             priced_flavor['price'],
-                            self._get_transaction_message(
-                                priced_flavor['res_string'],
-                                priced_flavor['hours'])))
+                            self._get_transaction_message(priced_flavor)))
                         continue
                     self.ut.consume_user_money(
                         stat.project_id,

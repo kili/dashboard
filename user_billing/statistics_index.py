@@ -73,7 +73,7 @@ class StatisticsIndexBuilder(object):
         self._save_index(self._merge_indexing_data())
 
 
-class UnfetchedDataFetcher(object):
+class UnfetchedStatisticsFetcher(object):
 
     def _fetch_store_dataset(self, dataset):
         self._store(dataset, self._fetch(dataset))

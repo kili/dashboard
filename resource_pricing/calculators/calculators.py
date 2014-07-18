@@ -54,7 +54,7 @@ class CalculatorBase(object):
             raise Exception("Could not get price of id {0} in currency "
                             "{1}".format(type_id, currency))
 
-    def get_hours_from_periods(self, periods):
+    def hours_from_periods(self, periods):
         return (decimal.Decimal(self.type_settings['period_length']) *
                 decimal.Decimal(periods) / decimal.Decimal(60))
 
@@ -80,9 +80,9 @@ class CalculatorBase(object):
 
 
 class VolumePriceCalculator(CalculatorBase):
-    type_name = "volume"
-    resource_type_relation = "resource__volumetype__os_type_id"
-    type_key = "type"
+    type_name = 'volume'
+    resource_type_relation = 'resource__volumetype__os_volume_type_id'
+    type_key = 'type'
 
     def _final_price_calculation(self, params):
         return (self._get_unit_price(params['type']) *
@@ -105,9 +105,9 @@ class VolumePriceCalculator(CalculatorBase):
 
 
 class InstancePriceCalculator(CalculatorBase):
-    type_name = "instance"
-    resource_type_relation = "resource__flavor__os_flavor_id"
-    type_key = "flavor"
+    type_name = 'instance'
+    resource_type_relation = 'resource__instancetype__os_instance_type_id'
+    type_key = 'flavor'
 
     def _final_price_calculation(self, params):
         return (self._get_unit_price(params['flavor']) *
@@ -123,7 +123,7 @@ class InstancePriceCalculator(CalculatorBase):
         for instance in raw_data:
             period_count += instance['stats']['count']
         return {
-            'hours': self.get_hours_from_periods(period_count),
+            'hours': self.hours_from_periods(period_count),
             'id': raw_data[0]['resource']['metadata']['flavor.id'],
             'flavor': u'instance:{0}'.format(
                 raw_data[0]['resource']['metadata']['flavor.name']),

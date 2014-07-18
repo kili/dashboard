@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         db.alter_column('pricing_instance_flavor_resource', 'resource_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['resource_pricing.Resource'], unique=True))
-        db.rename_column('pricing_instance_flavor_resource', 'resource_id', 'resource_ptr_id')
+        db.rename_column('pricing_instance_flavor_resource', 'resource_id', 'resourcebase_ptr_id')
         db.rename_column('pricing_instance_flavor_resource', 'os_flavor_id', 'os_instance_type_id')
         db.delete_column('pricing_instance_flavor_resource', 'id')
         db.add_column('pricing_instance_flavor_resource', 'id', self.gf('django.db.models.fields.AutoField')(primary_key=True))
@@ -33,7 +33,7 @@ class Migration(SchemaMigration):
 
         db.alter_column('pricing_instance_flavor_resource', 'id', self.gf('django.db.models.fields.IntegerField')(primary_key=True))
         db.rename_column('pricing_instance_flavor_resource', 'os_instance_type_id', 'os_flavor_id')
-        db.rename_column('pricing_instance_flavor_resource', 'resource_ptr_id', 'resource_id')
+        db.rename_column('pricing_instance_flavor_resource', 'resourcebase_ptr_id', 'resource_id')
         db.alter_column('pricing_instance_flavor_resource', 'resource_id', self.gf('django.db.models.fields.IntegerField')(blank=False))
 
     models = {

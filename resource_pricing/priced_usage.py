@@ -30,8 +30,9 @@ class PricedInstanceUsage(PricedUsageBase):
 
     @classmethod
     def _res_string_from_usage(cls, usage):
-        return u'instances ' + u', '.join([u'\'' + x + u'\''
-                                           for x in usage['resources']])
+        return u'instances of flavor \'{0}\': {1}'.format(
+            usage['flavor'],
+            u', '.join([u'\'' + x + u'\'' for x in usage['resources']]))
 
     @classmethod
     def get_priced_stats(cls, stats):
