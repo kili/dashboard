@@ -1,22 +1,22 @@
-from accounting import transactions
-from resource_pricing import priced_usage
-from user_billing import helpers
-from user_billing.metering.ceilometer import data_fetcher
+from accounting.transactions import UserTransactions
+from resource_pricing.priced_usage import PricedUsageBase
+from user_billing.helpers import FormattingHelpers
+from user_billing.metering.ceilometer.data_fetcher import StatsContainer
 from user_billing import models
 
 
 class UserTransactor(object):
 
     def __init__(self):
-        self.ut = transactions.UserTransactions()
+        self.ut = UserTransactions()
 
     def _get_raw_data(self, id):
-        return [data_fetcher.StatsContainer.from_pickle_string(x.data) for x in
+        return [StatsContainer.from_pickle_string(x.data) for x in
                 models.RawStatistics.objects.filter(statistics_index=id)]
 
     def _get_transaction_message(self, resource):
         return u'{0} for {1} hours'.format(resource['res_string'],
-                                           helpers.FormattingHelpers.hours(
+                                           FormattingHelpers.hours(
                                                resource['hours']))
 
     def _get_unbilled_statistics(self):
@@ -26,22 +26,21 @@ class UserTransactor(object):
 
     def bill_users(self, dry_run=False):
         for stat in self._get_unbilled_statistics():
-            datasets = self._get_raw_data(stat.id)
-            for data in datasets:
-                priced_flavors = priced_usage.PricedUsageBase.get_meter_class(
-                    stat.meter).get_priced_stats(data)
-                for priced_flavor in priced_flavors:
+            for data in self._get_raw_data(stat.id):
+                for priced_flavor_usage in PricedUsageBase.get_meter_class(
+                        stat.meter).get_priced_stats(data):
                     if dry_run:
-                        print(u'dry run: project {0}, price {1}, desc {2}'.format(
+                        print(u'dry run: proj {0}, price {1}, desc {2}'.format(
                             stat.project_id,
-                            priced_flavor['price'],
-                            self._get_transaction_message(priced_flavor)))
+                            priced_flavor_usage['price'],
+                            self._get_transaction_message(
+                                priced_flavor_usage)))
                         continue
                     self.ut.consume_user_money(
                         stat.project_id,
-                        priced_flavor['price'],
+                        priced_flavor_usage['price'],
                         self._get_transaction_message(
-                            priced_flavor['res_string'],
-                            priced_flavor['hours']))
+                            priced_flavor_usage['res_string'],
+                            priced_flavor_usage['hours']))
                     stat.billed = True
                     stat.save()
