@@ -31,8 +31,7 @@ class StatisticsIndexBuilder(object):
                     second=0,
                     microsecond=0),
                 'until_ts': timezone.now().replace(
-                    # hour should be 0, 23 is only for testing
-                    hour=23,
+                    hour=0,
                     minute=0,
                     second=0,
                     microsecond=0)}

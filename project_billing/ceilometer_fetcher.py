@@ -47,8 +47,10 @@ class StatsContainer(object):
 
     # merge stats and resource by a key that's produced by the given keygen
     def merged_by(self, keygen):
+
         def key_from_stat(data):
             return keygen(data['resource'])
+
         return {k: list(v) for k, v in
                 groupby(
                     sorted(

@@ -42,7 +42,6 @@ class UserTransactor(object):
                         stat.project_id,
                         priced_flavor_usage['price'],
                         self._get_transaction_message(
-                            priced_flavor_usage['res_string'],
-                            priced_flavor_usage['hours']))
+                            priced_flavor_usage))
                     stat.billed = True
                     stat.save()

@@ -26,7 +26,7 @@ class PricedUsageBase:
         """Method that fetches stats and combines them with prices."""
 
     @classmethod
-    def get_price_calculator(cls):
+    def _price_calculator(cls):
         return CalculatorBase.get_price_calculator(cls.meter_name)
 
     @classmethod
@@ -55,7 +55,7 @@ class PricedInstanceUsage(PricedUsageBase):
     def get_priced_stats(cls, stats):
         retval = []
         for stats in cls._merge_stats(stats).values():
-            priced_usage = cls.get_price_calculator().price_from_stats(
+            priced_usage = cls._price_calculator().price_from_stats(
                 cls._extract_params_from_raw_stats(
                     [{'resource': x['resource'],
                       'stats': x['stats']} for x in stats]))
@@ -68,18 +68,14 @@ class PricedInstanceUsage(PricedUsageBase):
     def _extract_params_from_raw_stats(cls, raw_data):
         if len(raw_data) < 1:
             raise Exception('received empty data')
-        return {
-            # same key that stats have been merged by
-            'id': raw_data[0]['resource']['metadata']['flavor.id'],
-
-            # sum count of all instance samples and convert to hours
-            'hours': cls.get_price_calculator().hours_from_periods(
-                sum([x['stats']['count'] for x in raw_data])),
-
-            # keep flavor name
-            'flavor': u'instance:{0}'.format(
-                raw_data[0]['resource']['metadata']['flavor.name']),
-
-            # keep list of all instance names
-            'resources': [x['resource']['metadata']['display_name']
-                          for x in raw_data]}
+        try:
+            return {
+                'id': raw_data[0]['resource']['metadata']['flavor.id'],
+                'hours': cls._price_calculator().hours_from_periods(
+                    sum([x['stats']['count'] for x in raw_data])),
+                'flavor': u'instance:{0}'.format(
+                    raw_data[0]['resource']['metadata']['flavor.name']),
+                'resources': [x['resource']['metadata']['display_name']
+                            for x in raw_data]}
+        except KeyError:
+            raise Exception('received bad raw_statistics from ceilometer')
