@@ -12,8 +12,6 @@ class StatisticsIndexBuilder(object):
     def __init__(self):
         self.ks_client = False
         self.project_ids = False
-        self.meters = False
-        self.timerange = False
 
     def _get_ks_client(self):
         if not self.ks_client:
@@ -21,26 +19,20 @@ class StatisticsIndexBuilder(object):
                                            endpoint=settings.KEYSTONE_URL)
         return self.ks_client
 
-    def _get_time_range(self):
-        if not self.timerange:
-            self.timerange = {
-                'from_ts': (timezone.now() -
-                timezone.timedelta(days=1)).replace(
-                    hour=0,
-                    minute=0,
-                    second=0,
-                    microsecond=0),
-                'until_ts': timezone.now().replace(
-                    hour=0,
-                    minute=0,
-                    second=0,
-                    microsecond=0)}
-        return self.timerange
-
-    def _list_billable_resource_type_meters(self):
-        if not self.meters:
-            self.meters = settings.BILLABLE_RESOURCE_TYPES.keys()
-        return self.meters
+    @staticmethod
+    def _get_time_range():
+        return {
+            'from_ts': (timezone.now() -
+            timezone.timedelta(days=1)).replace(
+                hour=0,
+                minute=0,
+                second=0,
+                microsecond=0),
+            'until_ts': timezone.now().replace(
+                hour=0,
+                minute=0,
+                second=0,
+                microsecond=0)}
 
     def _list_ks_project_ids(self):
         if not self.project_ids:
@@ -50,17 +42,18 @@ class StatisticsIndexBuilder(object):
 
     def _merge_indexing_data(self):
         # define data collectors in dc
-        dc = {'meters': self._list_billable_resource_type_meters,
-              'project_ids': self._list_ks_project_ids,
+        dc = {'meters': settings.BILLABLE_RESOURCE_TYPES.keys(),
+              'project_ids': self._list_ks_project_ids(),
               'time_range': self._get_time_range()}
 
         # create every possible combination of projectid, meter and date
         return [dict({'project_id': project_id, 'meter': meter}.items() +
                      dc['time_range'].items())
-                for project_id in dc['project_ids']()
-                for meter in dc['meters']()]
+                for project_id in dc['project_ids']
+                for meter in dc['meters']]
 
-    def _save_index(self, index_data):
+    @staticmethod
+    def _save_index(index_data):
         for index_element in index_data:
             try:
                 RawStatisticsIndex.objects.create(**index_element)

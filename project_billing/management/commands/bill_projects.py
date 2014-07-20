@@ -8,7 +8,7 @@ class Command(base.BaseCommand):
 
     def handle(self, *args, **kwargs):
         StatisticsIndexBuilder().build()
-        UnfetchedStatisticsFetcher().fetch()
+        UnfetchedStatisticsFetcher.fetch()
         if 'imsure' in args:
             AccountingTransactor.bill_projects()
         else:

@@ -572,9 +572,7 @@ CEILOMETER_AUTH_DATA = {
     'os_auth_url': ''}
 
 BILLABLE_RESOURCE_TYPES = {
-    'instance': {'price_calculator': 'resource_pricing.calculators'
-                 '.calculators.InstancePriceCalculator',
-                 'period_length': 10}
+    'instance': {'period_length': 10}
 }
 
 MINIMUM_BALANCE = 15
