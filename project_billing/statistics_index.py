@@ -2,8 +2,9 @@ from django.conf import settings
 from django.db import utils
 from django.utils import timezone
 from keystoneclient.v2_0 import client
-from user_billing import models
-from user_billing.ceilometer_fetcher import CeilometerStats
+from project_billing.models import RawStatistics
+from project_billing.models import RawStatisticsIndex
+from project_billing.ceilometer_fetcher import CeilometerStats
 
 
 class StatisticsIndexBuilder(object):
@@ -63,7 +64,7 @@ class StatisticsIndexBuilder(object):
     def _save_index(self, index_data):
         for index_element in index_data:
             try:
-                models.RawStatisticsIndex.objects.create(**index_element)
+                RawStatisticsIndex.objects.create(**index_element)
             except utils.IntegrityError:
                 # in case the previous run of this job has been aborted,
                 # just continue where we stopped
@@ -94,11 +95,11 @@ class UnfetchedStatisticsFetcher(object):
         index.save()
 
     def _store_with_data(self, index, data):
-        models.RawStatistics.objects.create(statistics_index=index,
+        RawStatistics.objects.create(statistics_index=index,
                                             data=data.pickle())
         index.has_data = True
 
     def fetch(self):
-        for unfetched_dataset in models.RawStatisticsIndex.objects.filter(
+        for unfetched_dataset in RawStatisticsIndex.objects.filter(
                 fetched=False):
             self._fetch_store_dataset(unfetched_dataset)

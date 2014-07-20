@@ -15,7 +15,7 @@ INSTALLED_APPS += (
     'swingtix.bookkeeper',
     'resource_pricing',
     'resource_pricing.calculators',
-    'user_billing',
+    'project_billing',
 )
 
 CUSTOMIZATIONS = (

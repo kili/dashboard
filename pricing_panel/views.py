@@ -3,8 +3,8 @@ from horizon import forms
 from horizon import tables as horizon_tables
 from pricing_panel import forms as pricing_forms
 from pricing_panel import tables
-from resource_pricing.calculators import models as type_models
-from resource_pricing import models as pricing_models
+from resource_pricing.calculators.models import InstanceType
+from resource_pricing.models import Price
 
 
 class IndexView(horizon_tables.MultiTableView):
@@ -14,10 +14,10 @@ class IndexView(horizon_tables.MultiTableView):
     def get_instance_prices_data(self):
         return [tables.InstancePricesTableEntry(
             id=x.resource.id,
-            flavor=x.resource.flavor_set.first().os_flavor_id,
+            instance_type=x.resource.instancetype.os_instance_type_id,
             price=x.price)
-            for x in pricing_models.Price.objects.exclude(
-                resource__flavor__os_flavor_id=None)]
+            for x in Price.objects.exclude(
+                resource__instancetype__os_instance_type_id=None)]
 
 
 class UpdateView(forms.ModalFormView):
@@ -26,11 +26,11 @@ class UpdateView(forms.ModalFormView):
     success_url = urlresolvers.reverse_lazy('horizon:admin:pricing:index')
 
     def get_object(self):
-        flavor = type_models.Flavor.objects.get(
-            resource=self.kwargs['resource_price_id'])
-        price = pricing_models.Price.objects.get(resource=flavor.resource)
+        instance_type = InstanceType.objects.get(
+            resourcebase_ptr=self.kwargs['resource_price_id'])
+        price = Price.objects.get(resource=instance_type.resourcebase_ptr)
         return {'resource_price_id': self.kwargs['resource_price_id'],
-                'flavor': flavor.os_flavor_id,
+                'instance_type': instance_type.os_instance_type_id,
                 'price': price.price}
 
     def get_context_data(self, **kwargs):

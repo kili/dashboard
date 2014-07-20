@@ -1,5 +1,5 @@
 from horizon import tables
-from user_billing import helpers
+from project_billing import helpers
 
 
 class InstanceUsageTableEntry(object):

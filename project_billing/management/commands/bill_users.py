@@ -1,14 +1,15 @@
 from django.core.management import base
-from user_billing import statistics_index
-from user_billing import transactor
+from project_billing.statistics_index import StatisticsIndexBuilder
+from project_billing.statistics_index import UnfetchedStatisticsFetcher
+from project_billing.transactor import UserTransactor
 
 
 class Command(base.BaseCommand):
 
     def handle(self, *args, **kwargs):
-        statistics_index.StatisticsIndexBuilder().build()
-        statistics_index.UnfetchedStatisticsFetcher().fetch()
+        StatisticsIndexBuilder().build()
+        UnfetchedStatisticsFetcher().fetch()
         if 'imsure' in args:
-            transactor.UserTransactor().bill_users()
+            UserTransactor().bill_users()
         else:
-            transactor.UserTransactor().bill_users(dry_run=True)
+            UserTransactor().bill_users(dry_run=True)

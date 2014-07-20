@@ -2,7 +2,7 @@ from billing_app.usage import forms
 from billing_app.usage import tables as usage_tables
 from horizon import tables as horizon_tables
 from resource_pricing import priced_usage
-from user_billing.ceilometer_fetcher import CeilometerStats
+from project_billing.ceilometer_fetcher import CeilometerStats
 
 
 class IndexView(horizon_tables.MultiTableView):
