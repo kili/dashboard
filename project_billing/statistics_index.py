@@ -75,30 +75,21 @@ class StatisticsIndexBuilder(object):
 
 class UnfetchedStatisticsFetcher(object):
 
-    def _fetch_store_dataset(self, dataset):
-        self._store(dataset, self._fetch(dataset))
-
-    def _fetch(self, dataset):
+    @classmethod
+    def _fetch_from_cm(cls, index):
         return CeilometerStats.get_stats(
-            meter=dataset.meter,
-            project_id=dataset.project_id,
-            from_ts=dataset.from_ts,
-            until_ts=dataset.until_ts)
+            meter=index.meter,
+            project_id=index.project_id,
+            from_ts=index.from_ts,
+            until_ts=index.until_ts)
 
-    def _store(self, index, data):
-        if data.has_data:
-            self._store_with_data(
-                index,
-                data)
-        index.fetched = True
-        index.save()
-
-    def _store_with_data(self, index, data):
-        RawStatistics.objects.create(statistics_index=index,
-                                            data=data.pickle())
-        index.has_data = True
-
-    def fetch(self):
-        for unfetched_dataset in RawStatisticsIndex.objects.filter(
-                fetched=False):
-            self._fetch_store_dataset(unfetched_dataset)
+    @classmethod
+    def fetch(cls):
+        for index in RawStatisticsIndex.objects.filter(fetched=False):
+            data = cls._fetch_from_cm(index)
+            if data.has_data:
+                RawStatistics.objects.create(statistics_index=index,
+                                             data=data.pickle())
+                index.has_data = True
+            index.fetched = True
+            index.save()

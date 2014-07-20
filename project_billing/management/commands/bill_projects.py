@@ -1,7 +1,7 @@
 from django.core.management import base
 from project_billing.statistics_index import StatisticsIndexBuilder
 from project_billing.statistics_index import UnfetchedStatisticsFetcher
-from project_billing.transactor import UserTransactor
+from project_billing.transactor import AccountingTransactor
 
 
 class Command(base.BaseCommand):
@@ -10,6 +10,6 @@ class Command(base.BaseCommand):
         StatisticsIndexBuilder().build()
         UnfetchedStatisticsFetcher().fetch()
         if 'imsure' in args:
-            UserTransactor().bill_users()
+            AccountingTransactor.bill_projects()
         else:
-            UserTransactor().bill_users(dry_run=True)
+            AccountingTransactor.bill_projects(dry_run=True)
