@@ -185,7 +185,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'resource_pricing',
     'resource_pricing.calculators',
-    'user_billing',
+    'project_billing',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
