@@ -9,7 +9,6 @@ from keystoneclient import exceptions as ks_exceptions
 class CeilometerClient(object):
     _cm_client = None
 
-    @classmethod
     def __new__(cls, *args, **kwargs):
         if not cls._cm_client:
             cls._cm_client = object.__new__(cls)
@@ -24,20 +23,13 @@ class CeilometerClient(object):
 
 class StatsContainer(object):
 
-    def __init__(self, stats, resources):
+    def __init__(self, stats):
         self.stats = stats
-        self.resources = resources
-
-    def _get_resource(self, res_id):
-        for resource in self.resources:
-            if resource['resource_id'] == res_id:
-                return resource
-        raise Exception('corrupt data in StatsContainer')
 
     @classmethod
     def from_pickle_string(cls, string):
         unpickled = pickle.loads(string)
-        return cls(unpickled['stats'], unpickled['resources'])
+        return cls(unpickled['stats'])
 
     @property
     def has_data(self):
@@ -54,15 +46,14 @@ class StatsContainer(object):
         return {k: list(v) for k, v in
                 groupby(
                     sorted(
-                        [{'stats': x,
-                          'resource': self._get_resource(
-                              x['groupby']['resource_id'])}
-                         for x in self.stats],
+                        [{'stats': stat['stats'],
+                          'resource': stat['resource']}
+                         for stat in self.stats],
                         key=key_from_stat),
                     key=key_from_stat)}
 
     def pickle(self):
-        return pickle.dumps({'stats': self.stats, 'resources': self.resources})
+        return pickle.dumps({'stats': self.stats})
 
 
 class CeilometerStats(object):
@@ -89,6 +80,7 @@ class CeilometerStats(object):
         stats = CeilometerClient().statistics.list(
             kwargs['meter'], **cls._get_stats_query(**kwargs))
         return StatsContainer(
-            [x.to_dict() for x in stats],
-            [x.to_dict() for x in map(CeilometerClient().resources.get,
-                [stat.groupby['resource_id'] for stat in stats])])
+            [{'stats': stat.to_dict(),
+              'resource': CeilometerClient().resources.get(
+                  stat.groupby['resource_id']).to_dict()}
+             for stat in stats])

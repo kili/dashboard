@@ -45,7 +45,7 @@ class PricedInstanceUsage(PricedUsageBase):
     def _res_string_from_usage(cls, usage):
         return u'instances of flavor \'{0}\': {1}'.format(
             usage['flavor'],
-            u', '.join([u'\'' + x + u'\'' for x in usage['resources']]))
+            u', '.join([u'\'{0}\''.format(x) for x in usage['resources']]))
 
     @classmethod
     def _merge_stats(cls, stats):
@@ -56,9 +56,7 @@ class PricedInstanceUsage(PricedUsageBase):
         retval = []
         for stats in cls._merge_stats(stats).values():
             priced_usage = cls._price_calculator().price_from_stats(
-                cls._extract_params_from_raw_stats(
-                    [{'resource': x['resource'],
-                      'stats': x['stats']} for x in stats]))
+                cls._extract_params_from_raw_stats(stats))
             priced_usage['res_string'] = cls._res_string_from_usage(
                 priced_usage)
             retval.append(priced_usage)
