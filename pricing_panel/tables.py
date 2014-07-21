@@ -1,5 +1,5 @@
 from horizon import tables
-from user_billing import helpers
+from project_billing import helpers
 
 
 class UpdatePriceAction(tables.LinkAction):
@@ -13,13 +13,13 @@ class InstancePricesTableEntry(object):
 
     def __init__(self, **kwargs):
         self.id = kwargs['id']
-        self.flavor = kwargs['flavor']
+        self.instance_type = kwargs['instance_type']
         self.price = kwargs['price']
 
 
 class InstancePricesTable(tables.DataTable):
-    flavor = tables.Column('flavor',
-                         verbose_name='OS Flavor ID')
+    instance_type = tables.Column('instance_type',
+                         verbose_name='OS Instance Type ID')
     price = tables.Column('price',
                           filters=[helpers.FormattingHelpers.price],
                           verbose_name='Price/h')

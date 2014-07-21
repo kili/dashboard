@@ -18,9 +18,7 @@ INSTALLED_APPS += (
     'swingtix.bookkeeper',
     'resource_pricing',
     'resource_pricing.calculators',
-    'user_billing',
-    'user_billing.metering',
-    'user_billing.metering.ceilometer',
+    'project_billing',
 )
 
 CUSTOMIZATIONS = (
@@ -50,26 +48,9 @@ ACCOUNTING_CREDIT_NEGATIVE_ACCOUNTS = ACCOUNTING_ASSET_SOURCES[:]
 ACCOUNTING_CREDIT_NEGATIVE_ACCOUNTS.append(ACCOUNTING_PROMOTIONS_ACCOUNT)
 
 BILLABLE_RESOURCE_TYPES = {
-    'instance': {'id': 0,
-                 'price_calculator': 'resource_pricing.calculators.instance',
-                 'period_length': 10,
-                 'meters': ['instance:MIcro',
-                            'instance:Small',
-                            'instance:Medium',
-                            'instance:High CPU',
-                            'instance:LArge',
-                            'instance:High RAM',
-                            'instance:Extra Large']},
-    'volume': {'id': 1,
-               'period_length': 10,
-               'price_calculator': 'resource_pricing.calculators.volume'},
-    'network': {'id': 2,
-                'period_length': 10,
-                'price_calculator': 'resource_pricing.calculators.network'},
-    'testtype1': {'id': 3,
-                  'period_length': 10,
-                  'price_calculator': 'testcalculator1'},
-}
+    'instance': {'period_length': 10},
+    'volume': {'period_length': 10},
+    'testtype1': {'period_length': 10}}
 
 MERCHANT_TEST_MODE = True
 MERCHANT_SETTINGS = {

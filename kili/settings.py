@@ -186,9 +186,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'resource_pricing',
     'resource_pricing.calculators',
-    'user_billing',
-    'user_billing.metering',
-    'user_billing.metering.ceilometer',
+    'project_billing',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -229,6 +227,7 @@ LANGUAGE_COOKIE_NAME = 'horizon_language'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+TIME_ZONE = 'GMT'
 
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = '_member_'
 
@@ -573,10 +572,7 @@ CEILOMETER_AUTH_DATA = {
     'os_auth_url': ''}
 
 BILLABLE_RESOURCE_TYPES = {
-    'instance': {'id': 0,
-                 'price_calculator': 'resource_pricing.calculators'
-                 '.calculators.InstancePriceCalculator',
-                 'period_length': 10}
+    'instance': {'period_length': 10}
 }
 
 MINIMUM_BALANCE = 15

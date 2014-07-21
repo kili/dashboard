@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from openstack_dashboard.dashboards.admin.projects.tables import *  # noqa
-from user_billing import helpers
+from project_billing import helpers
 
 
 class ProjectPromotionLink(tables.LinkAction):
