@@ -21,15 +21,19 @@ class FormattingHelpers(object):
                 decimal.Decimal('0.00'),
                 rounding=decimal.ROUND_UP))
 
-    @classmethod
-    def verify_date_format(cls, option, opt, value, parser):
+    @staticmethod
+    def verify_input_date(option, opt, value, parser):
         try:
-            cls.get_datetime(value)
+            setattr(parser.values,
+                    option.dest,
+                    parse(value,
+                          yearfirst=True).replace(
+                              tzinfo=timezone.get_default_timezone()))
         except Exception:
             raise OptionValueError('invalid date format, must be yyyy-mm-dd')
-        setattr(parser.values, option.dest, value)
-
-    @staticmethod
-    def get_datetime(string):
-        return parse(string, yearfirst=True).replace(
-            tzinfo=timezone.get_default_timezone())
+        if (getattr(parser.values,
+                    option.dest) >= timezone.now().replace(hour=0,
+                                                           minute=0,
+                                                           second=0,
+                                                           microsecond=0)):
+            raise OptionValueError('date must be in the past')

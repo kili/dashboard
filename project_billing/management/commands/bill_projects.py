@@ -16,8 +16,7 @@ class Command(BaseCommand):
                     action='callback',
                     dest='date',
                     type='string',
-                    callback=FormattingHelpers.verify_date_format),
-    )
+                    callback=FormattingHelpers.verify_input_date))
 
     def handle(self, *args, **kwargs):
         StatisticsIndexBuilder().build(date=kwargs['date'])

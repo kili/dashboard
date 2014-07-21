@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import utils
 from django.utils import timezone
 from keystoneclient.v2_0 import client
-from project_billing.helpers import FormattingHelpers
 from project_billing.models import RawStatistics
 from project_billing.models import RawStatisticsIndex
 from project_billing.ceilometer_fetcher import CeilometerStats
@@ -21,10 +20,7 @@ class StatisticsIndexBuilder(object):
         return self.ks_client
 
     def _get_time_range(self):
-        if self.date:
-            from_ts = FormattingHelpers.get_datetime(self.date)
-        else:
-            from_ts = timezone.now() - timezone.timedelta(days=1)
+        from_ts = self.date or timezone.now() - timezone.timedelta(days=1)
         return {
             'from_ts': from_ts.replace(hour=0,
                                        minute=0,
