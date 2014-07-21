@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import utils
 from django.utils import timezone
 from keystoneclient.v2_0 import client
+from project_billing.helpers import FormattingHelpers
 from project_billing.models import RawStatistics
 from project_billing.models import RawStatisticsIndex
 from project_billing.ceilometer_fetcher import CeilometerStats
@@ -19,20 +20,22 @@ class StatisticsIndexBuilder(object):
                                            endpoint=settings.KEYSTONE_URL)
         return self.ks_client
 
-    @staticmethod
-    def _get_time_range():
+    def _get_time_range(self):
+        if self.date:
+            from_ts = FormattingHelpers.get_datetime(self.date)
+        else:
+            from_ts = timezone.now() - timezone.timedelta(days=1)
         return {
-            'from_ts': (timezone.now() -
-            timezone.timedelta(days=1)).replace(
-                hour=0,
-                minute=0,
-                second=0,
-                microsecond=0),
-            'until_ts': timezone.now().replace(
-                hour=0,
-                minute=0,
-                second=0,
-                microsecond=0)}
+            'from_ts': from_ts.replace(hour=0,
+                                       minute=0,
+                                       second=0,
+                                       microsecond=0),
+            'until_ts': (from_ts +
+                         timezone.timedelta(days=1)).replace(
+                             hour=0,
+                             minute=0,
+                             second=0,
+                             microsecond=0)}
 
     def _list_ks_project_ids(self):
         if not self.project_ids:
@@ -62,7 +65,8 @@ class StatisticsIndexBuilder(object):
                 # just continue where we stopped
                 pass
 
-    def build(self):
+    def build(self, date=None):
+        self.date = date
         self._save_index(self._merge_indexing_data())
 
 
