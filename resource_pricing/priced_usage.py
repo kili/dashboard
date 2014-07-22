@@ -25,6 +25,10 @@ class PricedUsageBase:
     def get_priced_stats(cls, stats):
         """Method that fetches stats and combines them with prices."""
 
+    @staticmethod
+    def meter_specific_criterias(query):
+        return query
+
     @classmethod
     def _price_calculator(cls):
         return CalculatorBase.get_price_calculator(cls.meter_name)
@@ -77,3 +81,10 @@ class PricedInstanceUsage(PricedUsageBase):
                             for x in raw_data]}
         except KeyError:
             raise Exception('received bad raw_statistics from ceilometer')
+
+    @staticmethod
+    def meter_specific_criterias(query):
+        query['q'].append({'field': 'resource_metadata.status',
+                           'op': 'eq',
+                           'value': 'ACTIVE'})
+        return query

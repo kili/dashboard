@@ -2,6 +2,7 @@ from itertools import groupby
 import pickle
 from ceilometerclient import client
 from django.conf import settings
+from resource_pricing.priced_usage import PricedUsageBase
 from keystoneclient import exceptions as ks_exceptions
 
 
@@ -78,7 +79,9 @@ class CeilometerStats(object):
     @classmethod
     def get_stats(cls, **kwargs):
         stats = CeilometerClient().statistics.list(
-            kwargs['meter'], **cls._get_stats_query(**kwargs))
+            kwargs['meter'], **PricedUsageBase.get_meter_class(
+                kwargs['meter']).meter_specific_criterias(
+                    cls._get_stats_query(**kwargs)))
         return StatsContainer(
             [{'stats': stat.to_dict(),
               'resource': CeilometerClient().resources.get(
