@@ -26,13 +26,16 @@ class AccountingTransactor(object):
                                                  billed=False)
 
     @classmethod
-    def _print_info(cls, project, priced_usage):
-        print(u'dry run: proj {0}, price {1}, desc {2}'.format(
+    def _print_info(cls, project, priced_usage, dry_run=False):
+        msg = u'proj {0}, price {1}, desc {2}'.format(
             project,
             FormattingHelpers.price(
                 priced_usage['price']),
             cls._get_transaction_message(
-                priced_usage)))
+                priced_usage))
+        if dry_run:
+            msg = u'dry run: {0}'.format(msg)
+        print(msg)
 
     @classmethod
     def bill_projects(cls, dry_run=False):
@@ -49,4 +52,4 @@ class AccountingTransactor(object):
                                 priced_usage))
                         stat.billed = True
                         stat.save()
-                    cls._print_info(stat.project_id, priced_usage)
+                    cls._print_info(stat.project_id, priced_usage, dry_run)
