@@ -131,3 +131,19 @@ class KopoKopoTransaction(models.Model):
     currency = models.CharField(max_length=64)
     signature = models.CharField(max_length=64)
     claimed = models.BooleanField(default=False)
+
+
+class PrePaidReservation(models.Model):
+    instance_type = models.CharField(max_length=64)
+    hourly_price = models.DecimalField(max_digits=19, decimal_places=10)
+    total_price = models.DecimalField(max_digits=19, decimal_places=10)
+    length = models.PositiveSmallIntegerField()
+    available = models.BooleanField(default=False)
+
+
+class AssignedReservation(models.Model):
+    tenant_id = models.CharField(max_length=64,
+                                 blank=False)
+    start = models.DateTimeField(blank=False)
+    end = models.DateTimeField(blank=False)
+    prepaid_reservation = models.ForeignKey('PrePaidReservation')

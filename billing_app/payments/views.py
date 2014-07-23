@@ -22,7 +22,7 @@ from horizon import tables as horizon_tables  # noqa
 stripe_obj = billing.get_integration("stripe")
 
 
-class MobileNumberTableEntry():
+class MobileNumberTableEntry(object):
 
     def __init__(self, id, number):
         self.id = id
@@ -30,7 +30,7 @@ class MobileNumberTableEntry():
         self.name = number
 
 
-class CardTableEntry():
+class CardTableEntry(object):
 
     def __init__(self, id, name, default):
         self.id = id

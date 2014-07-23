@@ -1,0 +1,25 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block form_id %}id_add_funds_form{% endblock %}
+{% block form_action %}{% url submit_url %}{% endblock %}
+
+{% block modal_id %}id_add_card_modal{% endblock %}
+{% block modal-header %}{% trans "Add funds" %}{% endblock %}
+
+{% block modal-body %}
+<div class="left">
+    <fieldset>
+        {% include "horizon/common/_form_fields.html" %}
+    </fieldset>
+</div>
+<div class="right">
+    {{ modal_message }}
+</div>
+{% endblock %}
+
+{% block modal-footer %}
+<input id="id_submit" class="btn btn-primary pull-right" type="submit" value="{% trans "Yes" %}" />
+<a href="{% url 'horizon:billing:reservations:index' %}" class="btn secondary cancel close">{% trans "No" %}</a>
+{% endblock %}

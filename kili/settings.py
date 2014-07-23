@@ -160,6 +160,7 @@ ALLOWED_HOSTS = ['*', ]
 
 INSTALLED_APPS = [
     'pricing_panel',
+    'admin_reservations_panel',
     'accounting',
     'kili',
     'kopokopo',

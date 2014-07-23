@@ -17,9 +17,6 @@ class AddCard(tables.LinkAction):
     classes = ('btn-create', 'ajax-modal')
     ajax = True
 
-    def single(self, table, request, object_id=None):
-        return HttpResponse(self.render())
-
 
 class AddFunds(tables.LinkAction):
 
@@ -28,9 +25,6 @@ class AddFunds(tables.LinkAction):
     url = "horizon:billing:payments:add_funds"
     classes = ('btn-success', 'btn-large', 'ajax-modal')
     ajax = True
-
-    def single(self, table, request, object_id=None):
-        return HttpResponse(self.render())
 
     def allowed(self, request, datum):
         return bool(self.table.data)
@@ -88,9 +82,6 @@ class AddMobileMoneyNumber(tables.LinkAction):
     classes = ('btn-create', 'ajax-modal')
     ajax = True
 
-    def single(self, table, request, object_id=None):
-        return HttpResponse(self.render())
-
 
 class EnterCode(tables.LinkAction):
 
@@ -99,9 +90,6 @@ class EnterCode(tables.LinkAction):
     url = "horizon:billing:payments:enter_transaction_code"
     classes = ('btn-success', 'ajax-modal')
     ajax = True
-
-    def single(self, table, request, object_id=None):
-        return HttpResponse(self.render())
 
 
 class DeleteMobileMoneyNumber(tables.DeleteAction):
