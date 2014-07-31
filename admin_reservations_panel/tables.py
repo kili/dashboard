@@ -1,11 +1,11 @@
-from billing_app.reservations import tables as user_reservation_tables
+from billing_app.reservations.tables import *
 from billing_app import models
 from django.http import HttpResponse  # noqa
 from django.utils.translation import ugettext_lazy as _
 from horizon import tables as horizon_tables
 
 
-class CreateReservation(horizon_tables.LinkAction):
+class CreateReservation(tables.LinkAction):
 
     name = 'create'
     verbose_name = _('Create Reservation')
@@ -13,7 +13,7 @@ class CreateReservation(horizon_tables.LinkAction):
     classes = ('btn-create', 'ajax-modal')
     ajax = True
 
-class ToggleReservation(horizon_tables.BatchAction):
+class ToggleReservation(tables.BatchAction):
 
     name = 'toggle'
     verbose_name = _('Toggle Reservation')
@@ -28,7 +28,7 @@ class ToggleReservation(horizon_tables.BatchAction):
         reservation.available = not reservation.available
         reservation.save() 
 
-class DeleteReservation(horizon_tables.DeleteAction):
+class DeleteReservation(tables.DeleteAction):
 
     name = 'DeleteCard'
     verbose_name = _('Delete Reservation')
@@ -44,7 +44,7 @@ class DeleteReservation(horizon_tables.DeleteAction):
             pk=prepaid_reservation_id).delete()
 
 
-class AdminPrepaidReservationsTable(user_reservation_tables.PrepaidReservationsTable):
+class AdminPrepaidReservationsTable(PrepaidReservationsTable):
     active = horizon_tables.Column('active', verbose_name='Active')
 
     class Meta:
@@ -54,8 +54,14 @@ class AdminPrepaidReservationsTable(user_reservation_tables.PrepaidReservationsT
         row_actions = (ToggleReservation, DeleteReservation)
     
 
-class AdminActiveReservationsTable(user_reservation_tables.ActiveReservationsTable):
-    
+class AdminActiveReservationsTable(ActiveReservationsTable):
+   
+    tenant_id = tables.Column(
+        'tenant_id', verbose_name='Tenant ID')
+
+    tenant_name = tables.Column(
+        'tenant_name', verbose_name='Tenant Name')
+
     class Meta:
         name = 'active_reservations'
         verbose_name = 'Active Reservations'

@@ -3,23 +3,37 @@
 {% load url from future %}
 
 {% block form_id %}id_add_funds_form{% endblock %}
-{% block form_action %}{% url submit_url %}{% endblock %}
+{% block form_action %}{% url 'horizon:billing:reservations:purchase' id=reservation_id %}{% endblock %}
 
 {% block modal_id %}id_add_card_modal{% endblock %}
-{% block modal-header %}{% trans "Add funds" %}{% endblock %}
+{% block modal-header %}
+{% if user_affords_reservation %}
+    {% trans "Confirm Purchase Reservation" %}
+{% else %}
+    {% trans "Insufficient funds for reservation purchase" %}
+{% endif %}
+{% endblock %}
 
 {% block modal-body %}
 <div class="left">
     <fieldset>
-        {% include "horizon/common/_form_fields.html" %}
+        <input id="id_prepaid_reservation_id" name="prepaid_reservation_id" type="hidden" value="{{ reservation_id  }}">
     </fieldset>
 </div>
-<div class="right">
-    {{ modal_message }}
+<div>
+{% if user_affords_reservation %}
+    Are you sure you want to purchase this reservation?
+{% else %}
+You need at least <b>{{ price }}</b> to purchase this reservation.
+{% endif %}
 </div>
 {% endblock %}
 
 {% block modal-footer %}
-<input id="id_submit" class="btn btn-primary pull-right" type="submit" value="{% trans "Yes" %}" />
-<a href="{% url 'horizon:billing:reservations:index' %}" class="btn secondary cancel close">{% trans "No" %}</a>
+{% if user_affords_reservation %} 
+    <input id="id_submit" class="btn btn-primary pull-right" type="submit" value="{% trans "Yes" %}" />
+{% else %}
+    <a href="{% url 'horizon:billing:payments:index' %}" class="btn btn-primary pull-right">{% trans "Top Up" %}</a>
+{% endif %}
+    <a href="{% url 'horizon:billing:reservations:index' %}" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 {% endblock %}

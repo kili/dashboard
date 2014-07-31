@@ -10,33 +10,6 @@ from horizon import views
 from openstack_dashboard import api
 
 
-class PrepaidReservationsTableEntry(object):
-
-    def __init__(self, id, instance_type, hourly_price,
-                 total_price, length, active):
-        self.id = id
-        self.instance_type = instance_type
-        self.hourly_price = hourly_price
-        self.total_price = total_price
-        self.length = length
-        self.active = active 
- 
-    @property
-    def name(self):
-        return instance_type 
-
-class ActiveReservationsTableEntry(object):
-
-    def __init__(self, id, instance_type, start, end):
-        self.id = id
-        self.instance_type = instance_type
-        self.start = start
-        self.end = end
-
-    @property
-    def name(self):
-        return instance_type 
-
 class IndexView(horizon_tables.MultiTableView):
     template_name = 'admin/reservations/index.html'
     table_classes = (
@@ -45,21 +18,25 @@ class IndexView(horizon_tables.MultiTableView):
 
     def get_prepaid_reservations_data(self):
         try:
-            return [PrepaidReservationsTableEntry(x.id, 
+            return [admin_reservation_tables.PrepaidReservationsTableEntry(x.id, 
                     api.nova.flavor_get(self.request, x.instance_type).name,
-                    x.hourly_price, x.total_price, x.length, x.available)
-                    for x in PrePaidReservation.objects.filter()]
+                    x.formatted_hourly_price, x.formatted_upfront_price, 
+                    x.length, x.available)
+                    for x in 
+                    PrePaidReservation.objects.filter()]
         except Exception:
             exceptions.handle(self.request,
-                 'Unable to retrieve available reservations.')
+                'Unable to retrieve available reservations.')
             return []
 
     def get_active_reservations_data(self):
         try:
-            return [ActiveReservationsTableEntry(
+            return [admin_reservation_tables.ActiveReservationsTableEntry(
                     x.id, 
-                    api.nova.flavor_get(self.request, x.instance_type).name,
-                    x.start, x.end)
+                    api.nova.flavor_get(self.request, 
+                        x.prepaid_reservation.instance_type).name,
+                    x.start, x.end,
+                    api.keystone.tenant_get(self.request, x.tenant_id))
                     for x in 
                     AssignedReservation.objects.filter()]
         except Exception:
@@ -76,16 +53,8 @@ class CreateReservationView(ReservationsViewBase):
         'admin/reservations/create_reservation.html' 
     
     def get_initial(self):
-        flavors = api.nova.flavor_list(self.request)
-        flavor_choices = []
-
-        for flavor in flavors:
-            flavor_choices.append((flavor.id, flavor.name))
-
+        flavors = [(x.id, x.name) for x in api.nova.flavor_list(self.request)]
         self.form_class.base_fields['instance_type'].choices = \
-            flavor_choices;
+            flavors;
 
-        return {'instance_type': 0,
-                'hourly_price': 0,
-                'total_price': 0,
-                'length': 0}
+        return {'instance_type': 0, 'length': 365}

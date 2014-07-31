@@ -11,17 +11,8 @@ class CreateReservationForm(horizon_forms.SelfHandlingMixin,
     instance_type = horizon_forms.DynamicChoiceField(
         choices=[],
         label=_("Flavor"),
-        add_item_link='')
+        add_item_link='horizon:admin:flavors:create')
     
-    hourly_price = django_forms.DecimalField(
-        max_digits=5, decimal_places=2)
-
-    total_price = django_forms.DecimalField(
-        max_digits=5, decimal_places=2)
-    
-    length = django_forms.IntegerField(
-        label=_("Length in Days"))
-
     api_error = horizon_forms.SelfHandlingForm.api_error
     set_warning = horizon_forms.SelfHandlingForm.set_warning
 
@@ -30,14 +21,5 @@ class CreateReservationForm(horizon_forms.SelfHandlingMixin,
         fields = '__all__'
 
     def handle(self, request, data):
-        try:
-            if not self.is_valid():
-                raise django_forms.ValidationError('form aint valid') #fix this
-            self.save()
+        if self.save():
             return True
-        except IntegrityError as e:
-            self.api_error(e.message)
-        except django_forms.ValidationError as e:
-            self.api_error(e.messages[0])
-        except Exception:
-            exceptions.handle(request, ignore=True)

@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% load render_integration from billing_tags %}
-{% block title %}{% trans "Add Funds" %}{% endblock %}
+{% block title %}{% trans "Purchase Reservation" %}{% endblock %}
 
 {% block page_header %}
-    {% include "horizon/common/_page_header.html" with title=_("Add Funds") %}
+    {% include "horizon/common/_page_header.html" with title=_("Purchase Reservation") %}
 {% endblock page_header %}
 
 {% block main %}
-    {% include 'billing_app/payments/_add_card.html' %}
+    {% include 'billing/reservations/_purchase_reservation.html' %}
 {% endblock %}

@@ -1,9 +1,7 @@
-from accounting.managers import AccountManager
+from accounting import utils
 
 
 def balance(request):
     if request.user.is_authenticated():
-        return {'balance':
-            AccountManager().get_user_account(
-                request.user.tenant_id).balance()}
+        return {'balance':utils.balance(request)}
     return {}

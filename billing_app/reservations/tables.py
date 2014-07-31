@@ -7,47 +7,63 @@ from django.core.urlresolvers import reverse
 class PurchaseReservation(tables.LinkAction):
 
     name = 'purchase'
-    verbose_name = 'Purchase Reservation'
+    verbose_name = 'Purchase'
     url = 'horizon:billing:reservations:purchase'
     classes = ('btn-success', 'ajax-modal')
     ajax = True
 
-    def get_link_url(self, datum=None):
-        return '{}?PrePaidReservation={}'.format(
-            reverse('horizon:billing:reservations:purchase'),
-            datum.id)
-            
+class PrepaidReservationsTableEntry(object):
+
+    def __init__(self, id, instance_type, hourly_price,
+                 upfront_price, length, active=True):
+        self.id = id
+        self.instance_type = instance_type
+        self.hourly_price = hourly_price
+        self.upfront_price = upfront_price
+        self.length = length
+        self.active = active
+
+    @property
+    def name(self):
+        return instance_type
+
 
 class PrepaidReservationsTable(tables.DataTable):
 
-    instance_type = tables.Column(
-        'instance_type', verbose_name='Instance Type')
+    instance_type = tables.Column('instance_type')
     hourly_price = tables.Column(
         'hourly_price', verbose_name='Price per Hour')
-    total_price = tables.Column(
-        'total_price', verbose_name='Total Price')
+    upfront_price = tables.Column('upfront_price')
     length = tables.Column(
-        'length', verbose_name='Duraion (Days)'),
+        'length', verbose_name='Duration (Days)'),
  
     class Meta:
         name = 'prepaid_reservations'
-        verbose_name = 'Prepaid Reservations'
+        verbose_name = 'Available Reservations'
         row_actions = (PurchaseReservation, )
 
 
-class ExtendReservation(tables.LinkAction):
+class ActiveReservationsTableEntry(object):
 
-    name = 'extend'
-    verbose_name = 'Extend Reservation'
-    url = 'horizon:billing:reservations:extend_reservation'
-    classes = ('btn-success', 'ajax-modal')
-    ajax = True
+    def __init__(self, id, instance_type, 
+                 start, end, tenant=None):
+        self.id = id
+        self.instance_type = instance_type
+        self.start = start
+        self.end = end
+        if tenant:
+            self.tenant_id = tenant.id 
+            self.tenant_name = tenant.name
+
+    @property
+    def name(self):
+        return instance_type 
 
 
 class ActiveReservationsTable(tables.DataTable):
 
     instance_type = tables.Column(
-        'type', verbose_name='Instance_type')
+        'instance_type', verbose_name='Instance Type')
     start = tables.Column(
         'start', verbose_name='Created')
     end = tables.Column(
@@ -56,4 +72,3 @@ class ActiveReservationsTable(tables.DataTable):
     class Meta:
         name = 'active_reservations'
         verbose_name = 'Active Reservations'
-        row_actions = (ExtendReservation,)
