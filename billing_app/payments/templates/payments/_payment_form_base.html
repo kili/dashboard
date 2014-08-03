@@ -1,0 +1,25 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block form_id %}id_payment_form{% endblock %}
+{% block form_action %}{% url form_submit_url %}{% endblock %}
+
+{% block modal_id %}id_payment_modal{% endblock %}
+{% block modal-header %}{{ modal_header }}{% endblock %}
+
+{% block modal-body %}
+<div class="left">
+    <fieldset>
+        {% include "horizon/common/_form_fields.html" %}
+    </fieldset>
+</div>
+<div class="right">
+    {{ help_text }}
+</div>
+{% endblock %}
+
+{% block modal-footer %}
+<input id="id_submit" class="btn btn-primary pull-right" type="submit" value="{{ submit_button_label }}" />
+<a href="{% url 'horizon:billing:payments:index' %}" class="btn secondary cancel close">{% trans "Cancel" %}</a>
+{% endblock %}
