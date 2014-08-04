@@ -1,13 +1,9 @@
-{% extends "horizon/common/_modal_form.html" %}
+{% extends "billing/payments/_payment_form_base.html" %}
 {% load i18n %}
-{% load url from future %}
 {% load crispy_forms_tags %}
 
 {% block form_id %}id_add_card_form{% endblock %}
-{% block form_action %}{% url 'horizon:billing:payments:add_card' %}{% endblock %}
 
-{% block modal_id %}add_card_modal{% endblock %}
-{% block modal-header %}{% trans "Add Credit/Debit Card" %}{% endblock %}
 
 {% block modal-body %}
 <div id="stripe_error" class="alert alert-error" data-hide="true" ></div>
@@ -70,7 +66,6 @@ $("#id_add_card_form").submit(function(event) {
                 $("#id_add_card_form input[name=credit_card_cvc]").val("xxx");
                 $("#id_add_card_form input[name=stripe_card_token]").val(token);
                 $("#id_add_card_form").get(0).submit();
-            
             }
         );
         return false;

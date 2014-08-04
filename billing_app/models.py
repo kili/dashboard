@@ -1,5 +1,6 @@
 import billing
 from billing_app import managers
+from billing_app import utils
 from django.forms import ValidationError
 from django.db import models
 from django.db import IntegrityError
@@ -127,7 +128,31 @@ class KopoKopoTransaction(models.Model):
     first_name = models.CharField(max_length=64, blank=True)
     middle_name = models.CharField(max_length=64, blank=True)
     last_name = models.CharField(max_length=64, blank=True)
-    amount = models.DecimalField(decimal_places=2, max_digits=10)
+    amount = models.DecimalField(max_digits=10, decimal_places=3)
     currency = models.CharField(max_length=64)
     signature = models.CharField(max_length=64)
     claimed = models.BooleanField(default=False)
+
+
+class PrePaidReservation(models.Model):
+    instance_type = models.CharField(max_length=64)
+    hourly_price = models.DecimalField(max_digits=10, decimal_places=3)
+    upfront_price = models.DecimalField(max_digits=10, decimal_places=3)
+    length = models.PositiveSmallIntegerField(verbose_name='Duration (Days)')
+    available = models.BooleanField(default=False)
+
+    @property
+    def formatted_hourly_price(self):
+        return utils.format_currency(self.hourly_price)
+
+    @property
+    def formatted_upfront_price(self):
+        return utils.format_currency(self.upfront_price)
+
+
+class AssignedReservation(models.Model):
+    tenant_id = models.CharField(max_length=64,
+                                 blank=False)
+    start = models.DateTimeField(blank=False)
+    end = models.DateTimeField(blank=False)
+    prepaid_reservation = models.ForeignKey('PrePaidReservation')
