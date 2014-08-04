@@ -6,7 +6,7 @@ import horizon
 class Billing_App(horizon.Dashboard):
     name = _("Billing")
     slug = "billing"
-    panels = ('payments', 'history', 'usage', 'reservations')
+    panels = ('payments', 'history', 'usage')
     default_panel = 'payments'
 
 
