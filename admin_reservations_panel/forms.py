@@ -2,7 +2,6 @@ from billing_app.models import PrePaidReservation
 from django import forms as django_forms
 from django.utils.translation import ugettext_lazy as _
 from horizon import forms as horizon_forms
-from django.db import IntegrityError
 
 
 class CreateReservationForm(horizon_forms.SelfHandlingMixin,
@@ -12,7 +11,7 @@ class CreateReservationForm(horizon_forms.SelfHandlingMixin,
         choices=[],
         label=_("Flavor"),
         add_item_link='horizon:admin:flavors:create')
-    
+
     api_error = horizon_forms.SelfHandlingForm.api_error
     set_warning = horizon_forms.SelfHandlingForm.set_warning
 

@@ -1,7 +1,5 @@
-from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse  # noqa
 from horizon import tables
-from django.core.urlresolvers import reverse
 
 
 class PurchaseReservation(tables.LinkAction):
@@ -11,6 +9,7 @@ class PurchaseReservation(tables.LinkAction):
     url = 'horizon:billing:reservations:purchase'
     classes = ('btn-success', 'ajax-modal')
     ajax = True
+
 
 class PrepaidReservationsTableEntry(object):
 
@@ -25,18 +24,20 @@ class PrepaidReservationsTableEntry(object):
 
     @property
     def name(self):
-        return instance_type
+        return self.instance_type
 
 
 class PrepaidReservationsTable(tables.DataTable):
 
-    instance_type = tables.Column('instance_type')
+    instance_type = tables.Column(
+        'instance_type', verbose_name='Instance Type')
     hourly_price = tables.Column(
         'hourly_price', verbose_name='Price per Hour')
-    upfront_price = tables.Column('upfront_price')
+    upfront_price = tables.Column(
+        'upfront_price', verbose_name='Upfront Price')
     length = tables.Column(
         'length', verbose_name='Duration (Days)'),
- 
+
     class Meta:
         name = 'prepaid_reservations'
         verbose_name = 'Available Reservations'
@@ -45,19 +46,19 @@ class PrepaidReservationsTable(tables.DataTable):
 
 class ActiveReservationsTableEntry(object):
 
-    def __init__(self, id, instance_type, 
+    def __init__(self, id, instance_type,
                  start, end, tenant=None):
         self.id = id
         self.instance_type = instance_type
         self.start = start
         self.end = end
         if tenant:
-            self.tenant_id = tenant.id 
+            self.tenant_id = tenant.id
             self.tenant_name = tenant.name
 
     @property
     def name(self):
-        return instance_type 
+        return self.instance_type
 
 
 class ActiveReservationsTable(tables.DataTable):
@@ -68,7 +69,7 @@ class ActiveReservationsTable(tables.DataTable):
         'start', verbose_name='Created')
     end = tables.Column(
         'end', verbose_name='Expires')
-   
+
     class Meta:
         name = 'active_reservations'
         verbose_name = 'Active Reservations'

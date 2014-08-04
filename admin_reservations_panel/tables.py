@@ -1,8 +1,9 @@
-from billing_app.reservations.tables import *
+from billing_app.reservations.tables import ActiveReservationsTable  # noqa
+from billing_app.reservations.tables import PrepaidReservationsTable  # noqa
 from billing_app import models
 from django.http import HttpResponse  # noqa
 from django.utils.translation import ugettext_lazy as _
-from horizon import tables as horizon_tables
+from horizon import tables
 
 
 class CreateReservation(tables.LinkAction):
@@ -12,6 +13,7 @@ class CreateReservation(tables.LinkAction):
     url = 'horizon:admin:reservations:create'
     classes = ('btn-create', 'ajax-modal')
     ajax = True
+
 
 class ToggleReservation(tables.BatchAction):
 
@@ -26,7 +28,8 @@ class ToggleReservation(tables.BatchAction):
         reservation = models.PrePaidReservation.objects.get(
             pk=prepaid_reservation_id)
         reservation.available = not reservation.available
-        reservation.save() 
+        reservation.save()
+
 
 class DeleteReservation(tables.DeleteAction):
 
@@ -45,17 +48,19 @@ class DeleteReservation(tables.DeleteAction):
 
 
 class AdminPrepaidReservationsTable(PrepaidReservationsTable):
-    active = horizon_tables.Column('active', verbose_name='Active')
+
+    active = tables.Column('active', verbose_name='Active')
 
     class Meta:
         name = 'prepaid_reservations'
         verbose_name = 'Prepaid Reservations'
-        table_actions = (CreateReservation, ToggleReservation, DeleteReservation)
+        table_actions = (
+            CreateReservation, ToggleReservation, DeleteReservation)
         row_actions = (ToggleReservation, DeleteReservation)
-    
+
 
 class AdminActiveReservationsTable(ActiveReservationsTable):
-   
+
     tenant_id = tables.Column(
         'tenant_id', verbose_name='Tenant ID')
 
@@ -65,4 +70,3 @@ class AdminActiveReservationsTable(ActiveReservationsTable):
     class Meta:
         name = 'active_reservations'
         verbose_name = 'Active Reservations'
-        #row_actions = (ExtendReservation,)

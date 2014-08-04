@@ -87,7 +87,7 @@ class PaymentViewBase(horizon_forms.ModalFormView):
     success_url = urlresolvers.reverse_lazy('horizon:billing:payments:index')
     template_name = 'billing/payments/payment_form_base.html'
     modal_header = 'Form'
-    form_submit_url = None 
+    form_submit_url = None
     submit_button_label = 'Submit'
     help_text_template = None
     help_text = ' '
@@ -115,7 +115,7 @@ class PaymentViewBase(horizon_forms.ModalFormView):
 class AddCardView(PaymentViewBase):
     form_class = payment_forms.AddCardForm
     template_name = 'billing/payments/add_card.html'
-    modal_header = 'Add Debit/Credit Card' 
+    modal_header = 'Add Debit/Credit Card'
 
     def get_context_data(self, **kwargs):
         context = super(AddCardView, self).get_context_data(**kwargs)
