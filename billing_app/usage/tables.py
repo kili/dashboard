@@ -35,4 +35,4 @@ class InstanceUsageTable(tables.DataTable):
         verbose_name = 'Instances'
         table_actions = ()
         row_actions = ()
-        template = "billing_app/usage/_totalled_table.html"
+        template = "billing/usage/_totalled_table.html"
