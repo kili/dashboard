@@ -78,7 +78,8 @@ class PricedInstanceUsage(PricedUsageBase):
                 'flavor': u'instance:{0}'.format(
                     raw_data[0]['resource']['metadata']['flavor.name']),
                 'resources': [x['resource']['metadata']['display_name']
-                            for x in raw_data]}
+                            for x in raw_data],
+                'tenant_id': raw_data[0]['resource']['project_id']}
         except KeyError:
             raise Exception('received bad raw_statistics from ceilometer')
 
