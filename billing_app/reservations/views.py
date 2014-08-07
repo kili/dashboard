@@ -59,8 +59,7 @@ class PurchaseView(ReservationsViewBase):
         prepaid_reservation = PrePaidReservation.objects.get(
             pk=self.kwargs['id'])
         context['user_affords_reservation'] = balance(
-            self.request) >= PrePaidReservation.objects.get(
-                pk=self.kwargs['id']).upfront_price
+            self.request) >= prepaid_reservation.upfront_price
         context['reservation_id'] = self.kwargs['id']
         context['price'] = prepaid_reservation.formatted_upfront_price
         return context
