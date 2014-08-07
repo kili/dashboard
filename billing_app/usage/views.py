@@ -6,7 +6,7 @@ from project_billing.ceilometer_fetcher import CeilometerStats
 
 
 class IndexView(horizon_tables.MultiTableView):
-    template_name = 'billing_app/usage/index.html'
+    template_name = 'billing/usage/index.html'
     table_classes = (usage_tables.InstanceUsageTable,)
     date_range_class = forms.DateRangeForm
 
