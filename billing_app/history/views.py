@@ -4,7 +4,7 @@ from horizon import tables as horizon_tables
 
 
 class IndexView(horizon_tables.DataTableView):
-    template_name = 'billing_app/history/index.html'
+    template_name = 'billing/history/index.html'
     table_class = history_tables.TransactionHistoryTable
 
     def get_context_data(self, **kwargs):
