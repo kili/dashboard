@@ -43,7 +43,10 @@ class AccountingTransactor(object):
         for stat in cls._get_unbilled_statistics():
             for data in cls._get_raw_data(stat.id):
                 for priced_usage in PricedUsageBase.get_meter_class(
-                        stat.meter).get_priced_stats(data):
+                        stat.meter).get_priced_stats(
+                            data,
+                            (stat.from_ts,
+                             stat.until_ts)):
                     if not dry_run:
                         ut.consume_user_money(
                             stat.project_id,

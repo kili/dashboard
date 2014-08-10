@@ -64,8 +64,9 @@ class SimpleTest(test.TestCase):
                     test['price']].resource.os_instance_type_id,
                 'resources': [u'inst1', u'inst2'],
                 'tenant_id': u'333'
-            })['price'].compare(
-                decimal.Decimal(test['result'])) ==
+            }, (timezone.now(),
+                timezone.now()))['price'].compare(
+                    decimal.Decimal(test['result'])) ==
                 decimal.Decimal('0.000'))
 
     def test_single_reservation_price_calculation1(self):
@@ -81,8 +82,9 @@ class SimpleTest(test.TestCase):
             'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
-        })['price'].compare(
-            decimal.Decimal('24.0')) ==
+        }, (timezone.now(),
+            timezone.now()))['price'].compare(
+                decimal.Decimal('24.0')) ==
             decimal.Decimal('0.000'))
 
     def test_single_reservation_price_calculation2(self):
@@ -98,8 +100,9 @@ class SimpleTest(test.TestCase):
             'flavor': 'flav3',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
-        })['price'].compare(
-            decimal.Decimal('60.0')) ==
+        }, (timezone.now(),
+            timezone.now()))['price'].compare(
+                decimal.Decimal('60.0')) ==
             decimal.Decimal('0.000'))
 
     def test_single_reservation_price_calculation3(self):
@@ -115,8 +118,9 @@ class SimpleTest(test.TestCase):
             'flavor': 'flav3',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
-        })['price'].compare(
-            decimal.Decimal('156.0')) ==
+        }, (timezone.now(),
+            timezone.now()))['price'].compare(
+                decimal.Decimal('156.0')) ==
             decimal.Decimal('0.000'))
 
     def test_multi_reservation_price_calculation1(self):
@@ -137,8 +141,9 @@ class SimpleTest(test.TestCase):
             'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
-        })['price'].compare(
-            decimal.Decimal('42')) ==
+        }, (timezone.now(),
+            timezone.now()))['price'].compare(
+                decimal.Decimal('42')) ==
             decimal.Decimal('0.000'))
 
     def test_multi_reservation_price_calculation2(self):
@@ -159,8 +164,9 @@ class SimpleTest(test.TestCase):
             'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
-        })['price'].compare(
-            decimal.Decimal('42')) ==
+        }, (timezone.now(),
+            timezone.now()))['price'].compare(
+                decimal.Decimal('42')) ==
             decimal.Decimal('0.000'))
 
     def test_multi_reservation_price_calculation3(self):
@@ -181,8 +187,9 @@ class SimpleTest(test.TestCase):
             'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
-        })['price'].compare(
-            decimal.Decimal('91.6')) ==
+        }, (timezone.now(),
+            timezone.now()))['price'].compare(
+                decimal.Decimal('91.6')) ==
             decimal.Decimal('0.000'))
 
     def test_multi_reservation_price_calculation4(self):
@@ -208,8 +215,9 @@ class SimpleTest(test.TestCase):
             'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
-        })['price'].compare(
-            decimal.Decimal('62.0')) ==
+        }, (timezone.now(),
+            timezone.now()))['price'].compare(
+                decimal.Decimal('62.0')) ==
             decimal.Decimal('0.000'))
 
     def test_multi_reservation_price_calculation5(self):
@@ -235,6 +243,7 @@ class SimpleTest(test.TestCase):
             'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
-        })['price'].compare(
-            decimal.Decimal('67.6')) ==
+        }, (timezone.now(),
+            timezone.now()))['price'].compare(
+                decimal.Decimal('67.6')) ==
             decimal.Decimal('0.000'))

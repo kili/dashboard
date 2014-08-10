@@ -16,13 +16,13 @@ class PricedUsageBase:
         """
 
     @abc.abstractmethod
-    def _merge_stats(cls, stats):
+    def _merge_stats():
         """Method to merge stats in a way that makes sense for this
            resource type.
         """
 
     @abc.abstractmethod
-    def get_priced_stats(cls, stats):
+    def get_priced_stats():
         """Method that fetches stats and combines them with prices."""
 
     @staticmethod
@@ -46,8 +46,9 @@ class PricedInstanceUsage(PricedUsageBase):
     meter_name = 'instance'
 
     @classmethod
-    def _res_string_from_usage(cls, usage):
-        return u'instances of flavor \'{0}\': {1}'.format(
+    def _res_string_from_usage(cls, usage, timerange):
+        return u'{0}: instances of flavor \'{1}\': {2}'.format(
+            timerange[0].date(),
             usage['flavor'],
             u', '.join([u'\'{0}\''.format(x) for x in usage['resources']]))
 
@@ -56,13 +57,14 @@ class PricedInstanceUsage(PricedUsageBase):
         return stats.merged_by(lambda x: x['metadata']['flavor.id'])
 
     @classmethod
-    def get_priced_stats(cls, stats):
+    def get_priced_stats(cls, stats, timerange):
         retval = []
         for stats in cls._merge_stats(stats).values():
             priced_usage = cls._price_calculator().price_from_stats(
-                cls._extract_params_from_raw_stats(stats))
+                cls._extract_params_from_raw_stats(stats), timerange)
             priced_usage['res_string'] = cls._res_string_from_usage(
-                priced_usage)
+                priced_usage,
+                timerange)
             retval.append(priced_usage)
         return retval
 
@@ -78,7 +80,7 @@ class PricedInstanceUsage(PricedUsageBase):
                 'flavor': u'instance:{0}'.format(
                     raw_data[0]['resource']['metadata']['flavor.name']),
                 'resources': [x['resource']['metadata']['display_name']
-                            for x in raw_data],
+                              for x in raw_data],
                 'tenant_id': raw_data[0]['resource']['project_id']}
         except KeyError:
             raise Exception('received bad raw_statistics from ceilometer')
