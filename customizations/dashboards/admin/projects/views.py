@@ -38,7 +38,7 @@ class GrantPromotionView(forms.ModalFormView):
 
 
 class TransactionHistoryView(tables.DataTableView):
-    template_name = 'billing_app/history/index.html'
+    template_name = 'billing/history/index.html'
     table_class = billing_hist_tables.TransactionHistoryTable
 
     def get_context_data(self, **kwargs):
