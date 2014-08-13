@@ -27,9 +27,6 @@ class RegistrationForm(allauth_forms.SignupForm):
         except User.DoesNotExist:
             return company
 
-    def save(self, user):
-        pass
-
 
 class ResetPasswordForm(allauth_forms.ResetPasswordForm):
 
