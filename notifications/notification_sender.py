@@ -8,7 +8,6 @@ from keystone_wrapper.client import KeystoneClientSingleton
 class Notifications(object):
     sender_instances = {}
     params = ['project_id']
-    notifications = []
     from_email = 'help@kili.io'
 
     @classmethod
@@ -55,3 +54,6 @@ class LowBalanceNotifications(Notifications):
     params = Notifications.params + ['passed_limit', 'current_balance']
     template = 'notifications/low_balance.txt'
     subject = 'Your balance is low'
+
+    def __init__(self):
+        self.notifications = []

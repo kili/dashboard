@@ -3,6 +3,7 @@ from openstack_dashboard.test import helpers as test
 from notifications.notification_sender import Notifications
 from notifications.notification_sender import LowBalanceNotifications
 from keystone_wrapper.client import KeystoneClientSingleton
+from accounting.transactions import UserTransactions
 
 
 class StubObject(object):
@@ -11,10 +12,7 @@ class StubObject(object):
 
 class SimpleTest(test.TestCase):
 
-    @test.create_stubs({KeystoneClientSingleton: ('get_client',)})
-    def test_send_low_balance_notification(self):
-        number_recipients = 5
-
+    def _get_stub_keystone_client(self, number_recipients):
         def return_tenant(arg1):
             def return_user_list():
                 def create_user_object(num):
@@ -30,10 +28,38 @@ class SimpleTest(test.TestCase):
         setattr(stub_tenants, 'get', return_tenant)
         stub_client = StubObject()
         setattr(stub_client, 'tenants', stub_tenants)
-        KeystoneClientSingleton.get_client().AndReturn(stub_client)
+        return stub_client
+
+    @test.create_stubs({KeystoneClientSingleton: ('get_client',)})
+    def test_notification_sending(self):
+        Notifications.sender_instances = {}
+        number_recipients = 5
+        KeystoneClientSingleton.get_client().AndReturn(
+            self._get_stub_keystone_client(number_recipients))
         self.mox.ReplayAll()
         Notifications.get_notification_sender('low_balance').add(
-            project_id=1, passed_limit=5, current_balance=4)
+            project_id=1,
+            passed_limit=5,
+            current_balance=4)
+        Notifications.send_all_notifications()
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject,
+                         LowBalanceNotifications.subject)
+        self.assertEqual(mail.outbox[0].from_email,
+                         LowBalanceNotifications.from_email)
+        self.assertEqual(len(mail.outbox[0].to),
+                         number_recipients)
+
+    @test.create_stubs({KeystoneClientSingleton: ('get_client',)})
+    def test_low_balance_notification(self):
+        Notifications.sender_instances = {}
+        number_recipients = 1
+        KeystoneClientSingleton.get_client().AndReturn(
+            self._get_stub_keystone_client(number_recipients))
+        self.mox.ReplayAll()
+        ut = UserTransactions()
+        ut.receive_user_payment(1, 'STRIPE', 6, 'tester paid')
+        ut.consume_user_money(1, 4, 'some consumption')
         Notifications.send_all_notifications()
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
