@@ -2,8 +2,10 @@ import abc
 import decimal
 from django.conf import settings
 from django.core import exceptions
+from resource_pricing.calculators.models import InstanceType
 from billing_app.models import AssignedReservation
 from resource_pricing.models import Price
+from resource_pricing.models import Currency
 
 
 class CalculatorBase(object):
@@ -18,6 +20,10 @@ class CalculatorBase(object):
         pass
 
     @abc.abstractmethod
+    def _add_new_resource():
+        pass
+
+    @abc.abstractmethod
     def _final_price_calculation():
         """do the type specific calculations."""
 
@@ -28,8 +34,7 @@ class CalculatorBase(object):
                 **{"currency__iso": currency,
                    cls.resource_type_relation: type_id}).price
         except exceptions.ObjectDoesNotExist:
-            raise Exception("Could not get price of id {0} in currency "
-                            "{1}".format(type_id, currency))
+            return cls._add_new_resource(type_id, currency).price
 
     @classmethod
     def hours_from_periods(cls, periods):
@@ -87,3 +92,10 @@ class InstancePriceCalculator(CalculatorBase):
             billable_hours = 0
         final_price += cls._get_unit_price(params['flavor']) * billable_hours
         return final_price
+
+    @classmethod
+    def _add_new_resource(cls, type_id, currency):
+        return Price.objects.create(
+            currency=Currency.objects.get(iso=currency),
+            resource=InstanceType.objects.create(os_instance_type_id=type_id),
+            price=0)
