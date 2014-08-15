@@ -1,4 +1,6 @@
 from accounting import managers
+from accounting.balance_limits import BalanceLimits
+from notifications.notification_sender import Notifications
 
 
 class UserTransactions():
@@ -16,10 +18,19 @@ class UserTransactions():
             comment)
 
     def consume_user_money(self, user, amount, msg):
-        self.account_manager.get_user_account(user).debit(
-            amount,
-            self.account_manager.get_revenue_account(),
-            msg)
+        account = self.account_manager.get_user_account(user)
+        balance_before = account.balance()
+        account.debit(amount,
+                      self.account_manager.get_revenue_account(),
+                      msg)
+        balance_after = account.balance()
+        limit = BalanceLimits.passed_limit(balance_before,
+                                           balance_after)
+        if limit['passed']:
+            Notifications.get_notification_sender('low_balance').add(
+                project_id=user,
+                passed_limit=limit['limit'],
+                current_balance=balance_after)
 
     def grant_user_promotion(self, user, amount, message):
         self.account_manager.get_user_account(user).credit(
