@@ -6,13 +6,13 @@ from keystone_wrapper.client import KeystoneClientSingleton
 from accounting.transactions import UserTransactions
 
 
-class StubObject(object):
-    pass
-
-
 class SimpleTest(test.TestCase):
 
     def _get_stub_keystone_client(self, number_recipients):
+
+        class StubObject(object):
+            pass
+
         def return_tenant(arg1):
             def return_user_list():
                 def create_user_object(num):
@@ -24,6 +24,7 @@ class SimpleTest(test.TestCase):
             stub_tenant = StubObject()
             setattr(stub_tenant, 'list_users', return_user_list)
             return stub_tenant
+
         stub_tenants = StubObject()
         setattr(stub_tenants, 'get', return_tenant)
         stub_client = StubObject()
