@@ -2,14 +2,14 @@ from kili.settings import *  # noqa
 
 KEYSTONE_TOKEN = "5zoNv.aryGlnlXu7,oZM"
 
-OPENSTACK_HOST = "10.0.1.222"
-#OPENSTACK_HOST = "10.186.43.12"
+#OPENSTACK_HOST = "10.0.1.222"
+OPENSTACK_HOST = "10.186.43.12"
 OPENSTACK_KEYSTONE_URL = "http://{}:5000/v2.0".format(OPENSTACK_HOST)
 
 KEYSTONE_URL = "http://{}:35357/v2.0".format(OPENSTACK_HOST)
 
-BROKER_URL = \
-    'amqp://horizon_dashboard:iamapassword@127.0.0.1//horizon_dashboard'
+BROKER_URL = 'amqp://horizon_dashboard:dfTnELW4d0.-hjFJmb4C@'\
+             '{}//horizon_dashboard'.format(OPENSTACK_HOST)
 
 DATABASES = {
     'default': {
