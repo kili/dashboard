@@ -13,6 +13,8 @@ class SimpleTest(test.TestCase):
 
     @test.create_stubs({KeystoneClientSingleton: ('get_client',)})
     def test_send_low_balance_notification(self):
+        number_recipients = 5
+
         def return_tenant(arg1):
             def return_user_list():
                 def create_user_object(num):
@@ -20,7 +22,7 @@ class SimpleTest(test.TestCase):
                     setattr(ob, 'email', 'email{0}'.format(num))
                     return ob
                 return [create_user_object(i)
-                        for i in range(0, 5)]
+                        for i in range(0, number_recipients)]
             stub_tenant = StubObject()
             setattr(stub_tenant, 'list_users', return_user_list)
             return stub_tenant
@@ -36,3 +38,7 @@ class SimpleTest(test.TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
                          LowBalanceNotifications.subject)
+        self.assertEqual(mail.outbox[0].from_email,
+                         LowBalanceNotifications.from_email)
+        self.assertEqual(len(mail.outbox[0].to),
+                         number_recipients)
