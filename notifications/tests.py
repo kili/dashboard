@@ -1,7 +1,7 @@
 from django.core import mail
 from openstack_dashboard.test import helpers as test
 from notifications.notification_sender import Notifications
-from notifications.notification_sender import LowBalanceNotifications
+from notifications.notification_sender import LowBalanceNotificationSender
 from keystone_wrapper.client import KeystoneClientSingleton
 from accounting.transactions import UserTransactions
 
@@ -44,9 +44,9 @@ class SimpleTest(test.TestCase):
         Notifications.send_all_notifications()
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
-                         LowBalanceNotifications.subject)
+                         LowBalanceNotificationSender.subject)
         self.assertEqual(mail.outbox[0].from_email,
-                         LowBalanceNotifications.from_email)
+                         LowBalanceNotificationSender.from_email)
         self.assertEqual(len(mail.outbox[0].to),
                          number_recipients)
 
@@ -63,8 +63,8 @@ class SimpleTest(test.TestCase):
         Notifications.send_all_notifications()
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
-                         LowBalanceNotifications.subject)
+                         LowBalanceNotificationSender.subject)
         self.assertEqual(mail.outbox[0].from_email,
-                         LowBalanceNotifications.from_email)
+                         LowBalanceNotificationSender.from_email)
         self.assertEqual(len(mail.outbox[0].to),
                          number_recipients)

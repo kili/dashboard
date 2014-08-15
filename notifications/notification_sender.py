@@ -5,29 +5,12 @@ from django.template.loader import get_template
 from keystone_wrapper.client import KeystoneClientSingleton
 
 
-class Notifications(object):
-    sender_instances = {}
+class NotificationSenderBase(object):
     params = ['project_id']
     from_email = 'help@kili.io'
 
-    @classmethod
-    def send_all_notifications(cls):
-        send_mass_mail(cls.get_all_sender_notifications())
-
-    @classmethod
-    def get_all_sender_notifications(cls):
-        return list(itertools.chain(
-            *[x.get_notifications() for x in cls.sender_instances.values()]))
-
-    @classmethod
-    def get_notification_sender(cls, sender_name):
-        for subclass in cls.__subclasses__():
-            if subclass.name == sender_name:
-                if (not sender_name in cls.sender_instances or
-                    not isinstance(cls.sender_instances[sender_name],
-                        subclass)):
-                    cls.sender_instances[sender_name] = subclass()
-                return cls.sender_instances[sender_name]
+    def __init__(self):
+        self.notifications = []
 
     def _lookup_email_address(self, project_id):
         return [x.email for x in
@@ -49,11 +32,32 @@ class Notifications(object):
             for notification in self.notifications]
 
 
-class LowBalanceNotifications(Notifications):
+class LowBalanceNotificationSender(NotificationSenderBase):
     name = 'low_balance'
-    params = Notifications.params + ['passed_limit', 'current_balance']
+    params = NotificationSenderBase.params + \
+        ['passed_limit', 'current_balance']
     template = 'notifications/low_balance.txt'
     subject = 'Your balance is low'
 
-    def __init__(self):
-        self.notifications = []
+
+class Notifications(object):
+    sender_instances = {}
+
+    @classmethod
+    def send_all_notifications(cls):
+        send_mass_mail(cls.get_all_sender_notifications())
+
+    @classmethod
+    def get_all_sender_notifications(cls):
+        return list(itertools.chain(
+            *[x.get_notifications() for x in cls.sender_instances.values()]))
+
+    @classmethod
+    def get_notification_sender(cls, sender_name):
+        for subclass in NotificationSenderBase.__subclasses__():
+            if subclass.name == sender_name:
+                if (not sender_name in cls.sender_instances or
+                    not isinstance(cls.sender_instances[sender_name],
+                        subclass)):
+                    cls.sender_instances[sender_name] = subclass()
+                return cls.sender_instances[sender_name]
