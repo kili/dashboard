@@ -1,7 +1,9 @@
 import itertools
+import logging
 from django.core.mail import send_mass_mail
 from django.template import Context
 from django.template.loader import get_template
+from keystoneclient.apiclient.exceptions import NotFound
 from keystone_wrapper.client import KeystoneClientSingleton
 
 
@@ -17,10 +19,19 @@ class NotificationSenderBase(object):
                 KeystoneClientSingleton.get_client().tenants.get(
                     project_id).list_users()]
 
+
     def add(self, **kwargs):
         notification = {x: kwargs[x] for x in self.params}
-        notification['email'] = self._lookup_email_address(
-            notification['project_id'])
+        try:
+            notification['email'] = self._lookup_email_address(
+                notification['project_id'])
+            if len(notification['email']) == 0 or not notification['email'][0]:
+                raise NotFound()
+        except NotFound:
+            logger = logging.getLogger('horizon')
+            logger.error('coulnt lookup email addresses for project {0}'
+                         ', skipping'.format(notification['project_id']))
+            return
         self.notifications.append(notification)
 
     def get_notifications(self):

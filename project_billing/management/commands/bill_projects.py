@@ -23,4 +23,4 @@ class Command(BaseCommand):
         StatisticsIndexBuilder().build(date=kwargs['date'])
         UnfetchedStatisticsFetcher.fetch()
         AccountingTransactor.bill_projects(dry_run=(not kwargs['imsure']))
-        Notifications.send_all_notifcations()
+        Notifications.send_all_notifications()
