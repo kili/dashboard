@@ -24,7 +24,7 @@
     <a id="balance"
     {% if balance < 15 %}
        class="low" href="{% url 'horizon:billing:payments:index' %}">
-       Your account balance is low!
+       Your account balance is low (${{ balance }})!
     {% else %}
        href="{% url 'horizon:billing:history:index' %}"> ${{ balance }}
     {% endif %}
