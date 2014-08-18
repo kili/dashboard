@@ -11,7 +11,7 @@ class Migration(SchemaMigration):
         db.alter_column('pricing_instance_flavor_resource', 'resource_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['resource_pricing.Resource'], unique=True))
         db.rename_column('pricing_instance_flavor_resource', 'resource_id', 'resourcebase_ptr_id')
         db.rename_column('pricing_instance_flavor_resource', 'os_flavor_id', 'os_instance_type_id')
-        db.delete_column('pricing_instance_flavor_resource', 'id')
+        db.delete_primary_key('pricing_instance_flavor_resource')
         db.add_column('pricing_instance_flavor_resource', 'id', self.gf('django.db.models.fields.AutoField')(primary_key=True))
 
         db.delete_primary_key('pricing_volume_type_resource')
@@ -50,7 +50,7 @@ class Migration(SchemaMigration):
         u'resource_pricing.resource': {
             'Meta': {'object_name': 'Resource', 'db_table': "'pricing_resource'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        }
+        } 
     }
 
     complete_apps = ['calculators']
