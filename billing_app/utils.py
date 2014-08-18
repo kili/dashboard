@@ -1,10 +1,11 @@
-import locale
+import re
+from babel import numbers
 
 
-def format_currency(amount):
-    amount = round(float(amount), 2)
-    loc = locale.getlocale()
-    locale.setlocale(locale.LC_ALL, '')
-    formatted = locale.currency(amount)
-    locale.setlocale(locale.LC_ALL, loc)
-    return formatted
+def format_currency(orig_amount):
+    amount = numbers.format_currency(
+        abs(round(float(orig_amount), 2)), 'USD')
+    if orig_amount < 0:
+        pos = re.search("\d", amount)
+        amount = amount[:pos.start()] + '-' + amount[pos.start():]
+    return amount
