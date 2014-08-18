@@ -19,7 +19,6 @@ class NotificationSenderBase(object):
                 KeystoneClientSingleton.get_client().tenants.get(
                     project_id).list_users()]
 
-
     def add(self, **kwargs):
         notification = {x: kwargs[x] for x in self.params}
         try:
