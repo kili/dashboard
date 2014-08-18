@@ -1,4 +1,5 @@
 from accounting.transactions import UserTransactions
+from keystone_wrapper.client import KeystoneClientSingleton
 from resource_pricing.priced_usage import PricedUsageBase
 from project_billing.helpers import FormattingHelpers
 from project_billing.ceilometer_fetcher import StatsContainer
@@ -26,8 +27,17 @@ class AccountingTransactor(object):
                                                  billed=False)
 
     @classmethod
+    def _resolve_project_name(cls, id):
+        try:
+            return KeystoneClientSingleton.get_client().tenants.get(
+                tenant_id=id).name
+        except Exception:
+            return ''
+
+    @classmethod
     def _print_info(cls, project, priced_usage, dry_run=False):
-        msg = u'proj {0}, price {1}, desc {2}'.format(
+        msg = u'proj {0}({1}), price {2}, desc {3}'.format(
+            cls._resolve_project_name(project),
             project,
             FormattingHelpers.price(
                 priced_usage['price']),
