@@ -3,13 +3,14 @@ import logging
 from django.core.mail import send_mass_mail
 from django.template import Context
 from django.template.loader import get_template
+from billing_app.utils import format_currency
 from keystoneclient.apiclient.exceptions import NotFound
 from keystone_wrapper.client import KeystoneClient
 
 
 class NotificationSenderBase(object):
     params = ['project_id']
-    from_email = 'help@kili.io'
+    from_email = 'Kili Support <help@kili.io>'
 
     def __init__(self):
         self.notifications = []
@@ -18,6 +19,11 @@ class NotificationSenderBase(object):
         return [x.email for x in
                 KeystoneClient.get_client().tenants.get(
                     project_id).list_users()]
+
+    def _format_currencies(self, notification, keys):
+        for key in keys:
+            notification[key] = format_currency(notification[key])
+        return notification
 
     def add(self, **kwargs):
         notification = {x: kwargs[x] for x in self.params}
@@ -31,7 +37,9 @@ class NotificationSenderBase(object):
             logger.warning('coulnt lookup email addresses for project {0}'
                            ', skipping'.format(notification['project_id']))
             return
-        self.notifications.append(notification)
+        self.notifications.append(
+            self._format_currencies(notification, ['passed_limit',
+                                                   'current_balance']))
 
     def get_notifications(self):
         return [
