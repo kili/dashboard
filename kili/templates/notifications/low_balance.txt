@@ -1,6 +1,6 @@
-Hello, 
+Hello,
 
-We've noticed that your balance is only {{ current_balance }} and that you have dipped below {{ passed_limit }}!!!
+We've noticed that your balance is only {{ current_balance }}$ and that you have dipped below {{ passed_limit }}$!!!
 
 Until the account balance is raised, you may notice services starting to turn off.  Please maintain a sufficient balance for your usage so we can keep everything working for you.
 
@@ -8,3 +8,4 @@ If you have any questions or concerns, please email us at help@kili.io.
 
 Thanks,
 The Kili Team
+
