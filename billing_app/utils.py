@@ -1,5 +1,4 @@
 import locale
-from django.contrib.humanize.templatetags.humanize import intcomma
 
 
 def format_currency(amount):
