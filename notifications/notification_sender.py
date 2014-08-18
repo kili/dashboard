@@ -9,7 +9,7 @@ from keystone_wrapper.client import KeystoneClient
 
 class NotificationSenderBase(object):
     params = ['project_id']
-    from_email = 'help@kili.io'
+    from_email = 'Kili Support <help@kili.io>'
 
     def __init__(self):
         self.notifications = []
