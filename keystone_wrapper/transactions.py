@@ -1,4 +1,4 @@
-from keystone_wrapper.client import KeystoneClientSingleton
+from keystone_wrapper.client import KeystoneClient
 from keystone_wrapper.roles import TransactionDefaultRoles
 from keystone_wrapper.tenant import TransactionTenantCreator
 from keystone_wrapper.user import TransactionUserCreator
@@ -7,7 +7,7 @@ from keystone_wrapper.user import TransactionUserCreator
 class CreateUserTransaction():
 
     def __init__(self):
-        self.client = KeystoneClientSingleton.get_client()
+        self.client = KeystoneClient.get_client()
 
     def create_user(self, **kwargs):
         tenant_name = kwargs['tenant_name']

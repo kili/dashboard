@@ -1,5 +1,5 @@
 from accounting.transactions import UserTransactions
-from keystone_wrapper.client import KeystoneClientSingleton
+from keystone_wrapper.client import KeystoneClient
 from resource_pricing.priced_usage import PricedUsageBase
 from project_billing.helpers import FormattingHelpers
 from project_billing.ceilometer_fetcher import StatsContainer
@@ -29,7 +29,7 @@ class AccountingTransactor(object):
     @classmethod
     def _resolve_project_name(cls, id):
         try:
-            return KeystoneClientSingleton.get_client().tenants.get(
+            return KeystoneClient.get_client().tenants.get(
                 tenant_id=id).name
         except Exception:
             return ''

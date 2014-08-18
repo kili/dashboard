@@ -2,7 +2,7 @@ from django.core import mail
 from openstack_dashboard.test import helpers as test
 from notifications.notification_sender import Notifications
 from notifications.notification_sender import LowBalanceNotificationSender
-from keystone_wrapper.client import KeystoneClientSingleton
+from keystone_wrapper.client import KeystoneClient
 from accounting.transactions import UserTransactions
 
 
@@ -31,11 +31,11 @@ class SimpleTest(test.TestCase):
         setattr(stub_client, 'tenants', stub_tenants)
         return stub_client
 
-    @test.create_stubs({KeystoneClientSingleton: ('get_client',)})
+    @test.create_stubs({KeystoneClient: ('get_client',)})
     def test_notification_sending(self):
         Notifications.sender_instances = {}
         number_recipients = 5
-        KeystoneClientSingleton.get_client().AndReturn(
+        KeystoneClient.get_client().AndReturn(
             self._get_stub_keystone_client(number_recipients))
         self.mox.ReplayAll()
         Notifications.get_notification_sender('low_balance').add(
@@ -51,11 +51,11 @@ class SimpleTest(test.TestCase):
         self.assertEqual(len(mail.outbox[0].to),
                          number_recipients)
 
-    @test.create_stubs({KeystoneClientSingleton: ('get_client',)})
+    @test.create_stubs({KeystoneClient: ('get_client',)})
     def test_low_balance_notification(self):
         Notifications.sender_instances = {}
         number_recipients = 1
-        KeystoneClientSingleton.get_client().AndReturn(
+        KeystoneClient.get_client().AndReturn(
             self._get_stub_keystone_client(number_recipients))
         self.mox.ReplayAll()
         ut = UserTransactions()

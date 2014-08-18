@@ -2,7 +2,7 @@ from django.conf import settings
 from keystoneclient.v2_0 import client
 
 
-class KeystoneClientSingleton(object):
+class KeystoneClient(object):
     client = None
 
     @classmethod

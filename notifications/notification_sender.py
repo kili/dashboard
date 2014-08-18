@@ -4,7 +4,7 @@ from django.core.mail import send_mass_mail
 from django.template import Context
 from django.template.loader import get_template
 from keystoneclient.apiclient.exceptions import NotFound
-from keystone_wrapper.client import KeystoneClientSingleton
+from keystone_wrapper.client import KeystoneClient
 
 
 class NotificationSenderBase(object):
@@ -16,7 +16,7 @@ class NotificationSenderBase(object):
 
     def _lookup_email_address(self, project_id):
         return [x.email for x in
-                KeystoneClientSingleton.get_client().tenants.get(
+                KeystoneClient.get_client().tenants.get(
                     project_id).list_users()]
 
     def add(self, **kwargs):
