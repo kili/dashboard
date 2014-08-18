@@ -29,8 +29,8 @@ class NotificationSenderBase(object):
                 raise NotFound()
         except NotFound:
             logger = logging.getLogger('horizon')
-            logger.error('coulnt lookup email addresses for project {0}'
-                         ', skipping'.format(notification['project_id']))
+            logger.warning('coulnt lookup email addresses for project {0}'
+                           ', skipping'.format(notification['project_id']))
             return
         self.notifications.append(notification)
 
