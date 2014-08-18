@@ -1,5 +1,6 @@
 from optparse import make_option
 from django.core.management.base import BaseCommand
+from notifications.notification_sender import Notifications
 from project_billing.helpers import FormattingHelpers
 from project_billing.statistics_index import StatisticsIndexBuilder
 from project_billing.statistics_index import UnfetchedStatisticsFetcher
@@ -22,3 +23,4 @@ class Command(BaseCommand):
         StatisticsIndexBuilder().build(date=kwargs['date'])
         UnfetchedStatisticsFetcher.fetch()
         AccountingTransactor.bill_projects(dry_run=(not kwargs['imsure']))
+        Notifications.send_all_notifications()
