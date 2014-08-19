@@ -24,6 +24,9 @@ class UserTransactions():
                       self.account_manager.get_revenue_account(),
                       msg)
         balance_after = account.balance()
+        balance_limits.process_transaction(user,
+                                           balance_before,
+                                           balance_after)
         limit = BalanceLimits.passed_limit(balance_before,
                                            balance_after)
         if limit['passed']:
