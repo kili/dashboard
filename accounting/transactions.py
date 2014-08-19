@@ -27,13 +27,6 @@ class UserTransactions():
         balance_limits.process_transaction(user,
                                            balance_before,
                                            balance_after)
-        limit = BalanceLimits.passed_limit(balance_before,
-                                           balance_after)
-        if limit['passed']:
-            Notifications.get_notification_sender('low_balance').add(
-                project_id=user,
-                passed_limit=limit['limit'],
-                current_balance=balance_after)
 
     def grant_user_promotion(self, user, amount, message):
         self.account_manager.get_user_account(user).credit(
