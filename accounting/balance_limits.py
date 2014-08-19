@@ -44,7 +44,7 @@ class BalanceLimits(object):
                     and kwargs['balance_after'] >= threshold.balance):
                 actions.add(threshold)
         for action in actions:
-            cls.remember_passing(threshold, threshold, kwargs['project_id'])
+            cls.remember_passing(threshold, kwargs['project_id'])
             ThresholdAction.get_subclass_of_name(
                 threshold.action).handler(**kwargs)
 
