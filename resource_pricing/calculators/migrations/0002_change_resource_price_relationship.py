@@ -35,6 +35,8 @@ class Migration(SchemaMigration):
         db.rename_column('pricing_instance_flavor_resource', 'os_instance_type_id', 'os_flavor_id')
         db.rename_column('pricing_instance_flavor_resource', 'resourcebase_ptr_id', 'resource_id')
         db.alter_column('pricing_instance_flavor_resource', 'resource_id', self.gf('django.db.models.fields.IntegerField')(blank=False))
+        db.delete_column('pricing_instance_flavor_resource', u'id')
+        db.create_primary_key('pricing_instance_flavor_resource', ['os_flavor_id'])
 
     models = {
         u'calculators.instancetype': {
