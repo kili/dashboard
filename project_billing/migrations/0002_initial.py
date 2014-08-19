@@ -14,7 +14,7 @@ class Migration(SchemaMigration):
             ('insert_time', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('data', self.gf('django.db.models.fields.TextField')()),
         ))
-        db.send_create_signal(u'user_billing', ['RawStatistics'])
+        #db.send_create_signal(u'user_billing', ['RawStatistics'])
 
         # Adding model 'RawStatisticsIndex'
         db.create_table('user_billing_raw_statistics_index', (
@@ -27,7 +27,7 @@ class Migration(SchemaMigration):
             ('raw_statistics', self.gf('django.db.models.fields.related.OneToOneField')(default=-1, to=orm['user_billing.RawStatistics'], unique=True)),
             ('billed', self.gf('django.db.models.fields.BooleanField')(default=False, db_index=True)),
         ))
-        db.send_create_signal(u'user_billing', ['RawStatisticsIndex'])
+        #db.send_create_signal(u'user_billing', ['RawStatisticsIndex'])
 
         # Adding unique constraint on 'RawStatisticsIndex', fields ['user_id', 'month', 'meter', 'year']
         db.create_unique('user_billing_raw_statistics_index', ['user_id', 'month', 'meter', 'year'])

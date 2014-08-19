@@ -8,11 +8,21 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        pass
+        db.create_table('pricing_instance_flavor_resource', (
+            ('os_flavor_id', self.gf('django.db.models.fields.CharField')(primary_key=True, max_length=36)),
+            ('resource_id', self.gf('django.db.models.fields.IntegerField')(db_index=True, unique=True)),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=100)),
+        ))
 
+        db.create_table('pricing_volume_type_resource', (
+            ('os_type_id', self.gf('django.db.models.fields.CharField')(primary_key=True, max_length=36)),
+            ('resource_id', self.gf('django.db.models.fields.IntegerField')(db_index=True, unique=True)),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=100)),
+        ))
 
     def backwards(self, orm):
-        pass
+        db.delete_table(u'pricing_instance_flavor_resource')
+        db.delete_table(u'pricing_volume_type_resource')
 
 
     models = {
