@@ -34,8 +34,9 @@ class Migration(SchemaMigration):
         db.create_table(u'thresholds_actionqueue', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('verbose_name', self.gf('django.db.models.fields.CharField')(max_length=64)),
-            ('due_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+            ('due_datetime', self.gf('django.db.models.fields.DateTimeField')(db_index=True)),
             ('kwargs', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('processed', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal(u'thresholds', ['ActionQueue'])
 
@@ -57,9 +58,10 @@ class Migration(SchemaMigration):
     models = {
         u'thresholds.actionqueue': {
             'Meta': {'object_name': 'ActionQueue'},
-            'due_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'due_datetime': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kwargs': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'processed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'verbose_name': ('django.db.models.fields.CharField', [], {'max_length': '64'})
         },
         u'thresholds.passedthreshold': {
