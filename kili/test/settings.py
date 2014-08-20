@@ -20,6 +20,7 @@ INSTALLED_APPS += (
     'resource_pricing.calculators',
     'project_billing',
     'notifications',
+    'thresholds',
 )
 
 CUSTOMIZATIONS = (

@@ -1,4 +1,5 @@
 import abc
+import logging
 import pickle
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
@@ -8,7 +9,7 @@ from thresholds.models import PassedThreshold
 from thresholds.models import ActionQueue
 
 
-class ThresholdAction(object):
+class ThresholdActionBase(object):
     delay = 0
 
     @abc.abstractproperty
@@ -44,6 +45,26 @@ class ThresholdAction(object):
             cls.queue_for_later(**kwargs)
 
 
+class ActionQueueProcessor(object):
+
+    @classmethod
+    def _get_due_actions(cls):
+        return ActionQueue.objects.filter(due_datetime__lte=timezone.now())
+
+    @classmethod
+    def process(cls, dry_run=True):
+        for action in cls._get_due_actions():
+            try:
+                ThresholdActionBase.get_subclass_of_name(
+                    action.verbose_name).handler(pickle.loads(action.kwargs))
+                action.processed = True
+                action.save()
+            except Exception:
+                logging.getLogger('horizon').warning(
+                    'error in action {0}, continuing'.format(
+                        action.verbose_name))
+
+
 class BalanceThresholds(object):
 
     @classmethod
@@ -65,7 +86,7 @@ class BalanceThresholds(object):
         for threshold in passed_thresholds:
             cls.remember_passing(threshold, kwargs['project_id'])
             for action in pickle.loads(threshold.actions):
-                ThresholdAction.get_subclass_of_name(action).pass_event(
+                ThresholdActionBase.get_subclass_of_name(action).pass_event(
                     passed_limit=threshold.balance,
                     project_id=kwargs['project_id'],
                     current_balance=kwargs['balance_after'])

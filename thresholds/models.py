@@ -19,5 +19,6 @@ class PassedThreshold(models.Model):
 
 class ActionQueue(models.Model):
     verbose_name = models.CharField(max_length=64)
-    due_datetime = models.DateTimeField()
+    due_datetime = models.DateTimeField(db_index=True)
     kwargs = models.TextField(blank=True)
+    processed = models.BooleanField(default=False)

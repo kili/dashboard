@@ -1,8 +1,8 @@
-from accounting.balance_limits import ThresholdAction
+from thresholds.balance_thresholds import ThresholdActionBase
 from notifications.notification_sender import Notifications
 
 
-class SendNotificationThresholdAction(ThresholdAction):
+class SendNotificationThresholdAction(ThresholdActionBase):
     verbose_name = 'send_notification'
 
     @staticmethod

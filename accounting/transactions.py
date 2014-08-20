@@ -1,5 +1,5 @@
 from accounting import managers
-from accounting.balance_limits import BalanceLimits
+from thresholds.balance_thresholds import BalanceThresholds
 
 
 class UserTransactions():
@@ -23,7 +23,7 @@ class UserTransactions():
                       self.account_manager.get_revenue_account(),
                       msg)
         balance_after = account.balance()
-        BalanceLimits.process_transaction(project_id=user,
+        BalanceThresholds.process_transaction(project_id=user,
                                           balance_before=balance_before,
                                           balance_after=balance_after)
 

@@ -1,8 +1,8 @@
 import pickle
 from django.core import mail
 from openstack_dashboard.test import helpers as test
-from accounting.models import Threshold
-from accounting.models import PassedThreshold
+from thresholds.models import Threshold
+from thresholds.models import PassedThreshold
 from notifications.notification_sender import Notifications
 from notifications.notification_sender import LowBalanceNotificationSender
 from keystone_wrapper.client import KeystoneClient
