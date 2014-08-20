@@ -11,7 +11,7 @@ class Migration(SchemaMigration):
         # Adding model 'Threshold'
         db.create_table(u'accounting_threshold', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('balance', self.gf('django.db.models.fields.IntegerField')(unique=True)),
+            ('balance', self.gf('django.db.models.fields.DecimalField')(max_digits=19, decimal_places=10)),
             ('actions', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('up', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('down', self.gf('django.db.models.fields.BooleanField')(default=False)),
@@ -23,7 +23,7 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('project_id', self.gf('django.db.models.fields.CharField')(max_length=64)),
             ('threshold', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounting.Threshold'])),
-            ('datetime', self.gf('django.db.models.fields.DateTimeField')()),
+            ('datetime', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
         ))
         db.send_create_signal(u'accounting', ['PassedThreshold'])
 
@@ -45,7 +45,7 @@ class Migration(SchemaMigration):
     models = {
         u'accounting.passedthreshold': {
             'Meta': {'unique_together': "(('project_id', 'threshold'),)", 'object_name': 'PassedThreshold'},
-            'datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'project_id': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'threshold': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['accounting.Threshold']"})
@@ -53,7 +53,7 @@ class Migration(SchemaMigration):
         u'accounting.threshold': {
             'Meta': {'object_name': 'Threshold'},
             'actions': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'balance': ('django.db.models.fields.IntegerField', [], {'unique': 'True'}),
+            'balance': ('django.db.models.fields.DecimalField', [], {'max_digits': '19', 'decimal_places': '10'}),
             'down': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'up': ('django.db.models.fields.BooleanField', [], {'default': 'False'})

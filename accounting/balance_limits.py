@@ -35,13 +35,12 @@ class BalanceLimits(object):
     def process_transaction(cls, **kwargs):
         actions = Set()
         for threshold in cls._get_thresholds():
-            if (threshold.up
-                    and kwargs['balance_before'] < threshold.balance
-                    and kwargs['balance_after'] >= threshold.balance):
-                actions.add(threshold)
-            if (threshold.down
-                    and kwargs['balance_before'] < threshold.balance
-                    and kwargs['balance_after'] >= threshold.balance):
+            if (threshold.up and
+                    kwargs['balance_before'] < threshold.balance and
+                    kwargs['balance_after'] >= threshold.balance) or (
+                    threshold.down and
+                    kwargs['balance_before'] < threshold.balance and
+                    kwargs['balance_after'] >= threshold.balance):
                 actions.add(threshold)
         for action in actions:
             cls.remember_passing(threshold, kwargs['project_id'])

@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Threshold(models.Model):
-    balance = models.IntegerField(unique=True)
+    balance = models.DecimalField(max_digits=19, decimal_places=10)
     actions = models.TextField(blank=True)
     up = models.BooleanField(default=False)
     down = models.BooleanField(default=False)
