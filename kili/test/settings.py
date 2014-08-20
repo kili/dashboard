@@ -2,6 +2,8 @@ from openstack_dashboard.test.settings import *  # noqa
 
 ROOT_URLCONF = 'kili.urls'
 
+OPENSTACK_HOST = "10.0.1.222"
+
 HORIZON_CONFIG['customization_module'] = 'customizations.loader'
 
 INSTALLED_APPS += (
@@ -71,3 +73,9 @@ K2_KES_USD_RATE = 88
 
 KOPOKOPO_USERNAME = 'K2USER'
 KOPOKOPO_PASSWORD = 'K2PASS'
+
+ADMIN_AUTH_DATA = {
+    'os_username': 'admin',
+    'os_tenant_name': 'admin',
+    'os_password': 'MYp-ZSJLXJpLCJM9-u5f',
+    'os_auth_url': 'http://10.0.1.223/keystone/v2.0'.format(OPENSTACK_HOST)}

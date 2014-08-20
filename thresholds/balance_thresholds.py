@@ -24,6 +24,10 @@ class ThresholdActionBase(object):
         pass
 
     @classmethod
+    def _get_due_datetime(cls):
+        return timezone.now() + timezone.timedelta(seconds=cls.delay)
+
+    @classmethod
     def get_subclass_of_name(cls, name):
         for subclass in cls.__subclasses__():
             if subclass.verbose_name == name:
@@ -34,7 +38,7 @@ class ThresholdActionBase(object):
     def queue_for_later(cls, **kwargs):
         ActionQueue.objects.create(
             verbose_name=cls.verbose_name,
-            due_datetime=timezone.now() + timezone.delta(seconds=cls.delay),
+            due_datetime=cls._get_due_datetime(),
             kwargs=pickle.dumps(kwargs))
 
     @classmethod
@@ -56,7 +60,7 @@ class ActionQueueProcessor(object):
         for action in cls._get_due_actions():
             try:
                 ThresholdActionBase.get_subclass_of_name(
-                    action.verbose_name).handler(pickle.loads(action.kwargs))
+                    action.verbose_name).handler(**pickle.loads(action.kwargs))
                 action.processed = True
                 action.save()
             except Exception:

@@ -576,6 +576,12 @@ CEILOMETER_AUTH_DATA = {
     'os_tenant_name': '',
     'os_auth_url': ''}
 
+ADMIN_AUTH_DATA = {
+    'os_username': '',
+    'os_tenant_name': '',
+    'os_password': '',
+    'os_auth_url': ''}
+
 BILLABLE_RESOURCE_TYPES = {
     'instance': {'period_length': 10}
 }
