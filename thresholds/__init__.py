@@ -1,1 +1,1 @@
-from thresholds.event_handlers import * #  noqa
+from thresholds.event_handlers import *  # noqa

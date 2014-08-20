@@ -1,3 +1,4 @@
+from django.conf import settings
 from novaclient.v1_1 import client as novaclient
 from accounting.managers import AccountManager
 from thresholds.balance_thresholds import ThresholdActionBase
@@ -14,7 +15,7 @@ class SendNotificationThresholdAction(ThresholdActionBase):
 
 class StopProjectInstances(ThresholdActionBase):
     _novaclient = None
-    delay = 345600 # 4 days
+    delay = 345600  # 4 days
     verbose_name = 'stop_project_instances'
 
     @classmethod
