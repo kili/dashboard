@@ -188,6 +188,7 @@ INSTALLED_APPS = [
     'resource_pricing',
     'resource_pricing.calculators',
     'project_billing',
+    'notifications',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

@@ -1,5 +1,5 @@
 import abc
-from sets import Set
+import pickle
 from django.core.exceptions import ObjectDoesNotExist
 from horizon.utils import memoized
 from accounting.models import Threshold
@@ -14,6 +14,9 @@ class ThresholdAction(object):
 
     @abc.abstractmethod
     def handler():
+        """will get the following kwargs passed:
+           passed_limit, project_id, current_balance
+        """
         pass
 
     @classmethod
@@ -33,19 +36,22 @@ class BalanceLimits(object):
 
     @classmethod
     def process_transaction(cls, **kwargs):
-        actions = Set()
+        passed_thresholds = set()
         for threshold in cls._get_thresholds():
             if (threshold.up and
                     kwargs['balance_before'] < threshold.balance and
                     kwargs['balance_after'] >= threshold.balance) or (
                     threshold.down and
-                    kwargs['balance_before'] < threshold.balance and
-                    kwargs['balance_after'] >= threshold.balance):
-                actions.add(threshold)
-        for action in actions:
+                    kwargs['balance_before'] > threshold.balance and
+                    kwargs['balance_after'] <= threshold.balance):
+                passed_thresholds.add(threshold)
+        for threshold in passed_thresholds:
             cls.remember_passing(threshold, kwargs['project_id'])
-            ThresholdAction.get_subclass_of_name(
-                threshold.action).handler(**kwargs)
+            for action in pickle.loads(threshold.actions):
+                ThresholdAction.get_subclass_of_name(
+                    action).handler(passed_limit=threshold.balance,
+                                    project_id=kwargs['project_id'],
+                                    current_balance=kwargs['balance_after'])
 
     @classmethod
     def remember_passing(cls, threshold, project_id):

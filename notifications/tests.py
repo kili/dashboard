@@ -1,5 +1,8 @@
+import pickle
 from django.core import mail
 from openstack_dashboard.test import helpers as test
+from accounting.models import Threshold
+from accounting.models import PassedThreshold
 from notifications.notification_sender import Notifications
 from notifications.notification_sender import LowBalanceNotificationSender
 from keystone_wrapper.client import KeystoneClient
@@ -54,6 +57,11 @@ class SimpleTest(test.TestCase):
     @test.create_stubs({KeystoneClient: ('get_client',)})
     def test_low_balance_notification(self):
         Notifications.sender_instances = {}
+        threshold = Threshold.objects.create(
+            balance=5,
+            actions=pickle.dumps(['send_notification']),
+            up=False,
+            down=True)
         number_recipients = 1
         KeystoneClient.get_client().AndReturn(
             self._get_stub_keystone_client(number_recipients))
@@ -69,3 +77,6 @@ class SimpleTest(test.TestCase):
                          LowBalanceNotificationSender.from_email)
         self.assertEqual(len(mail.outbox[0].to),
                          number_recipients)
+        self.assertEqual(PassedThreshold.objects.count(), 1)
+        self.assertEqual(PassedThreshold.objects.all()[0].threshold,
+                         threshold)

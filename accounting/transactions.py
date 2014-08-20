@@ -1,6 +1,5 @@
 from accounting import managers
 from accounting.balance_limits import BalanceLimits
-from notifications.notification_sender import Notifications
 
 
 class UserTransactions():
@@ -24,9 +23,9 @@ class UserTransactions():
                       self.account_manager.get_revenue_account(),
                       msg)
         balance_after = account.balance()
-        balance_limits.process_transaction(user,
-                                           balance_before,
-                                           balance_after)
+        BalanceLimits.process_transaction(project_id=user,
+                                          balance_before=balance_before,
+                                          balance_after=balance_after)
 
     def grant_user_promotion(self, user, amount, message):
         self.account_manager.get_user_account(user).credit(
