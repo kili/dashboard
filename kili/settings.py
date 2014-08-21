@@ -109,6 +109,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'horizon.middleware.HorizonMiddleware',
+    'kili.middleware.PaywallMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -542,8 +543,6 @@ FLAVOR_EXTRA_KEYS = {
 # all customization modules listed here will be loaded by the loader that's
 # specified in HORIZON_CONFIG.customization_module
 CUSTOMIZATIONS = (
-    'customizations.launch_instance.LaunchInstanceViewCustomizer',
-    'customizations.instances_table.InstancesTableCustomizer',
     'customizations.project_balance.ProjectTableCustomizer',
 )
 
@@ -582,4 +581,21 @@ MINIMUM_BALANCE = 15
 BALANCE_LIMITS = [0, 5]
 
 KOPOKOPO_USERNAME = ''
-KOPOKOPO_PASSWORD = ''
+
+PAYWALL_LOOKOUT_VIEWS = [
+    u'horizon:project:instances:launch',
+    u'horizon:project:volumes:volumes:create',
+    u'horizon:project:images:images:create',
+    u'horizon:project:network_topology:launchinstance',
+    u'horizon:project:network_topology:createnetwork',
+    u'horizon:project:network_topology:createrouter',
+    u'horizon:project:containers:create',
+    u'horizon:project:containers:object_upload',
+    u'horizon:project:containers:create_pseudo_folder',
+    u'horizon:project:stacks:select_template'
+]
+
+PAYWALL_EXEMPT = [
+    u'admin',
+    u'kili',
+]
