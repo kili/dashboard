@@ -318,6 +318,10 @@ function run_tests_all {
   if [ "$NOSE_WITH_HTML_OUTPUT" = '1' ]; then
     export NOSE_HTML_OUT_FILE='kili_nose_results.html'
   fi
+  if [ $with_coverage -eq 1 ]; then
+    ${command_wrapper} coverage erase
+    coverage_run="coverage run -p"
+  fi
   ${command_wrapper} ${coverage_run} $root/manage.py test kili thresholds notifications accounting async resource_pricing customizations registration project_billing billing_app keystone_wrapper --settings=kili.test.settings $testopts
   # get results of the kili tests
   KILI_RESULT=$?
