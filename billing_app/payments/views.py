@@ -1,4 +1,3 @@
-from accounting import managers
 #import base64
 import billing
 from billing_app.models import Card  # noqa
@@ -6,7 +5,6 @@ from billing_app.models import MobileMoneyNumber  # noqa
 from billing_app.payments import forms as payment_forms  # noqa
 from billing_app.payments import tables as payment_tables  # noqa
 from django import template
-from django.conf import settings
 from django.core import urlresolvers
 # from django.views import generic
 from django.template.defaultfilters import linebreaks  # noqa
@@ -19,7 +17,6 @@ from django.views.generic.edit import FormView  # noqa
 #import hmac
 from horizon import exceptions
 from horizon import forms as horizon_forms
-from horizon import messages
 from horizon import tables as horizon_tables  # noqa
 
 
@@ -50,12 +47,6 @@ class IndexView(horizon_tables.MultiTableView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['stripe_obj'] = billing.get_integration('stripe')
-        if not managers.AccountManager().has_sufficient_balance(
-                self.request.user.tenant_id):
-            messages.warning(
-                self.request,
-                u'You need at least {0} USD to launch an instance'.
-                format(settings.MINIMUM_BALANCE))
         return context
 
     def get_mobile_money_data(self):
