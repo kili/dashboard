@@ -9,37 +9,38 @@ from keystone_wrapper.client import KeystoneClient
 from accounting.transactions import UserTransactions
 
 
+def get_stub_keystone_client(number_recipients):
+
+    class StubObject(object):
+        pass
+
+    def return_tenant(arg1):
+        def return_user_list():
+            def create_user_object(num):
+                ob = StubObject()
+                setattr(ob, 'email', 'email{0}'.format(num))
+                return ob
+            return [create_user_object(i)
+                    for i in range(0, number_recipients)]
+        stub_tenant = StubObject()
+        setattr(stub_tenant, 'list_users', return_user_list)
+        return stub_tenant
+
+    stub_tenants = StubObject()
+    setattr(stub_tenants, 'get', return_tenant)
+    stub_client = StubObject()
+    setattr(stub_client, 'tenants', stub_tenants)
+    return stub_client
+
+
 class NotificationsTests(test.TestCase):
-
-    def _get_stub_keystone_client(self, number_recipients):
-
-        class StubObject(object):
-            pass
-
-        def return_tenant(arg1):
-            def return_user_list():
-                def create_user_object(num):
-                    ob = StubObject()
-                    setattr(ob, 'email', 'email{0}'.format(num))
-                    return ob
-                return [create_user_object(i)
-                        for i in range(0, number_recipients)]
-            stub_tenant = StubObject()
-            setattr(stub_tenant, 'list_users', return_user_list)
-            return stub_tenant
-
-        stub_tenants = StubObject()
-        setattr(stub_tenants, 'get', return_tenant)
-        stub_client = StubObject()
-        setattr(stub_client, 'tenants', stub_tenants)
-        return stub_client
 
     @test.create_stubs({KeystoneClient: ('get_client',)})
     def test_notification_sending(self):
         Notifications.sender_instances = {}
         number_recipients = 5
         KeystoneClient.get_client().AndReturn(
-            self._get_stub_keystone_client(number_recipients))
+            get_stub_keystone_client(number_recipients))
         self.mox.ReplayAll()
         Notifications.get_notification_sender('low_balance').add(
             project_id=1,
@@ -64,7 +65,7 @@ class NotificationsTests(test.TestCase):
             down=True)
         number_recipients = 1
         KeystoneClient.get_client().AndReturn(
-            self._get_stub_keystone_client(number_recipients))
+            get_stub_keystone_client(number_recipients))
         self.mox.ReplayAll()
         ut = UserTransactions()
         ut.receive_user_payment(1, 'STRIPE', 6, 'tester paid')
