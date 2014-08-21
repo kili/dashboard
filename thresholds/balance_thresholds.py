@@ -56,7 +56,7 @@ class ActionQueueProcessor(object):
                                           processed=False)
 
     @classmethod
-    def process(cls, dry_run=True):
+    def process(cls):
         for action in cls._get_due_actions():
             try:
                 ThresholdActionBase.get_subclass_of_name(
