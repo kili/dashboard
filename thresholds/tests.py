@@ -76,6 +76,11 @@ class ThresholdTests(test.TestCase):
         ActionQueueProcessor.process()
         ActionQueueProcessor.process()
 
+    # this test simulates a whole scenario:
+    # create two thresholds, one at 0 and one at -50:
+    # - the one at 0 sends a notification to the project's users
+    # - the one at -50 sends a notification at the time of passing
+    #    and also stops the instances of the project after 4 days have passed
     @test.create_stubs({ServerManager: ('list',),
                         KeystoneClient: ('get_client',),
                         timezone: ('now',),
