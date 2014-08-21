@@ -19,17 +19,14 @@ instance_list = [
 class ThresholdTests(test.TestCase):
 
     def setUp(self):
-        @classmethod
-        def stub_get_due_datetime(cls):
-            return timezone.now()
-
-        self.stub_get_due_datetime = stub_get_due_datetime
         super(ThresholdTests, self).setUp()
+        self.real_now = timezone.now()
 
     @test.create_stubs({ServerManager: ('list',),
+                        StopProjectInstances: ('_get_due_datetime',),
                         instance_list[0]: ('stop',),
                         instance_list[2]: ('stop',)})
-    def test_low_balance_notification(self):
+    def test_instance_stopper(self):
         Threshold.objects.create(
             balance=-50,
             actions=pickle.dumps(['stop_project_instances']),
@@ -38,8 +35,37 @@ class ThresholdTests(test.TestCase):
         ServerManager.list().AndReturn(instance_list)
         instance_list[0].stop()
         instance_list[2].stop()
+        StopProjectInstances._get_due_datetime().AndReturn(timezone.now())
         self.mox.ReplayAll()
-        StopProjectInstances._get_due_datetime = self.stub_get_due_datetime
         UserTransactions().consume_user_money(1, 60, 'some consumption')
         ActionQueueProcessor.process()
-        self.mox.VerifyAll()
+
+    @test.create_stubs({ServerManager: ('list',),
+                        timezone: ('now',),
+                        instance_list[0]: ('stop',),
+                        instance_list[2]: ('stop',)})
+    def test_action_queue_delay(self):
+        Threshold.objects.create(
+            balance=-50,
+            actions=pickle.dumps(['stop_project_instances']),
+            up=False,
+            down=True)
+        ServerManager.list().AndReturn(instance_list)
+        instance_list[0].stop()
+        instance_list[2].stop()
+        timezone.now().AndReturn(self.real_now)  # called by user transaction
+        timezone.now().AndReturn(self.real_now)  # called by user transaction
+        timezone.now().AndReturn(
+            self.real_now + timezone.timedelta(seconds=2 * 24 * 60 * 60))
+        timezone.now().AndReturn(
+            self.real_now + timezone.timedelta(seconds=3 * 24 * 60 * 60))
+        timezone.now().AndReturn(
+            self.real_now + timezone.timedelta(seconds=5 * 24 * 60 * 60))
+        timezone.now().AndReturn(
+            self.real_now + timezone.timedelta(seconds=6 * 24 * 60 * 60))
+        self.mox.ReplayAll()
+        UserTransactions().consume_user_money(1, 60, 'some consumption')
+        ActionQueueProcessor.process()
+        ActionQueueProcessor.process()
+        ActionQueueProcessor.process()
+        ActionQueueProcessor.process()
