@@ -9,7 +9,7 @@ from keystone_wrapper.client import KeystoneClient
 from accounting.transactions import UserTransactions
 
 
-class SimpleTest(test.TestCase):
+class NotificationsTests(test.TestCase):
 
     def _get_stub_keystone_client(self, number_recipients):
 

@@ -3,7 +3,6 @@ import logging
 import pickle
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
-from horizon.utils import memoized
 from thresholds.models import Threshold
 from thresholds.models import PassedThreshold
 from thresholds.models import ActionQueue
@@ -53,7 +52,8 @@ class ActionQueueProcessor(object):
 
     @classmethod
     def _get_due_actions(cls):
-        return ActionQueue.objects.filter(due_datetime__lte=timezone.now())
+        return ActionQueue.objects.filter(due_datetime__lte=timezone.now(),
+                                          processed=False)
 
     @classmethod
     def process(cls, dry_run=True):
@@ -72,7 +72,6 @@ class ActionQueueProcessor(object):
 class BalanceThresholds(object):
 
     @classmethod
-    @memoized.memoized_method
     def _get_thresholds(cls):
         return Threshold.objects.all()
 
