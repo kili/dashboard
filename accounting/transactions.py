@@ -1,4 +1,5 @@
 from accounting import managers
+from notifications.notification_sender import Notifications
 from thresholds.balance_thresholds import BalanceThresholds
 
 
@@ -28,10 +29,17 @@ class UserTransactions():
                                           balance_after=balance_after)
 
     def grant_user_promotion(self, user, amount, message):
-        self.account_manager.get_user_account(user).credit(
+        account = self.account_manager.get_user_account(user)
+        account.credit(
             amount,
             self.account_manager.get_promotions_account(),
             message)
+        Notifications.get_notification_sender('promotion_granted').add(
+            project_id=user,
+            promotion_amount=amount,
+            new_balance=account.balance(),
+            message=message)
+        Notifications.send_all_notifications()
 
 
 class TransactionHistory():

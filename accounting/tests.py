@@ -1,11 +1,17 @@
+import random
+from django.core import mail
 from accounting import managers
 from accounting import transactions
 from django.conf import settings
-from django import test
-import random
+from openstack_dashboard.test import helpers as test
+from notifications.notification_sender import Notifications
+from notifications.notification_sender import \
+    PromotionGrantedNotificationSender
+from notifications.tests import get_stub_keystone_client
+from keystone_wrapper.client import KeystoneClient
 
 
-class SimpleTest(test.TestCase):
+class AccountingTests(test.TestCase):
 
     def setUp(self):
         self.account_manager = managers.AccountManager()
@@ -21,6 +27,7 @@ class SimpleTest(test.TestCase):
             settings.ACCOUNTING_REVENUE_ACCOUNT)
         self.promotions_account = self.account_manager.get_account(
             settings.ACCOUNTING_PROMOTIONS_ACCOUNT)
+        super(AccountingTests, self).setUp()
 
     def test_receive_user_payment(self):
         self.user_transactions.receive_user_payment(
@@ -36,18 +43,34 @@ class SimpleTest(test.TestCase):
         self.assertEqual(self.user_account.balance(), 50)
         self.assertEqual(self.revenue_account.balance(), 100)
 
+    @test.create_stubs({KeystoneClient: ('get_client',)})
     def test_grant_user_promotion(self):
+        Notifications.delete_all_notifications()
+        KeystoneClient.get_client().AndReturn(
+            get_stub_keystone_client(1))
+        self.mox.ReplayAll()
         self.user_transactions.grant_user_promotion(
             self.user_id, 100, 'free money!')
+        self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(self.promotions_account.balance(), 100)
         self.assertEqual(self.user_account.balance(), 100)
+        self.assertEqual(mail.outbox[0].subject,
+                         PromotionGrantedNotificationSender.subject)
 
+    @test.create_stubs({KeystoneClient: ('get_client',)})
     def test_promotion_message(self):
+        Notifications.delete_all_notifications()
+        KeystoneClient.get_client().AndReturn(
+            get_stub_keystone_client(1))
+        self.mox.ReplayAll()
         self.user_transactions.grant_user_promotion(
             self.user_id, 100, "free money!")
         self.assertEqual(
             self.transaction_history.get_user_account_transaction_history(
                 self.user_id)[0]["description"], "free money!")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject,
+                         PromotionGrantedNotificationSender.subject)
 
     def test_transaction_history(self):
         self.user_transactions.receive_user_payment(

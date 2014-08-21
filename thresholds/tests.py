@@ -89,6 +89,7 @@ class ThresholdTests(test.TestCase):
                         instance_list[0]: ('stop',),
                         instance_list[2]: ('stop',)})
     def test_notification_sender_and_instance_stopper_combination(self):
+        Notifications.delete_all_notifications()
         Threshold.objects.create(
             balance=0,
             actions=pickle.dumps(['send_notification']),

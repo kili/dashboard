@@ -1,0 +1,6 @@
+congrats, a promotion of {{ promotion_amount }} has been granted for you!
+
+your new balance is {{ new_balance }}.
+
+PS:
+{{ message }}

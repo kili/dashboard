@@ -10,6 +10,7 @@ from keystone_wrapper.client import KeystoneClient
 
 class NotificationSenderBase(object):
     params = ['project_id']
+    currency_format_fields = []
     from_email = 'Kili Support <help@kili.io>'
 
     def __init__(self):
@@ -38,8 +39,7 @@ class NotificationSenderBase(object):
                            ', skipping'.format(notification['project_id']))
             return
         self.notifications.append(
-            self._format_currencies(notification, ['passed_limit',
-                                                   'current_balance']))
+            self._format_currencies(notification, self.currency_format_fields))
 
     def get_notifications(self):
         return [
@@ -51,11 +51,21 @@ class NotificationSenderBase(object):
 
 
 class LowBalanceNotificationSender(NotificationSenderBase):
+    currency_format_fields = ['passed_limit', 'current_balance']
     name = 'low_balance'
     params = NotificationSenderBase.params + \
         ['passed_limit', 'current_balance']
     template = 'notifications/low_balance.txt'
     subject = 'Your balance is low'
+
+
+class PromotionGrantedNotificationSender(NotificationSenderBase):
+    currency_format_fields = ['promotion_amount', 'new_balance']
+    name = 'promotion_granted'
+    params = NotificationSenderBase.params + \
+        ['promotion_amount', 'new_balance', 'message']
+    template = 'notifications/promotion_granted.txt'
+    subject = 'You received a promotion'
 
 
 class Notifications(object):
@@ -64,6 +74,11 @@ class Notifications(object):
     @classmethod
     def send_all_notifications(cls):
         send_mass_mail(cls.get_all_sender_notifications())
+        cls.delete_all_notifications()
+
+    @classmethod
+    def delete_all_notifications(cls):
+        cls.sender_instances = {}
 
     @classmethod
     def get_all_sender_notifications(cls):

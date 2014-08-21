@@ -37,7 +37,7 @@ class NotificationsTests(test.TestCase):
 
     @test.create_stubs({KeystoneClient: ('get_client',)})
     def test_notification_sending(self):
-        Notifications.sender_instances = {}
+        Notifications.delete_all_notifications()
         number_recipients = 5
         KeystoneClient.get_client().AndReturn(
             get_stub_keystone_client(number_recipients))
@@ -57,7 +57,7 @@ class NotificationsTests(test.TestCase):
 
     @test.create_stubs({KeystoneClient: ('get_client',)})
     def test_low_balance_notification(self):
-        Notifications.sender_instances = {}
+        Notifications.delete_all_notifications()
         threshold = Threshold.objects.create(
             balance=5,
             actions=pickle.dumps(['send_notification']),
