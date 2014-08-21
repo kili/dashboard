@@ -10,7 +10,7 @@ from notifications.tests import get_stub_keystone_client
 from notifications.notification_sender import Notifications
 from thresholds.models import PassedThreshold
 from thresholds.models import Threshold
-from thresholds.event_handlers import StopProjectInstances
+from thresholds.event_handlers import StopProjectInstancesThresholdAction
 from thresholds.balance_thresholds import ActionQueueProcessor
 
 my_tenant_id = 1
@@ -29,7 +29,8 @@ class ThresholdTests(test.TestCase):
         self.real_now = timezone.now()
 
     @test.create_stubs({ServerManager: ('list',),
-                        StopProjectInstances: ('_get_due_datetime',),
+                        StopProjectInstancesThresholdAction: (
+                            '_get_due_datetime',),
                         instance_list[0]: ('stop',),
                         instance_list[2]: ('stop',)})
     def test_instance_stopper(self):
@@ -41,7 +42,8 @@ class ThresholdTests(test.TestCase):
         ServerManager.list().AndReturn(instance_list)
         instance_list[0].stop()
         instance_list[2].stop()
-        StopProjectInstances._get_due_datetime().AndReturn(timezone.now())
+        StopProjectInstancesThresholdAction._get_due_datetime().AndReturn(
+            timezone.now())
         self.mox.ReplayAll()
         UserTransactions().consume_user_money(1, 60, 'some consumption')
         ActionQueueProcessor.process()

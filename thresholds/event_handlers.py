@@ -13,7 +13,7 @@ class SendNotificationThresholdAction(ThresholdActionBase):
         Notifications.get_notification_sender('low_balance').add(**kwargs)
 
 
-class StopProjectInstances(ThresholdActionBase):
+class StopProjectInstancesThresholdAction(ThresholdActionBase):
     _novaclient = None
     delay = 345600  # 4 days
     verbose_name = 'stop_project_instances'
