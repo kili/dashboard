@@ -1,8 +1,8 @@
 Hello,
 
-We've noticed that your balance is {{ current_balance }} and that you have dipped below {{ passed_limit }}!!!
+Your current balance ({{ current_balance }}) has dipped below the {{ passed_limit }} threshold required to allocate new cloud resources.
 
-Until the account balance is raised, you may notice services starting to turn off.  Please maintain a sufficient balance for your usage so we can keep everything working for you.
+Until the account balance is raised, you may notice services starting to turn off. Please maintain a sufficient balance for your usage so we can keep everything working for you.
 
 If you have any questions or concerns, please email us at help@kili.io.
 
