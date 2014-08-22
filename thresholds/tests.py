@@ -34,7 +34,6 @@ class ThresholdTests(test.TestCase):
                         instance_list[0]: ('stop',),
                         instance_list[2]: ('stop',)})
     def test_instance_stopper(self):
-        self.tenant.id = my_tenant_id
         Threshold.objects.create(
             balance=-50,
             actions=pickle.dumps(['stop_project_instances']),
