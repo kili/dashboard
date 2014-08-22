@@ -34,12 +34,17 @@ class ThresholdTests(test.TestCase):
                         instance_list[0]: ('stop',),
                         instance_list[2]: ('stop',)})
     def test_instance_stopper(self):
+        self.tenant.id = my_tenant_id
         Threshold.objects.create(
             balance=-50,
             actions=pickle.dumps(['stop_project_instances']),
             up=False,
             down=True)
-        ServerManager.list().AndReturn(instance_list)
+        ServerManager.list(
+            search_opts={'all_tenants': True,
+                         'tenant_id': my_tenant_id}).AndReturn(
+                             [instance for instance in instance_list
+                              if instance.tenant_id == my_tenant_id])
         instance_list[0].stop()
         instance_list[2].stop()
         StopProjectInstancesThresholdAction._get_due_datetime().AndReturn(
@@ -58,7 +63,11 @@ class ThresholdTests(test.TestCase):
             actions=pickle.dumps(['stop_project_instances']),
             up=False,
             down=True)
-        ServerManager.list().AndReturn(instance_list)
+        ServerManager.list(
+            search_opts={'all_tenants': True,
+                         'tenant_id': my_tenant_id}).AndReturn(
+                             [instance for instance in instance_list
+                              if instance.tenant_id == my_tenant_id])
         instance_list[0].stop()
         instance_list[2].stop()
         timezone.now().AndReturn(self.real_now)  # called by user transaction
@@ -105,7 +114,11 @@ class ThresholdTests(test.TestCase):
             get_stub_keystone_client(3))
         KeystoneClient.get_client().AndReturn(
             get_stub_keystone_client(3))
-        ServerManager.list().AndReturn(instance_list)
+        ServerManager.list(
+            search_opts={'all_tenants': True,
+                         'tenant_id': my_tenant_id}).AndReturn(
+                             [instance for instance in instance_list
+                              if instance.tenant_id == my_tenant_id])
         instance_list[0].stop()
         instance_list[2].stop()
         timezone.now().AndReturn(self.real_now)  # called by user transaction

@@ -33,7 +33,10 @@ class StopProjectInstancesThresholdAction(ThresholdActionBase):
         if AccountManager().get_user_account(
                 kwargs['project_id']).balance() >= 0:
             return
-        # filter for tenant_id to avoid this bug:
+        # need to enable all_tenants because of this (read comments):
         # https://bugs.launchpad.net/python-novaclient/+bug/1134382
-        [server.stop() for server in cls._get_novaclient().servers.list()
-         if server.tenant_id == kwargs['project_id']]
+        #import pdb
+        #pdb.set_trace()
+        [server.stop() for server in cls._get_novaclient().servers.list(
+            search_opts={'all_tenants': True,
+                         'tenant_id': kwargs['project_id']})]
