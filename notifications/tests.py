@@ -1,5 +1,6 @@
 import pickle
 from django.core import mail
+from django.conf import settings
 from openstack_dashboard.test import helpers as test
 from thresholds.models import Threshold
 from thresholds.models import PassedThreshold
@@ -51,7 +52,7 @@ class NotificationsTests(test.TestCase):
         self.assertEqual(mail.outbox[0].subject,
                          LowBalanceNotificationSender.subject)
         self.assertEqual(mail.outbox[0].from_email,
-                         LowBalanceNotificationSender.from_email)
+                         settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(len(mail.outbox[0].to),
                          number_recipients)
 

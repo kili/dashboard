@@ -1,5 +1,6 @@
 import itertools
 import logging
+from django.conf import settings
 from django.core.mail import send_mass_mail
 from django.template import Context
 from django.template.loader import get_template
@@ -11,7 +12,7 @@ from keystone_wrapper.client import KeystoneClient
 class NotificationSenderBase(object):
     params = ['project_id']
     currency_format_fields = []
-    from_email = 'Kili Support <help@kili.io>'
+    from_email = settings.DEFAULT_FROM_EMAIL
 
     def __init__(self):
         self.notifications = []
