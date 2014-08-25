@@ -1,4 +1,5 @@
 import pickle
+import decimal
 from django.core import mail
 from django.utils import timezone
 from openstack_dashboard.test import helpers as test
@@ -12,6 +13,7 @@ from thresholds.models import PassedThreshold
 from thresholds.models import Threshold
 from thresholds.event_handlers import StopProjectInstancesThresholdAction
 from thresholds.balance_thresholds import ActionQueueProcessor
+from thresholds.balance_thresholds import ThresholdActionBase
 
 my_tenant_id = 1
 other_tenant_id = 2
@@ -111,8 +113,6 @@ class ThresholdTests(test.TestCase):
             down=True)
         KeystoneClient.get_client().AndReturn(
             get_stub_keystone_client(3))
-        KeystoneClient.get_client().AndReturn(
-            get_stub_keystone_client(3))
         ServerManager.list(
             search_opts={'all_tenants': True,
                          'tenant_id': my_tenant_id}).AndReturn(
@@ -134,9 +134,11 @@ class ThresholdTests(test.TestCase):
         self.mox.ReplayAll()
         ut = UserTransactions()
         ut.receive_user_payment(1, 'STRIPE', 6, 'user paid something')
+        #import pdb
+        #pdb.set_trace()
         ut.consume_user_money(1, 100, 'lot of consumption')
         Notifications.send_all_notifications()
-        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(PassedThreshold.objects.count(), 2)
         ActionQueueProcessor.process()
         ActionQueueProcessor.process()
@@ -146,3 +148,56 @@ class ThresholdTests(test.TestCase):
         self.assertEqual(len(instance_list[0].stop._expected_calls_queue), 0)
         self.assertEqual(len(instance_list[2].stop._expected_calls_queue), 0)
         ActionQueueProcessor.process()
+
+    @test.create_stubs({ThresholdActionBase: ('pass_event',)})
+    def test_only_keep_last_threshold_downwards(self):
+        Threshold.objects.create(
+            balance=-2,
+            actions=pickle.dumps(['send_notification']),
+            up=False,
+            down=True)
+        Threshold.objects.create(
+            balance=-3,
+            actions=pickle.dumps(['send_notification']),
+            up=False,
+            down=True)
+        Threshold.objects.create(
+            balance=-1,
+            actions=pickle.dumps(['send_notification']),
+            up=False,
+            down=True)
+        ThresholdActionBase.pass_event(
+            passed_limit=decimal.Decimal(-3),
+            project_id=1,
+            current_balance=decimal.Decimal('-5'))
+        self.mox.ReplayAll()
+        ut = UserTransactions()
+        ut.consume_user_money(1, 5, 'some consumption')
+
+    @test.create_stubs({ThresholdActionBase: ('pass_event',),
+                        KeystoneClient: ('get_client',)})
+    def test_only_keep_last_threshold_upwards(self):
+        Threshold.objects.create(
+            balance=2,
+            actions=pickle.dumps(['send_notification']),
+            up=True,
+            down=False)
+        Threshold.objects.create(
+            balance=3,
+            actions=pickle.dumps(['send_notification']),
+            up=True,
+            down=False)
+        Threshold.objects.create(
+            balance=1,
+            actions=pickle.dumps(['send_notification']),
+            up=True,
+            down=False)
+        KeystoneClient.get_client().AndReturn(
+            get_stub_keystone_client(3))
+        ThresholdActionBase.pass_event(
+            passed_limit=decimal.Decimal(3),
+            project_id=1,
+            current_balance=decimal.Decimal(5))
+        self.mox.ReplayAll()
+        ut = UserTransactions()
+        ut.grant_user_promotion(1, 5, 'granting promotion')

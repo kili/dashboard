@@ -1,6 +1,6 @@
 from accounting import managers
 from notifications.notification_sender import Notifications
-from thresholds.balance_thresholds import BalanceThresholds
+from thresholds.balance_thresholds import check_thresholds
 
 
 class UserTransactions():
@@ -8,6 +8,7 @@ class UserTransactions():
     def __init__(self):
         self.account_manager = managers.AccountManager()
 
+    @check_thresholds
     def receive_user_payment(self, user, asset_source, amount, comment):
         if not self.account_manager.is_asset_source(asset_source):
             raise Exception(
@@ -17,17 +18,14 @@ class UserTransactions():
             self.account_manager.get_account(asset_source),
             comment)
 
+    @check_thresholds
     def consume_user_money(self, user, amount, msg):
-        account = self.account_manager.get_user_account(user)
-        balance_before = account.balance()
-        account.debit(amount,
-                      self.account_manager.get_revenue_account(),
-                      msg)
-        balance_after = account.balance()
-        BalanceThresholds.process_transaction(project_id=user,
-                                          balance_before=balance_before,
-                                          balance_after=balance_after)
+        self.account_manager.get_user_account(user).debit(
+            amount,
+            self.account_manager.get_revenue_account(),
+            msg)
 
+    @check_thresholds
     def grant_user_promotion(self, user, amount, message):
         account = self.account_manager.get_user_account(user)
         account.credit(
