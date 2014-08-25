@@ -56,8 +56,20 @@ class LowBalanceNotificationSender(NotificationSenderBase):
     name = 'low_balance'
     params = NotificationSenderBase.params + \
         ['passed_limit', 'current_balance']
-    template = 'notifications/low_balance.txt'
+    template = ''
+    templates = {5: 'notifications/low_balance_5.txt',
+                 0: 'notifications/low_balance_0.txt',
+                 -50: 'notifications/low_balance_-50.txt'}
     subject = 'Your balance is low'
+
+    def add(self, **kwargs):
+        try:
+            self.template = self.templates[kwargs['passed_limit']]
+        except KeyError:
+                logging.getLogger('horizon').warning(
+                    'cant find tempalte for threshold {0}'.format(
+                        kwargs['passed_limit']))
+        super(LowBalanceNotificationSender, self).add(**kwargs)
 
 
 class PromotionGrantedNotificationSender(NotificationSenderBase):
