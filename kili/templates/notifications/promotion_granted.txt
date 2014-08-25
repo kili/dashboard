@@ -1,11 +1,11 @@
 Hello,
 
-You have been granted {{ promotion_amount }} worth of Kili credits.
-Your new balance is {{ new_balance }}.
+You have been granted {{ promotion_amount }} worth of credit on Kili.
 
-PS:
-{{ message }}
+Your balance is now {{ new_balance }}.
 
 Cheers!
 
 The Kili team
+P.S. - {{ message }}
+
