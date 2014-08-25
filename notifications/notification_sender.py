@@ -66,7 +66,10 @@ class LowBalanceNotificationSender(NotificationSenderBase):
         try:
             self.template = self.templates[kwargs['passed_limit']]
         except KeyError:
-            pass
+            logging.getLogger('horizon').warning(
+                'cant find template for threshold {0}, '
+                'falling back to default template'.format(
+                    kwargs['passed_limit']))
         super(LowBalanceNotificationSender, self).add(**kwargs)
 
 
