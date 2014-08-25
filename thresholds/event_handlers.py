@@ -35,8 +35,7 @@ class StopProjectInstancesThresholdAction(ThresholdActionBase):
             return
         # need to enable all_tenants because of this (read comments):
         # https://bugs.launchpad.net/python-novaclient/+bug/1134382
-        #import pdb
-        #pdb.set_trace()
         [server.stop() for server in cls._get_novaclient().servers.list(
             search_opts={'all_tenants': True,
-                         'tenant_id': kwargs['project_id']})]
+                         'tenant_id': kwargs['project_id'],
+                         'status': 'ACTIVE'})]
