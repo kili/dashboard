@@ -176,7 +176,7 @@ class ThresholdTests(test.TestCase):
 
     @test.create_stubs({ThresholdActionBase: ('pass_event',),
                         KeystoneClient: ('get_client',)})
-    def test_only_keep_last_threshold_upwards(self):
+    def test_only_keep_last_threshold_upwards_and_flags(self):
         Threshold.objects.create(
             balance=2,
             actions=pickle.dumps(['send_notification']),
@@ -192,6 +192,11 @@ class ThresholdTests(test.TestCase):
             actions=pickle.dumps(['send_notification']),
             up=True,
             down=False)
+        Threshold.objects.create(
+            balance=4,
+            actions=pickle.dumps(['send_notification']),
+            up=False,
+            down=True)
         KeystoneClient.get_client().AndReturn(
             get_stub_keystone_client(3))
         ThresholdActionBase.pass_event(
