@@ -1,6 +1,6 @@
 from accounting import managers
-from accounting.balance_limits import BalanceLimits
 from notifications.notification_sender import Notifications
+from thresholds.balance_thresholds import BalanceThresholds
 
 
 class UserTransactions():
@@ -24,19 +24,22 @@ class UserTransactions():
                       self.account_manager.get_revenue_account(),
                       msg)
         balance_after = account.balance()
-        limit = BalanceLimits.passed_limit(balance_before,
-                                           balance_after)
-        if limit['passed']:
-            Notifications.get_notification_sender('low_balance').add(
-                project_id=user,
-                passed_limit=limit['limit'],
-                current_balance=balance_after)
+        BalanceThresholds.process_transaction(project_id=user,
+                                          balance_before=balance_before,
+                                          balance_after=balance_after)
 
     def grant_user_promotion(self, user, amount, message):
-        self.account_manager.get_user_account(user).credit(
+        account = self.account_manager.get_user_account(user)
+        account.credit(
             amount,
             self.account_manager.get_promotions_account(),
             message)
+        Notifications.get_notification_sender('promotion_granted').add(
+            project_id=user,
+            promotion_amount=amount,
+            new_balance=account.balance(),
+            message=message)
+        Notifications.send_all_notifications()
 
 
 class TransactionHistory():

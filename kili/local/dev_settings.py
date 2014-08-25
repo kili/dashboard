@@ -60,6 +60,12 @@ CEILOMETER_AUTH_DATA = {
     'os_tenant_name': 'service',
     'os_auth_url': 'http://10.0.1.223/keystone/v2.0'.format(OPENSTACK_HOST)}
 
+ADMIN_AUTH_DATA = {
+    'os_username': 'admin',
+    'os_tenant_name': 'admin',
+    'os_password': 'MYp-ZSJLXJpLCJM9-u5f',
+    'os_auth_url': 'http://10.0.1.223/keystone/v2.0'.format(OPENSTACK_HOST)}
+
 K2_API_KEY = '1234567890'
 K2_KES_USD_RATE = 88
 

@@ -1,0 +1,11 @@
+Hello,
+
+You have been granted {{ promotion_amount }} worth of Kili credits.
+Your new balance is {{ new_balance }}.
+
+PS:
+{{ message }}
+
+Cheers!
+
+The Kili team

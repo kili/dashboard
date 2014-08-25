@@ -189,6 +189,8 @@ INSTALLED_APPS = [
     'resource_pricing',
     'resource_pricing.calculators',
     'project_billing',
+    'notifications',
+    'thresholds',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -571,6 +573,12 @@ CEILOMETER_AUTH_DATA = {
     'os_username': '',
     'os_password': '',
     'os_tenant_name': '',
+    'os_auth_url': ''}
+
+ADMIN_AUTH_DATA = {
+    'os_username': '',
+    'os_tenant_name': '',
+    'os_password': '',
     'os_auth_url': ''}
 
 BILLABLE_RESOURCE_TYPES = {
