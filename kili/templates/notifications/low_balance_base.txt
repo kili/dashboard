@@ -2,7 +2,8 @@ Hello,
 
 Your current balance ({{ current_balance }}) has dipped below the {{ passed_limit }} threshold.
 
-This means that you will no longer be able to: {% block restrictions %}{% endblock %}.
+This means that {% block restrictions %}{% endblock %}.
+
 Until the account balance is raised, services . Please maintain a sufficient balance for your usage so we can keep everything working for you.
 
 If you have any questions or concerns, please email us at help@kili.io.
