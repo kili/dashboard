@@ -1,0 +1,2 @@
+{% extends "notifications/low_balance.txt" %}
+{% block restrictions %}{% endblock %}
