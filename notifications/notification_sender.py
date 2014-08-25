@@ -65,11 +65,11 @@ class LowBalanceNotificationSender(NotificationSenderBase):
     def add(self, **kwargs):
         try:
             self.template = self.templates[kwargs['passed_limit']]
+            super(LowBalanceNotificationSender, self).add(**kwargs)
         except KeyError:
                 logging.getLogger('horizon').warning(
                     'cant find tempalte for threshold {0}'.format(
                         kwargs['passed_limit']))
-        super(LowBalanceNotificationSender, self).add(**kwargs)
 
 
 class PromotionGrantedNotificationSender(NotificationSenderBase):
