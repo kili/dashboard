@@ -21,9 +21,7 @@ INSTALLED_APPS += (
     'project_billing',
 )
 
-CUSTOMIZATIONS = (
-    'customizations.launch_instance.LaunchInstanceViewCustomizer',
-)
+CUSTOMIZATIONS = ()
 
 ENV_NAME = "test"
 
