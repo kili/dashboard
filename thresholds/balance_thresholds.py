@@ -12,10 +12,10 @@ from thresholds.models import ActionQueue
 def check_thresholds(fun):
 
     def inner(instance, user, *args):
-        account_manager = AccountManager()
-        balance_before = account_manager.get_user_account(user).balance()
+        account = AccountManager().get_user_account(user)
+        balance_before = account.balance()
         fun(instance, user, *args)
-        balance_after = account_manager.get_user_account(user).balance()
+        balance_after = account.balance()
         BalanceThresholds.process_transaction(
             project_id=user,
             balance_before=balance_before,
