@@ -25,9 +25,7 @@ INSTALLED_APPS += (
     'thresholds',
 )
 
-CUSTOMIZATIONS = (
-    'customizations.launch_instance.LaunchInstanceViewCustomizer',
-)
+CUSTOMIZATIONS = ()
 
 ENV_NAME = "test"
 
@@ -65,7 +63,6 @@ MERCHANT_SETTINGS = {
 }
 
 MINIMUM_BALANCE = 0
-BALANCE_LIMITS = [0, 5]
 
 K2_API_KEY = '1234567890'
 K2_AUTHORIZATION_HEADER = 'HTTP_AUTHORIZATION'

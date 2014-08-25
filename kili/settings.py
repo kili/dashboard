@@ -586,13 +586,15 @@ BILLABLE_RESOURCE_TYPES = {
 }
 
 MINIMUM_BALANCE = 15
-BALANCE_LIMITS = [0, 5]
 
 KOPOKOPO_USERNAME = ''
 
 PAYWALL_LOOKOUT_VIEWS = [
     u'horizon:project:instances:launch',
     u'horizon:project:volumes:volumes:create',
+    u'horizon:project:volumes:volumes:extend',
+    u'horizon:project:volumes:volumes:attach',
+    u'horizon:project:volumes:volumes:create_snapshot',
     u'horizon:project:images:images:create',
     u'horizon:project:network_topology:launchinstance',
     u'horizon:project:network_topology:createnetwork',

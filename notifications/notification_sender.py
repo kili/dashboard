@@ -57,7 +57,20 @@ class LowBalanceNotificationSender(NotificationSenderBase):
     params = NotificationSenderBase.params + \
         ['passed_limit', 'current_balance']
     template = 'notifications/low_balance.txt'
+    templates = {5: 'notifications/low_balance_5.txt',
+                 0: 'notifications/low_balance_0.txt',
+                 -50: 'notifications/low_balance_-50.txt'}
     subject = 'Your balance is low'
+
+    def add(self, **kwargs):
+        try:
+            self.template = self.templates[kwargs['passed_limit']]
+        except KeyError:
+            logging.getLogger('horizon').warning(
+                'cant find template for threshold {0}, '
+                'falling back to default template'.format(
+                    kwargs['passed_limit']))
+        super(LowBalanceNotificationSender, self).add(**kwargs)
 
 
 class PromotionGrantedNotificationSender(NotificationSenderBase):
@@ -91,7 +104,7 @@ class Notifications(object):
         for subclass in NotificationSenderBase.__subclasses__():
             if subclass.name == sender_name:
                 if (not sender_name in cls.sender_instances or
-                    not isinstance(cls.sender_instances[sender_name],
-                        subclass)):
+                    not isinstance(
+                        cls.sender_instances[sender_name], subclass)):
                     cls.sender_instances[sender_name] = subclass()
                 return cls.sender_instances[sender_name]

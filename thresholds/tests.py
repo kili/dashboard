@@ -43,7 +43,8 @@ class ThresholdTests(test.TestCase):
             down=True)
         ServerManager.list(
             search_opts={'all_tenants': True,
-                         'tenant_id': my_tenant_id}).AndReturn(
+                         'tenant_id': my_tenant_id,
+                         'status': 'ACTIVE'}).AndReturn(
                              [instance for instance in instance_list
                               if instance.tenant_id == my_tenant_id])
         instance_list[0].stop()
@@ -66,7 +67,8 @@ class ThresholdTests(test.TestCase):
             down=True)
         ServerManager.list(
             search_opts={'all_tenants': True,
-                         'tenant_id': my_tenant_id}).AndReturn(
+                         'tenant_id': my_tenant_id,
+                         'status': 'ACTIVE'}).AndReturn(
                              [instance for instance in instance_list
                               if instance.tenant_id == my_tenant_id])
         instance_list[0].stop()
@@ -115,7 +117,8 @@ class ThresholdTests(test.TestCase):
             get_stub_keystone_client(3))
         ServerManager.list(
             search_opts={'all_tenants': True,
-                         'tenant_id': my_tenant_id}).AndReturn(
+                         'tenant_id': my_tenant_id,
+                         'status': 'ACTIVE'}).AndReturn(
                              [instance for instance in instance_list
                               if instance.tenant_id == my_tenant_id])
         instance_list[0].stop()
