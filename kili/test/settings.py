@@ -25,9 +25,7 @@ INSTALLED_APPS += (
     'thresholds',
 )
 
-CUSTOMIZATIONS = (
-    'customizations.launch_instance.LaunchInstanceViewCustomizer',
-)
+CUSTOMIZATIONS = ()
 
 ENV_NAME = "test"
 
