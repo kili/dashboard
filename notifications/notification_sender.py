@@ -67,9 +67,9 @@ class LowBalanceNotificationSender(NotificationSenderBase):
             self.template = self.templates[kwargs['passed_limit']]
             super(LowBalanceNotificationSender, self).add(**kwargs)
         except KeyError:
-                logging.getLogger('horizon').warning(
-                    'cant find tempalte for threshold {0}'.format(
-                        kwargs['passed_limit']))
+            logging.getLogger('horizon').warning(
+                'cant find tempalte for threshold {0}'.format(
+                    kwargs['passed_limit']))
 
 
 class PromotionGrantedNotificationSender(NotificationSenderBase):
@@ -103,7 +103,7 @@ class Notifications(object):
         for subclass in NotificationSenderBase.__subclasses__():
             if subclass.name == sender_name:
                 if (not sender_name in cls.sender_instances or
-                    not isinstance(cls.sender_instances[sender_name],
-                        subclass)):
+                    not isinstance(
+                        cls.sender_instances[sender_name], subclass)):
                     cls.sender_instances[sender_name] = subclass()
                 return cls.sender_instances[sender_name]
