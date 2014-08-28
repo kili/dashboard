@@ -8,12 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        db.delete_column('pricing_instance_flavor_resource', 'description')
         db.alter_column('pricing_instance_flavor_resource', 'resource_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['resource_pricing.Resource'], unique=True))
         db.rename_column('pricing_instance_flavor_resource', 'resource_id', 'resourcebase_ptr_id')
         db.rename_column('pricing_instance_flavor_resource', 'os_flavor_id', 'os_instance_type_id')
+        db.create_index('pricing_instance_flavor_resource', ['os_instance_type_id'], unique=False)
         db.delete_primary_key('pricing_instance_flavor_resource')
         db.add_column('pricing_instance_flavor_resource', 'id', self.gf('django.db.models.fields.AutoField')(primary_key=True))
 
+        db.delete_column('pricing_volume_type_resource', 'description')
         db.delete_primary_key('pricing_volume_type_resource')
         db.rename_column('pricing_volume_type_resource', 'os_type_id', 'os_volume_type_id')
         db.create_index('pricing_volume_type_resource', ['os_volume_type_id'], unique=False)
@@ -30,13 +33,16 @@ class Migration(SchemaMigration):
         db.delete_index('pricing_volume_type_resource', ['os_volume_type_id'])
         db.rename_column('pricing_volume_type_resource', 'os_volume_type_id', 'os_type_id')
         db.create_primary_key('pricing_volume_type_resource', ['os_type_id'])
+        db.add_column('pricing_volume_type_resource', 'description', self.gf('django.db.models.fields.CharField')(max_length=100))
 
         db.alter_column('pricing_instance_flavor_resource', 'id', self.gf('django.db.models.fields.IntegerField')(primary_key=True))
+        db.delete_index('pricing_instance_flavor_resource', ['os_instance_type_id'])
         db.rename_column('pricing_instance_flavor_resource', 'os_instance_type_id', 'os_flavor_id')
         db.rename_column('pricing_instance_flavor_resource', 'resourcebase_ptr_id', 'resource_id')
         db.alter_column('pricing_instance_flavor_resource', 'resource_id', self.gf('django.db.models.fields.IntegerField')(blank=False))
         db.delete_column('pricing_instance_flavor_resource', u'id')
         db.create_primary_key('pricing_instance_flavor_resource', ['os_flavor_id'])
+        db.add_column('pricing_instance_flavor_resource', 'description', self.gf('django.db.models.fields.CharField')(max_length=100))
 
     models = {
         u'calculators.instancetype': {
