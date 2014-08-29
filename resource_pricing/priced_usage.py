@@ -1,4 +1,5 @@
 import abc
+from nova_wrapper.client import NovaClient
 from resource_pricing.calculators.calculators import CalculatorBase
 
 
@@ -26,6 +27,10 @@ class PricedUsageBase:
         """Method that fetches stats and combines them with prices."""
 
     @staticmethod
+    def _resolve_resource_id(id):
+        return id
+
+    @staticmethod
     def meter_specific_criterias(query):
         return query
 
@@ -49,12 +54,16 @@ class PricedInstanceUsage(PricedUsageBase):
     def _res_string_from_usage(cls, usage, timerange):
         return u'{0}: instances of flavor \'{1}\': {2}'.format(
             timerange[0].date(),
-            usage['flavor'],
+            cls._resolve_resource_id(usage['id']),
             u', '.join([u'\'{0}\''.format(x) for x in usage['resources']]))
 
     @classmethod
     def _merge_stats(cls, stats):
         return stats.merged_by(lambda x: x['metadata']['flavor.id'])
+
+    @staticmethod
+    def _resolve_resource_id(id):
+        return NovaClient.get_client().flavors.get(id).name
 
     @classmethod
     def get_priced_stats(cls, stats, timerange):
@@ -77,8 +86,6 @@ class PricedInstanceUsage(PricedUsageBase):
                 'id': raw_data[0]['resource']['metadata']['flavor.id'],
                 'hours': cls._price_calculator().hours_from_periods(
                     sum([x['stats']['count'] for x in raw_data])),
-                'flavor': u'instance:{0}'.format(
-                    raw_data[0]['resource']['metadata']['flavor.name']),
                 'resources': [x['resource']['metadata']['display_name']
                               for x in raw_data],
                 'tenant_id': raw_data[0]['resource']['project_id']}

@@ -29,13 +29,13 @@ class SimpleTest(test.TestCase):
 
         self.reservations = []
         reservations = [
-            {'type': u'1',
+            {'type': 'flav1',
              'hourly_price': '1.2',
              'upfront_price': '5.5'},
-            {'type': u'2',
+            {'type': 'flav2',
              'hourly_price': '8.0',
              'upfront_price': '50'},
-            {'type': u'1',
+            {'type': 'flav1',
              'hourly_price': '2.2',
              'upfront_price': '10'}]
         for reservation in reservations:
@@ -58,10 +58,9 @@ class SimpleTest(test.TestCase):
 
         for test in testcases:
             self.assertTrue(self.ipc.price_from_stats({
-                'id': u'1',
-                'hours': decimal.Decimal(test['hours']),
-                'flavor': self.prices[
+                'id': self.prices[
                     test['price']].resource.os_instance_type_id,
+                'hours': decimal.Decimal(test['hours']),
                 'resources': [u'inst1', u'inst2'],
                 'tenant_id': u'333'
             }, (timezone.now(),
@@ -77,9 +76,8 @@ class SimpleTest(test.TestCase):
             prepaid_reservation=self.reservations[0])
 
         self.assertTrue(self.ipc.price_from_stats({
-            'id': u'1',
+            'id': 'flav1',
             'hours': decimal.Decimal('20'),
-            'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
         }, (timezone.now(),
@@ -95,14 +93,13 @@ class SimpleTest(test.TestCase):
             prepaid_reservation=self.reservations[0])
 
         self.assertTrue(self.ipc.price_from_stats({
-            'id': u'1',
+            'id': 'flav3',
             'hours': decimal.Decimal('30'),
-            'flavor': 'flav3',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
         }, (timezone.now(),
             timezone.now()))['price'].compare(
-                decimal.Decimal('60.0')) ==
+                decimal.Decimal('156.0')) ==
             decimal.Decimal('0.000'))
 
     def test_single_reservation_price_calculation3(self):
@@ -113,9 +110,8 @@ class SimpleTest(test.TestCase):
             prepaid_reservation=self.reservations[0])
 
         self.assertTrue(self.ipc.price_from_stats({
-            'id': u'1',
+            'id': 'flav3',
             'hours': decimal.Decimal('30'),
-            'flavor': 'flav3',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
         }, (timezone.now(),
@@ -136,9 +132,8 @@ class SimpleTest(test.TestCase):
             prepaid_reservation=self.reservations[2])
 
         self.assertTrue(self.ipc.price_from_stats({
-            'id': u'1',
+            'id': 'flav1',
             'hours': decimal.Decimal('30'),
-            'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
         }, (timezone.now(),
@@ -159,9 +154,8 @@ class SimpleTest(test.TestCase):
             prepaid_reservation=self.reservations[0])
 
         self.assertTrue(self.ipc.price_from_stats({
-            'id': u'1',
+            'id': u'flav1',
             'hours': decimal.Decimal('30'),
-            'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
         }, (timezone.now(),
@@ -182,9 +176,8 @@ class SimpleTest(test.TestCase):
             prepaid_reservation=self.reservations[2])
 
         self.assertTrue(self.ipc.price_from_stats({
-            'id': u'1',
+            'id': 'flav1',
             'hours': decimal.Decimal('50'),
-            'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
         }, (timezone.now(),
@@ -210,9 +203,8 @@ class SimpleTest(test.TestCase):
             prepaid_reservation=self.reservations[0])
 
         self.assertTrue(self.ipc.price_from_stats({
-            'id': u'1',
+            'id': 'flav1',
             'hours': decimal.Decimal('50'),
-            'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
         }, (timezone.now(),
@@ -238,9 +230,8 @@ class SimpleTest(test.TestCase):
             prepaid_reservation=self.reservations[2])
 
         self.assertTrue(self.ipc.price_from_stats({
-            'id': u'1',
+            'id': 'flav1',
             'hours': decimal.Decimal('50'),
-            'flavor': 'flav1',
             'resources': [u'inst1', u'inst2'],
             'tenant_id': u'333'
         }, (timezone.now(),

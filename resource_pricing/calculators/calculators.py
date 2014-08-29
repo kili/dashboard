@@ -90,7 +90,7 @@ class InstancePriceCalculator(CalculatorBase):
             final_price += active_reservation.\
                 prepaid_reservation.hourly_price * billable_hours
             billable_hours = 0
-        final_price += cls._get_unit_price(params['flavor']) * billable_hours
+        final_price += cls._get_unit_price(params['id']) * billable_hours
         return final_price
 
     @classmethod

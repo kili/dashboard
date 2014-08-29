@@ -1,6 +1,7 @@
 from django.core import urlresolvers
 from horizon import forms
 from horizon import tables as horizon_tables
+from nova_wrapper.client import NovaClient
 from pricing_panel import forms as pricing_forms
 from pricing_panel import tables
 from resource_pricing.calculators.models import InstanceType
@@ -14,7 +15,8 @@ class IndexView(horizon_tables.MultiTableView):
     def get_instance_prices_data(self):
         return [tables.InstancePricesTableEntry(
             id=x.resource.id,
-            instance_type=x.resource.instancetype.os_instance_type_id,
+            instance_type=NovaClient.instance_type_id_to_name(
+                x.resource.instancetype.os_instance_type_id),
             price=x.price)
             for x in Price.objects.exclude(
                 resource__instancetype__os_instance_type_id=None)]
