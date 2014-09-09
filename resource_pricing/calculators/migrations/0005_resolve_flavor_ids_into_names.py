@@ -10,17 +10,23 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         for instance_type in orm.InstanceType.objects.all():
-            instance_type.os_instance_type_id = \
-                NovaClient.instance_type_id_to_name(
-                    instance_type.os_instance_type_id)
-            instance_type.save()
+            try:
+                instance_type.os_instance_type_id = \
+                    NovaClient.instance_type_id_to_name(
+                        instance_type.os_instance_type_id)
+                instance_type.save()
+            except:
+                pass
 
     def backwards(self, orm):
         for instance_type in orm.InstanceType.objects.all():
-            instance_type.os_instance_type_id = \
-                NovaClient.instance_type_name_to_id(
-                    instance_type.os_instance_type_id)
-            instance_type.save()
+            try:
+                instance_type.os_instance_type_id = \
+                    NovaClient.instance_type_name_to_id(
+                        instance_type.os_instance_type_id)
+                instance_type.save()
+            except:
+                pass
 
     models = {
         u'calculators.instancetype': {
