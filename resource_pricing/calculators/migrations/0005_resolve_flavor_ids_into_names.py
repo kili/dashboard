@@ -12,8 +12,8 @@ class Migration(DataMigration):
         for instance_type in orm.InstanceType.objects.all():
             try:
                 instance_type.os_instance_type_id = \
-                    NovaClient.instance_type_id_to_name(
-                        instance_type.os_instance_type_id)
+                    NovaClient.instance_type_name_to_id(
+                        instance_type.os_instance_type_id.split(':')[1])
                 instance_type.save()
             except:
                 pass
@@ -22,8 +22,8 @@ class Migration(DataMigration):
         for instance_type in orm.InstanceType.objects.all():
             try:
                 instance_type.os_instance_type_id = \
-                    NovaClient.instance_type_name_to_id(
-                        instance_type.os_instance_type_id)
+                    NovaClient.instance_type_id_to_name(
+                        'instance:' + instance_type.os_instance_type_id)
                 instance_type.save()
             except:
                 pass
