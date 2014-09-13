@@ -33,7 +33,6 @@ class IndexView(horizon_tables.MultiTableView):
         return [usage_tables.InstanceUsageTableEntry(id='.'.join([stats['id'],
                                                                   str(day)]),
                                                      name=stats['res_string'],
-                                                     flavor=stats['flavor'],
                                                      hours=stats['hours'],
                                                      price=stats['price'])
                 for day in range((from_until_ts[1] - from_until_ts[0]).days)
