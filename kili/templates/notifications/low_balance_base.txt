@@ -3,7 +3,7 @@ Hello,
 Your current balance ({{ current_balance }}) has dipped below the {{ passed_limit }} threshold.
 Unless you top up account, you will be unable to:- {% block restrictions %}{% endblock %}. 
 
-Please visit the billing dashboard (https://dash.kili.io/billing/) top up your account balance so we can keep everything working for you.
+Please visit the billing dashboard (https://dash.kili.io/billing/) and top up your account balance so we can keep everything working for you.
 
 If you have any questions, please feel free to reach out to help@kili.io.
 
