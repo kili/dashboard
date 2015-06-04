@@ -1,2 +1,8 @@
 {% extends "notifications/low_balance_base.txt" %}
-{% block restrictions %}instances will be suspended and write access to object storage will be blocked{% endblock %}
+{% block restrictions %}
+ - Start/restart instances, 
+ - Create block storage volumes,
+ - or create object storage buckets
+ 
+In addition, instances will be suspended and write access to object storage will be blocked.
+{% endblock %}
