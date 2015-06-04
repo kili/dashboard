@@ -1,2 +1,8 @@
 {% extends "notifications/low_balance_base.txt" %}
-{% block restrictions %}access to services and tools will be progressively disabled{% endblock %}
+{% block restrictions %}
+ - Start/restart instances, 
+ - Create block storage volumes,
+ - or create object storage buckets
+ 
+In addition, access to services and tools will be progressively disabled.
+{% endblock %}
